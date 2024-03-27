@@ -18,10 +18,10 @@ impl Solver for Day3 {
         let mut counts: [usize; BITS_COUNT] = [0; BITS_COUNT];
 
         for value in &self.values {
-            for bit_position in 0..BITS_COUNT {
-                let mask = 1 << bit_position;
+            for (index, count) in counts.iter_mut().enumerate() {
+                let mask = 1 << index;
                 if value & mask != 0 {
-                    counts[bit_position] += 1;
+                    *count += 1;
                 }
             }
         }
@@ -29,9 +29,9 @@ impl Solver for Day3 {
         let half = self.values.len() / 2;
         let mut gamma = 0;
         let mut epsilon = 0;
-        for bit_position in 0..BITS_COUNT {
-            let mask = 1 << bit_position;
-            if counts[bit_position] > half {
+        for (index, count) in counts.iter_mut().enumerate() {
+            let mask = 1 << index;
+            if *count > half {
                 gamma |= mask;
             } else {
                 epsilon |= mask;

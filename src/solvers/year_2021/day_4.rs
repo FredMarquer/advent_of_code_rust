@@ -111,9 +111,9 @@ fn check_column(board_progression: u32, x: usize) -> bool {
 
 fn get_score(board: &[i64], board_progression: u32, last_number: i64) -> i64{
     let mut sum = 0;
-    for i in 0..BOARD_CAPACITY {
+    for (i, cell) in board.iter().enumerate() {
         if (board_progression & (1 << i)) == 0 {
-            sum += board[i];
+            sum += *cell;
         }
     }
 

@@ -62,9 +62,7 @@ impl Day17 {
                 break x_velocity;
             }
 
-            if x > self.target_area.x_max{
-                panic!("no possible x velocity found");
-            }
+            assert!(x <= self.target_area.x_max, "no possible x velocity found");
 
             x_velocity += 1;
         };

@@ -156,7 +156,7 @@ impl Element {
     fn get_regular_number(&self) -> i64 {
         match self {
             Element::RegularNumber(regular_number) => *regular_number,
-            _ => panic!("not a regular number"),
+            Element::Pair(_) => panic!("not a regular number"),
         }
     }
 
@@ -173,7 +173,7 @@ impl Element {
                 *self = Element::RegularNumber(0);
             }
             else {
-                pair.try_explode_internal(state, nesting_level)
+                pair.try_explode_internal(state, nesting_level);
             }
         }
     }

@@ -59,9 +59,7 @@ fn get_starting_positions(input: &str) -> [usize; PLAYER_COUNT] {
         index += 1;
     }
 
-    if index != PLAYER_COUNT {
-        panic!("The input player count (= {index}) doesn't match the expected player count (= {PLAYER_COUNT}).");
-    }
+    assert!(index == PLAYER_COUNT, "The input player count (= {index}) doesn't match the expected player count (= {PLAYER_COUNT}).");
 
     starting_positions
 }

@@ -76,7 +76,7 @@ fn str_to_operation(s: &str) -> Operations
         "forward" => Operations::Forward,
         "up" => Operations::Up,
         "down" => Operations::Down,
-        _ => panic!("Invalid Operation {}", s),
+        _ => panic!("Invalid Operation {s}"),
     }
 }
 

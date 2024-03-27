@@ -16,7 +16,7 @@ pub fn create() -> Day10 {
                 '}' => Token { brackets_type: BracketsType::Curly, open: false },
                 '<' => Token { brackets_type: BracketsType::Angle, open: true },
                 '>' => Token { brackets_type: BracketsType::Angle, open: false },
-                _ => panic!("invalid character: {}", c),
+                _ => panic!("invalid character: {c}"),
             };
 
             tokens.push(token);
@@ -86,7 +86,7 @@ impl Solver for Day10 {
             }
         }
 
-        scores.sort();
+        scores.sort_unstable();
         scores[scores.len() / 2].into()
     }
 }

@@ -84,7 +84,7 @@ impl Map {
                         let add = x_offset + y_offset;
 
                         let index = map.get_index(new_x, new_y);
-                        let cost = ((other_map.nodes[ohter_index].cost + (add as usize) - 1) % 9) + 1;
+                        let cost = ((other_map.nodes[ohter_index].cost + add - 1) % 9) + 1;
                         map.nodes[index] = Node::new(new_x, new_y, width, heigth, cost);
                     }
                 }

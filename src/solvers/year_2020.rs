@@ -20,6 +20,6 @@ pub fn create_solver(day: &str) -> Box<dyn Solver>
         "6" => Box::new(day_6::create()),
         "7" => Box::new(day_7::create()),
         "8" => Box::new(day_8::create()),
-        _ => panic!("Invalid day argument: {}", day),
+        _ => panic!("Invalid day argument: {day}"),
     }
 }

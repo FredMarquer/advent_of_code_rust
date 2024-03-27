@@ -38,36 +38,33 @@ impl Packet {
         let packet_type = PacketType::from_usize(packet_type);
         let mut literal_value = 0;
         let mut sub_packets = Vec::new();
-        match packet_type {
-            PacketType::LiteralValue => {
+        if packet_type == PacketType::LiteralValue {
+            loop {
+                let last = binary_reader.read_bits(1) == 0;
+                literal_value |= binary_reader.read_bits(4) as u64;
+                if last {
+                    break;
+                }
+                literal_value <<= 4;
+            }
+        } else {
+            let length_type_id = binary_reader.read_bits(1);
+            if length_type_id == 0 {
+                let sub_packets_length = binary_reader.read_bits(15);
+                let end_position = binary_reader.bit_position() + sub_packets_length;
                 loop {
-                    let last = binary_reader.read_bits(1) == 0;
-                    literal_value |= binary_reader.read_bits(4) as u64;
-                    if last {
+                    let sub_packet = Packet::from_binary_reader(binary_reader);
+                    sub_packets.push(sub_packet);
+                    assert!(binary_reader.bit_position() <= end_position);
+                    if binary_reader.bit_position() == end_position {
                         break;
                     }
-                    literal_value <<= 4;
                 }
-            }
-            _=> {
-                let length_type_id = binary_reader.read_bits(1);
-                if length_type_id == 0 {
-                    let sub_packets_length = binary_reader.read_bits(15);
-                    let end_position = binary_reader.bit_position() + sub_packets_length;
-                    loop {
-                        let sub_packet = Packet::from_binary_reader(binary_reader);
-                        sub_packets.push(sub_packet);
-                        assert!(binary_reader.bit_position() <= end_position);
-                        if binary_reader.bit_position() == end_position {
-                            break;
-                        }
-                    }
-                } else {
-                    let sub_packets_count = binary_reader.read_bits(11);
-                    for _ in 0..sub_packets_count {
-                        let sub_packet = Packet::from_binary_reader(binary_reader);
-                        sub_packets.push(sub_packet);
-                    }
+            } else {
+                let sub_packets_count = binary_reader.read_bits(11);
+                for _ in 0..sub_packets_count {
+                    let sub_packet = Packet::from_binary_reader(binary_reader);
+                    sub_packets.push(sub_packet);
                 }
             }
         }
@@ -91,9 +88,9 @@ impl Packet {
             PacketType::Minimum => self.sub_packets.iter().fold(u64::MAX, |min, sub_packet| u64::min(min, sub_packet.evaluate())),
             PacketType::Maximum => self.sub_packets.iter().fold(u64::MIN, |max, sub_packet| u64::max(max, sub_packet.evaluate())),
             PacketType::LiteralValue => self.literal_value,
-            PacketType::GreaterThan => (self.sub_packets[0].evaluate() > self.sub_packets[1].evaluate()) as u64,
-            PacketType::LessThan => (self.sub_packets[0].evaluate() < self.sub_packets[1].evaluate()) as u64,
-            PacketType::EqualTo => (self.sub_packets[0].evaluate() == self.sub_packets[1].evaluate()) as u64,
+            PacketType::GreaterThan => u64::from(self.sub_packets[0].evaluate() > self.sub_packets[1].evaluate()),
+            PacketType::LessThan => u64::from(self.sub_packets[0].evaluate() < self.sub_packets[1].evaluate()),
+            PacketType::EqualTo => u64::from(self.sub_packets[0].evaluate() == self.sub_packets[1].evaluate()),
         }
     }
 }
@@ -121,7 +118,7 @@ impl PacketType {
             5 => PacketType::GreaterThan,
             6 => PacketType::LessThan,
             7 => PacketType::EqualTo,
-            _ => panic!("invalid value: {}", value),
+            _ => panic!("invalid value: {value}"),
         }
     }
 }

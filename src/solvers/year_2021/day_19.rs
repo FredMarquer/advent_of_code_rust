@@ -73,7 +73,7 @@ impl Solver for Day19 {
     }
 }
 
-fn resolve(scanner_reports: &mut Vec<ScannerReport>, beacon_positions: &mut Vec<Position>, scanner_positions: &mut Vec<Position>) {
+fn resolve(scanner_reports: &mut [ScannerReport], beacon_positions: &mut Vec<Position>, scanner_positions: &mut Vec<Position>) {
     assert_eq!(beacon_positions.len(), 0);
     assert_eq!(scanner_positions.len(), 0);
 
@@ -137,7 +137,7 @@ impl ScannerReport {
         let mut lines = s.lines();
         lines.next();
         for line in lines {
-            beacon_positions.push(Position::from_str(line))
+            beacon_positions.push(Position::from_str(line));
         }
 
         ScannerReport { beacon_positions }
@@ -258,54 +258,54 @@ impl Mul<&RotationMatrix> for &Position {
     type Output = Position;
 
     fn mul(self, other: &RotationMatrix) -> Position {
-        &(&(&other.x_mul * self.x) + &(&other.y_mul * self.y)) + &(&other.z_mul * self.z)
+        &(&(&other.x * self.x) + &(&other.y * self.y)) + &(&other.z * self.z)
     }
 }
 
 struct RotationMatrix {
-    x_mul: Position,
-    y_mul: Position,
-    z_mul: Position,
+    x: Position,
+    y: Position,
+    z: Position,
 }
 
 impl RotationMatrix {
     const fn identity() -> RotationMatrix {
         RotationMatrix {
-            x_mul: Position { x:1, y:0, z:0 },
-            y_mul: Position { x:0, y:1, z:0 },
-            z_mul: Position { x:0, y:0, z:1 },
+            x: Position { x:1, y:0, z:0 },
+            y: Position { x:0, y:1, z:0 },
+            z: Position { x:0, y:0, z:1 },
         }
     }
 
     const fn pitch() -> RotationMatrix {
         RotationMatrix {
-            x_mul: Position { x:1, y:0, z:0 },
-            y_mul: Position { x:0, y:0, z:-1 },
-            z_mul: Position { x:0, y:1, z:0 },
+            x: Position { x:1, y:0, z:0 },
+            y: Position { x:0, y:0, z:-1 },
+            z: Position { x:0, y:1, z:0 },
         }
     }
 
     const fn pitch_inv() -> RotationMatrix {
         RotationMatrix {
-            x_mul: Position { x:1, y:0, z:0 },
-            y_mul: Position { x:0, y:0, z:1 },
-            z_mul: Position { x:0, y:-1, z:0 },
+            x: Position { x:1, y:0, z:0 },
+            y: Position { x:0, y:0, z:1 },
+            z: Position { x:0, y:-1, z:0 },
         }
     }
 
     const fn yaw() -> RotationMatrix {
         RotationMatrix {
-            x_mul: Position { x:0, y:0, z:-1 },
-            y_mul: Position { x:0, y:1, z:0 },
-            z_mul: Position { x:1, y:0, z:0 },
+            x: Position { x:0, y:0, z:-1 },
+            y: Position { x:0, y:1, z:0 },
+            z: Position { x:1, y:0, z:0 },
         }
     }
 
     const fn roll() -> RotationMatrix {
         RotationMatrix {
-            x_mul: Position { x:0, y:-1, z:0 },
-            y_mul: Position { x:1, y:0, z:0 },
-            z_mul: Position { x:0, y:0, z:1 },
+            x: Position { x:0, y:-1, z:0 },
+            y: Position { x:1, y:0, z:0 },
+            z: Position { x:0, y:0, z:1 },
         }
     }
 }

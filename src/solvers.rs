@@ -18,15 +18,15 @@ impl SolverResult {
     pub fn print(&self) {
         match self {
             SolverResult::Invalid => println!("Result: Invalid"),
-            SolverResult::I64(value) => println!("Result: {}", value),
-            SolverResult::String(value) => println!("Result: {}", value),
+            SolverResult::I64(value) => println!("Result: {value}"),
+            SolverResult::String(value) => println!("Result: {value}"),
         }
     }
 }
 
 impl From<i32> for SolverResult {
     fn from(value: i32) -> Self {
-        SolverResult::I64(value as i64)
+        SolverResult::I64(i64::from(value))
     }
 }
 
@@ -44,7 +44,7 @@ impl From<isize> for SolverResult {
 
 impl From<u32> for SolverResult {
     fn from(value: u32) -> Self {
-        SolverResult::I64(value as i64)
+        SolverResult::I64(i64::from(value))
     }
 }
 
@@ -77,6 +77,6 @@ pub fn create_solver(year: &str, day: &str) -> Box<dyn Solver>
     match year {
         "2020" => year_2020::create_solver(day),
         "2021" => year_2021::create_solver(day),
-        _ => panic!("Invalid year argument: {}", year),
+        _ => panic!("Invalid year argument: {year}"),
     }
 }

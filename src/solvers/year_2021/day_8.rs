@@ -126,8 +126,8 @@ impl Digit {
 }
 
 fn index_of(ordered_digits: &[usize], bits: usize) -> i64 {
-    for index in 0..ordered_digits.len() {
-        if bits == ordered_digits[index] {
+    for (index, digit) in ordered_digits.iter().enumerate() {
+        if bits == *digit {
             return index as i64;
         }
     }

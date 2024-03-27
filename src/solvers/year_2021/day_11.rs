@@ -42,9 +42,9 @@ impl Solver for Day11 {
                 }
             }
 
-            for index in 0..GRID_CAPACITY {
-                if grid[index] > 9 {
-                    grid[index] = 0;
+            for cell in grid.iter_mut() {
+                if *cell > 9 {
+                    *cell = 0;
                     flashes_count += 1;
                 }
             }
@@ -66,9 +66,9 @@ impl Solver for Day11 {
             }
 
             let mut all = true;
-            for index in 0..GRID_CAPACITY {
-                if grid[index] > 9 {
-                    grid[index] = 0;
+            for cell in grid.iter_mut() {
+                if *cell > 9 {
+                    *cell = 0;
                 } else {
                     all = false;
                 }

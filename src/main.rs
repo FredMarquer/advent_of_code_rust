@@ -1,7 +1,3 @@
-#![feature(associated_type_bounds)]
-#![feature(derive_default_enum)]
-#![feature(mixed_integer_ops)]
-
 mod solvers;
 
 use std::env;
@@ -26,7 +22,7 @@ fn main() {
         match part {
             1 => run_part_2 = false,
             2 => run_part_1 = false,
-            _ => panic!("Invalid part argument: {}", part)
+            _ => panic!("Invalid part argument: {part}")
         }
     }
 
@@ -34,7 +30,7 @@ fn main() {
     let now = Instant::now();
     let solver = solvers::create_solver(year, day);
     let duration = now.elapsed().as_micros() as f64 * 0.001;
-    println!("Solver created in {} ms", duration);
+    println!("Solver created in {duration} ms");
 
     if run_part_1 {
         // Run part 1
@@ -43,7 +39,7 @@ fn main() {
         let result = solver.run_part1();
         let duration = now.elapsed().as_micros() as f64 * 0.001;
         result.print();
-        println!("Part 1 executed in {} ms", duration);
+        println!("Part 1 executed in {duration} ms");
     }
 
     if run_part_2 {
@@ -53,6 +49,6 @@ fn main() {
         let result = solver.run_part2();
         let duration = now.elapsed().as_micros() as f64 * 0.001;
         result.print();
-        println!("Part 2 executed in {} ms", duration);
+        println!("Part 2 executed in {duration} ms");
     }
 }

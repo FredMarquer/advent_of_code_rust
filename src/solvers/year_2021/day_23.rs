@@ -6,9 +6,10 @@ use crate::solvers::{Solver, SolverResult};
 const REGEX: &str = r"#([A-D])#([A-D])#([A-D])#([A-D])#";
 const NEW_RAW_1: &str = "#D#C#B#A#";
 const NEW_RAW_2: &str = "#D#B#A#C#";
-const MOVE_COSTS: [u32; 4] = [1, 10, 100, 1000];
+const ROOM_COUNT: usize = 4;
+const MOVE_COSTS: [u32; ROOM_COUNT] = [1, 10, 100, 1000];
 const VALID_HALLWAY_INDEXES: [usize; 7] = [0, 1, 3, 5, 7, 9, 10];
-const ENTRANCE_HALLWAY_INDEXES: [usize; 4] = [2, 4, 6, 8];
+const ENTRANCE_HALLWAY_INDEXES: [usize; ROOM_COUNT] = [2, 4, 6, 8];
 
 pub fn create() -> Day23 {
     let input = include_str!("inputs/23.txt");
@@ -48,7 +49,7 @@ fn search<const ROOM_SIZE: usize>(initial_state: &State<ROOM_SIZE>) -> i64 {
     
     while let Some(node) = open_set.pop() {
         if node.state.is_finished() {
-            return node.cost as i64;
+            return i64::from(node.cost);
         }
 
         for next_node in node.available_moves() {
@@ -56,7 +57,7 @@ fn search<const ROOM_SIZE: usize>(initial_state: &State<ROOM_SIZE>) -> i64 {
                 continue;
             }
 
-            open_set.push(next_node)
+            open_set.push(next_node);
         }
 
         close_set.insert(node.state);
@@ -70,14 +71,14 @@ fn search<const ROOM_SIZE: usize>(initial_state: &State<ROOM_SIZE>) -> i64 {
 #[derive(Hash)]
 struct State<const ROOM_SIZE: usize> {
     hallway: [u8; 11],
-    rooms: [[u8; ROOM_SIZE]; 4],
+    rooms: [[u8; ROOM_SIZE]; ROOM_COUNT],
 }
 
 impl<const ROOM_SIZE: usize> State<ROOM_SIZE> {
     fn new() -> Self {
         State {
             hallway: [u8::MAX; 11],
-            rooms: [[u8::MAX; ROOM_SIZE]; 4],
+            rooms: [[u8::MAX; ROOM_SIZE]; ROOM_COUNT],
         }
     }
 
@@ -85,7 +86,7 @@ impl<const ROOM_SIZE: usize> State<ROOM_SIZE> {
         let mut new_state = State::new();
         new_state.hallway = self.hallway;
         let room_size = usize::min(ROOM_SIZE, NEW_ROOM_SIZE);
-        for room_index in 0..4 {
+        for room_index in 0..ROOM_COUNT {
             for room_depth in 0..room_size {
                 new_state.rooms[room_index][room_depth] = self.rooms[room_index][room_depth];
             }
@@ -97,7 +98,7 @@ impl<const ROOM_SIZE: usize> State<ROOM_SIZE> {
     fn add_line_to_rooms(&mut self, line: &str, regex: &Regex, room_depth: usize) {
         assert!(room_depth < ROOM_SIZE);
         let captures = regex.captures(line).unwrap();
-        for room_index in 0..4 {
+        for room_index in 0..ROOM_COUNT {
             let capture = captures.get(room_index + 1).unwrap().as_str().chars().next().unwrap();
             self.rooms[room_index][room_depth] = ((capture as usize) - ('A' as usize)) as u8;
         }
@@ -106,7 +107,7 @@ impl<const ROOM_SIZE: usize> State<ROOM_SIZE> {
     fn swap_room_depths(&mut self, room_depth_a: usize, room_depth_b: usize) {
         assert!(room_depth_a < ROOM_SIZE);
         assert!(room_depth_b < ROOM_SIZE);
-        for room_index in 0..4 {
+        for room_index in 0..ROOM_COUNT {
             self.rooms[room_index].swap(room_depth_a, room_depth_b);
         }
     }
@@ -150,7 +151,7 @@ impl<const ROOM_SIZE: usize> State<ROOM_SIZE> {
             }
         }
 
-        for room_index in 0..4 {
+        for room_index in 0..ROOM_COUNT {
             let mut has_stranger = false;
             for room_depth in (0..ROOM_SIZE).rev() {
                 let amphipod = self.rooms[room_index][room_depth];
@@ -158,7 +159,7 @@ impl<const ROOM_SIZE: usize> State<ROOM_SIZE> {
                     if amphipod != room_index as u8 {
                         let distance = self.path_length(room_index, room_depth, ENTRANCE_HALLWAY_INDEXES[amphipod as usize], false, false) + 1;
                         cost += distance * MOVE_COSTS[amphipod as usize];
-                        has_stranger = true
+                        has_stranger = true;
                     } else if has_stranger {
                         let distance = (room_depth as u32) + 4;
                         cost += distance * MOVE_COSTS[room_index];
@@ -198,11 +199,11 @@ impl<const ROOM_SIZE: usize> State<ROOM_SIZE> {
         }
 
         let length = hallway_index as i32 - entrance_hallway_index as i32;
-        ((length.abs() as usize) + (room_depth + 1)) as u32
+        length.unsigned_abs() + ((room_depth + 1) as u32)
     }
 
     fn is_finished(&self) -> bool {
-        for room_index in 0..4 {
+        for room_index in 0..ROOM_COUNT {
             for room_depth in 0..ROOM_SIZE {
                 if self.rooms[room_index][room_depth] != room_index as u8 {
                     return false;
@@ -275,7 +276,7 @@ impl<'a, const ROOM_SIZE: usize> Iterator for MoveIterator<'a, ROOM_SIZE> {
     fn next(&mut self) -> Option<Self::Item> {
         let current_state = &self.node.state;
         let mut next = None;
-        while next == None && self.room_index < 4 {
+        while next.is_none() && self.room_index < ROOM_COUNT {
             if current_state.has_stranger(self.room_index) {
                 let mut room_depth = usize::MAX;
                 let mut amphipod_to_move = u8::MAX;
@@ -315,7 +316,7 @@ impl<'a, const ROOM_SIZE: usize> Iterator for MoveIterator<'a, ROOM_SIZE> {
             }
         }
 
-        while next == None && self.hallway_index < VALID_HALLWAY_INDEXES.len() {
+        while next.is_none() && self.hallway_index < VALID_HALLWAY_INDEXES.len() {
             let from_hallway_index = VALID_HALLWAY_INDEXES[self.hallway_index];
             let amphipod_at = current_state.hallway[from_hallway_index];
             if amphipod_at != u8::MAX {

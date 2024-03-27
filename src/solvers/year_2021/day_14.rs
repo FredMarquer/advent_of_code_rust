@@ -56,7 +56,7 @@ mod naive {
                     left: chars.next().unwrap(),
                     right: chars.next().unwrap(),
                     result: chars.nth(4).unwrap(),
-                })
+                });
             }
         
             Data {
@@ -175,7 +175,7 @@ mod opti {
                     left_result_pair: None,
                     right_result_pair: None,
                     count: 0,
-                })
+                });
             }
 
             for index in 0..insertion_pairs.len() {
@@ -207,7 +207,7 @@ mod opti {
                     }
                 }
 
-                previous = Some(c)
+                previous = Some(c);
             }
 
             Data {

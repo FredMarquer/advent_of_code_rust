@@ -4,7 +4,7 @@ use crate::solvers::{Solver, SolverResult};
 
 pub fn create() -> Day7 {
     let input = include_str!("inputs/07.txt");
-    let bag_repository = BagRepository::from(&input);
+    let bag_repository = BagRepository::from(input);
 
     Day7 { bag_repository }
 }

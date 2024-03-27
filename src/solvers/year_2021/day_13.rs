@@ -23,7 +23,7 @@ pub fn create() -> Day13 {
         let axis = match axis {
             'x' => Axis::X,
             'y' => Axis::Y,
-            _ => panic!("invalid char: {}", axis)
+            _ => panic!("invalid char: {axis}")
         };
 
         let offset = captures.get(2).unwrap().as_str();
@@ -70,7 +70,7 @@ impl Solver for Day13 {
             for x in 0..width {
                 let index = x + y * width;
                 let c = if pixels[index] { '#' } else { '.' };
-                result.push(c)
+                result.push(c);
             }
         }
 

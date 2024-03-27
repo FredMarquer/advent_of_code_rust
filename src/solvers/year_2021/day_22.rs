@@ -18,7 +18,7 @@ pub fn create() -> Day22 {
         reboot_steps.push(RebootStep {
             value,
             cuboid,
-        })
+        });
     }
 
     Day22 { reboot_steps: reboot_steps.into_boxed_slice() }
@@ -133,7 +133,7 @@ impl Node {
     }
 
     fn apply_procedures(&mut self, reboot_steps: &[RebootStep]) {
-        for reboot_step in reboot_steps.iter() {
+        for reboot_step in reboot_steps {
             self.apply_procedure(reboot_step);
         }
     }
@@ -142,7 +142,7 @@ impl Node {
         match reboot_step.cuboid.overlap(&self.cuboid) {
             OverlapResult::Intersect => self.split(reboot_step),
             OverlapResult::Encompass => self.node_type = NodeType::Leaf(reboot_step.value),
-            _ => {}
+            OverlapResult::None => {},
         }
     }
 
@@ -196,7 +196,7 @@ impl Node {
     fn count(&self, value: bool, count: &mut i64) {
         match &self.node_type {
             NodeType::Branch(nodes) => {
-                for node in nodes.iter() {
+                for node in nodes {
                     node.count(value, count);
                 }
             }

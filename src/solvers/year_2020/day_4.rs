@@ -121,7 +121,7 @@ fn validate_passport_part2(passport: &str) -> bool {
 
                 let mut charater_count = 0;
                 for charater in charaters {
-                    if !('0'..='9').contains(&charater) && !('a'..='f').contains(&charater) && !('A'..='F').contains(&charater) {
+                    if !charater.is_ascii_digit() && !('a'..='f').contains(&charater) && !('A'..='F').contains(&charater) {
                         return false;
                     }
                     
@@ -144,7 +144,7 @@ fn validate_passport_part2(passport: &str) -> bool {
 
                 let mut digit_count = 0;
                 for digit in digits {
-                    if !('0'..='9').contains(&digit) {
+                    if !digit.is_ascii_digit() {
                         return false;
                     }
                     
@@ -165,6 +165,7 @@ fn validate_passport_part2(passport: &str) -> bool {
 }
 
 bitflags! {
+    #[derive(PartialEq)]
     struct FieldFlags: u32 {
         const NONE = 0;
         const BYR = 1 << 0;
@@ -174,7 +175,7 @@ bitflags! {
         const HCL = 1 << 4;
         const ECL = 1 << 5;
         const PID = 1 << 6;
-        const ALL = Self::BYR.bits | Self::IYR.bits | Self::EYR.bits | Self::HGT.bits | Self::HCL.bits | Self::ECL.bits | Self::PID.bits;
+        const ALL = Self::BYR.bits() | Self::IYR.bits() | Self::EYR.bits() | Self::HGT.bits() | Self::HCL.bits() | Self::ECL.bits() | Self::PID.bits();
     }
 }
 

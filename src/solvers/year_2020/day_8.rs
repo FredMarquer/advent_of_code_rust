@@ -177,7 +177,7 @@ fn str_to_op_code(s: &str) -> OpCodes
         "nop" => OpCodes::Nop,
         "acc" => OpCodes::Acc,
         "jmp" => OpCodes::Jmp,
-        _ => panic!("Invalid OpCode: {}", s),
+        _ => panic!("Invalid OpCode: {s}"),
     }
 }
 
