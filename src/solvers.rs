@@ -1,5 +1,6 @@
 mod year_2020;
 mod year_2021;
+mod year_2023;
 
 pub trait Solver {
     fn run_part1(&self) -> SolverResult;
@@ -77,6 +78,7 @@ pub fn create_solver(year: &str, day: &str) -> Box<dyn Solver>
     match year {
         "2020" => year_2020::create_solver(day),
         "2021" => year_2021::create_solver(day),
+        "2023" => year_2023::create_solver(day),
         _ => panic!("Invalid year argument: {year}"),
     }
 }
