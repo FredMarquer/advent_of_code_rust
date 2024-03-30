@@ -1,0 +1,31 @@
+use crate::solvers::*;
+
+pub fn create() -> Day00 {
+    Day00 { input: include_str!("inputs/00.txt") }
+}
+
+pub struct Day00 {
+    input: &'static str,
+}
+
+impl Solver for Day00 {
+    fn run_part1(&self) -> SolverResult {
+        SolverResult::Invalid
+    }
+
+    fn run_part2(&self) -> SolverResult {
+        SolverResult::Invalid
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test() {
+        let day = create();
+        assert_eq!(day.run_part1(), 0.into(), "Part1");
+        assert_eq!(day.run_part2(), 0.into(), "Part2");
+    }
+}
