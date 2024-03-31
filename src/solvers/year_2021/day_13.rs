@@ -1,52 +1,54 @@
 use regex::Regex;
 use crate::solvers::{Solver, SolverResult};
 
-pub fn create() -> Day13 {
-    let input = include_str!("inputs/13.txt");
-    let mut splits = input.split("\r\n\r\n");
-
-    let lines = splits.next().unwrap().lines();
-    let mut dots= Vec::new();
-    for line in lines {
-        let mut splits = line.split(',');
-        let x = splits.next().unwrap().parse().unwrap();
-        let y = splits.next().unwrap().parse().unwrap();
-        dots.push((x, y));
-    }
-
-    let regex = Regex::new(r"fold along (x|y)=([0-9]*)").unwrap();
-    let mut fold_instructions = Vec::new();
-    for line in splits.next().unwrap().lines() {
-        let captures = regex.captures(line).unwrap();
-
-        let axis = captures.get(1).unwrap().as_str().chars().next().unwrap();
-        let axis = match axis {
-            'x' => Axis::X,
-            'y' => Axis::Y,
-            _ => panic!("invalid char: {axis}")
-        };
-
-        let offset = captures.get(2).unwrap().as_str();
-        let offset = offset.parse().unwrap();
-
-        fold_instructions.push(FoldInstruction {
-            axis,
-            offset,
-        });
-    }
-
-    Day13 {
-        dots,
-        fold_instructions,
-    }
-}
-
 pub struct Day13 {
     dots: Vec<(usize, usize)>,
     fold_instructions: Vec<FoldInstruction>,
 }
 
 impl Solver for Day13 {
+    const INPUT_PATH: &'static str = "inputs/2021/13.txt";
+
+    fn from_input(input: &str) -> Self {
+        let pat = if input.contains('\r') { "\r\n\r\n" } else { "\n\n" };
+        let mut splits = input.split(pat);
+
+        let lines = splits.next().unwrap().lines();
+        let mut dots= Vec::new();
+        for line in lines {
+            let mut splits = line.split(',');
+            let x = splits.next().unwrap().parse().unwrap();
+            let y = splits.next().unwrap().parse().unwrap();
+            dots.push((x, y));
+        }
+
+        let regex = Regex::new(r"fold along (x|y)=([0-9]*)").unwrap();
+        let mut fold_instructions = Vec::new();
+        for line in splits.next().unwrap().lines() {
+            let captures = regex.captures(line).unwrap();
+
+            let axis = captures.get(1).unwrap().as_str().chars().next().unwrap();
+            let axis = match axis {
+                'x' => Axis::X,
+                'y' => Axis::Y,
+                _ => panic!("invalid char: {axis}")
+            };
+
+            let offset = captures.get(2).unwrap().as_str();
+            let offset = offset.parse().unwrap();
+
+            fold_instructions.push(FoldInstruction {
+                axis,
+                offset,
+            });
+        }
+
+        Day13 {
+            dots,
+            fold_instructions,
+        }
+    }
+
     fn run_part1(&self) -> SolverResult {
         let mut pixels = Vec::new();
         let mut width = 0;
@@ -144,19 +146,44 @@ enum Axis {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use indoc::indoc;
 
     #[test]
     fn test() {
-        static PART2_RESULT: &str = "
-####.#..#..##..#..#..##..####.#..#..##.
-...#.#.#..#..#.#..#.#..#.#....#..#.#..#
-..#..##...#..#.#..#.#....###..#..#.#...
-.#...#.#..####.#..#.#....#....#..#.#...
-#....#.#..#..#.#..#.#..#.#....#..#.#..#
-####.#..#.#..#..##...##..#.....##...##.";
+        const TEST_INPUT: &str = indoc!{"
+            6,10
+            0,14
+            9,10
+            0,3
+            10,4
+            4,11
+            6,0
+            6,12
+            4,1
+            0,13
+            10,12
+            3,4
+            3,0
+            8,4
+            1,10
+            2,14
+            8,10
+            9,0
+            
+            fold along y=7
+            fold along x=5
+        "};
 
-        let day = create();
-        assert_eq!(day.run_part1(), 731.into(), "Part1");
-        assert_eq!(day.run_part2(), PART2_RESULT.into(), "Part2");
+        const TEST_PART2_RESULT: &str = indoc!{"
+        
+            #####
+            #...#
+            #...#
+            #...#
+            #####"};
+
+        let day = Day13::from_input(TEST_INPUT);
+        assert_eq!(day.run_part1(), 17.into(), "Part1");
+        assert_eq!(day.run_part2(), TEST_PART2_RESULT.into(), "Part2");
     }
 }

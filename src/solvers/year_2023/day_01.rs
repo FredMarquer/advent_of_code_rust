@@ -1,22 +1,28 @@
+use std::str::FromStr;
+
 use crate::solvers::*;
 
 const NUMBERS: [&str; 9] = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
 
-pub fn create() -> Day01 {
-    Day01 { input: include_str!("inputs/01.txt") }
-}
-
 pub struct Day01 {
-    input: &'static str,
+    input: String,
 }
 
 impl Solver for Day01 {
+    const INPUT_PATH: &'static str = "inputs/2023/01.txt";
+
+    fn from_input(input: &str) -> Self {
+        Day01 {
+            input: String::from_str(input).unwrap()
+        }
+    }
+
     fn run_part1(&self) -> SolverResult {
-        sum_lines(self.input, false)
+        sum_lines(self.input.as_str(), false)
     }
 
     fn run_part2(&self) -> SolverResult {
-        sum_lines(self.input, true)
+        sum_lines(self.input.as_str(), true)
     }
 }
 
@@ -75,11 +81,31 @@ fn try_parse_number(s: &str) -> Option<usize> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use indoc::indoc;
+
+    const TEST_INPUT_1: &str = indoc!{
+       "1abc2
+        pqr3stu8vwx
+        a1b2c3d4e5f
+        treb7uchet"
+    };
+
+    const TEST_INPUT_2: &str = indoc!{
+       "two1nine
+        eightwothree
+        abcone2threexyz
+        xtwone3four
+        4nineeightseven2
+        zoneight234
+        7pqrstsixteen"
+    };
 
     #[test]
     fn test() {
-        let day = create();
-        assert_eq!(day.run_part1(), 55834.into(), "Part1");
-        assert_eq!(day.run_part2(), 53221.into(), "Part2");
+        let day = Day01::from_input(TEST_INPUT_1);
+        assert_eq!(day.run_part1(), 142.into(), "Part1");
+
+        let day = Day01::from_input(TEST_INPUT_2);
+        assert_eq!(day.run_part2(), 281.into(), "Part2");
     }
 }

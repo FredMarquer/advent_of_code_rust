@@ -3,24 +3,25 @@ use std::collections::VecDeque;
 use std::mem;
 use crate::solvers::{Solver, SolverResult};
 
-pub fn create() -> Day18 {
-    let input = include_str!("inputs/18.txt");
-    let mut pairs = Vec::new();
-    for line in input.lines() {
-        let mut chars = line.chars();
-        let first = chars.next().unwrap();
-        assert_eq!(first, '[');
-        pairs.push(Box::new(Pair::from_chars(&mut chars)));
-    }
-
-    Day18 { pairs }
-}
-
 pub struct Day18 {
     pairs: Vec<Box<Pair>>
 }
 
 impl Solver for Day18 {
+    const INPUT_PATH: &'static str = "inputs/2021/18.txt";
+
+    fn from_input(input: &str) -> Self {
+        let mut pairs = Vec::new();
+        for line in input.lines() {
+            let mut chars = line.chars();
+            let first = chars.next().unwrap();
+            assert_eq!(first, '[');
+            pairs.push(Box::new(Pair::from_chars(&mut chars)));
+        }
+
+        Day18 { pairs }
+    }
+
     fn run_part1(&self) -> SolverResult {
         let mut pairs = VecDeque::from(self.pairs.clone());
         let mut sum = pairs.pop_front().unwrap();
@@ -243,11 +244,25 @@ struct ExplodeState {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use indoc::indoc;
 
     #[test]
     fn test() {
-        let day = create();
-        assert_eq!(day.run_part1(), 4120.into(), "Part1");
-        assert_eq!(day.run_part2(), 4725.into(), "Part2");
+        const TEST_INPUT: &str = indoc!{"
+            [[[0,[5,8]],[[1,7],[9,6]]],[[4,[1,2]],[[1,4],2]]]
+            [[[5,[2,8]],4],[5,[[9,9],0]]]
+            [6,[[[6,2],[5,6]],[[7,6],[4,7]]]]
+            [[[6,[0,7]],[0,9]],[4,[9,[9,0]]]]
+            [[[7,[6,4]],[3,[1,3]]],[[[5,5],1],9]]
+            [[6,[[7,3],[3,2]]],[[[3,8],[5,7]],4]]
+            [[[[5,4],[7,7]],8],[[8,3],8]]
+            [[9,3],[[9,9],[6,[4,9]]]]
+            [[2,[[7,7],7]],[[5,8],[[9,3],[0,2]]]]
+            [[[[5,2],5],[8,[3,7]]],[[5,[7,5]],[4,4]]]
+        "};
+
+        let day = Day18::from_input(TEST_INPUT);
+        assert_eq!(day.run_part1(), 4140.into(), "Part1");
+        assert_eq!(day.run_part2(), 3993.into(), "Part2");
     }
 }

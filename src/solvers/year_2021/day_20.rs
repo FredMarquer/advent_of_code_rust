@@ -13,26 +13,33 @@ const OFFSETS: [(usize, usize); 9] = [
     (2, 2),
 ];
 
-pub fn create() -> Day20 {
-    let input = include_str!("inputs/20.txt");
-    let mut splits = input.split("\r\n\r\n");
-
-    let mut image_enhancement_algorithm = Box::new([false; 512]);
-    for (index, c) in splits.next().unwrap().chars().enumerate() {
-        image_enhancement_algorithm[index] = char_to_pixel(c);
-    }
-    
-    let input_image = Image::from_input(splits.next().unwrap());
-
-    Day20 { image_enhancement_algorithm, input_image }
-}
-
 pub struct Day20 {
-    image_enhancement_algorithm: Box<[bool; 512]>,
+    image_enhancement_algorithm: Vec<bool>,
     input_image: Image,
 }
 
 impl Solver for Day20 {
+    const INPUT_PATH: &'static str = "inputs/2021/20.txt";
+
+    fn from_input(input: &str) -> Self {
+        let pat = if input.contains('\r') { "\r\n\r\n" } else { "\n\n" };
+        let mut splits = input.split(pat);
+        
+        let mut image_enhancement_algorithm = Vec::with_capacity(512);
+        for c in splits.next().unwrap().chars() {
+            if c != '\n' {
+                image_enhancement_algorithm.push(char_to_pixel(c));
+            }
+        }
+        
+        let input_image = Image::from_input(splits.next().unwrap());
+        
+        Day20 {
+            image_enhancement_algorithm,
+            input_image,
+        }
+    }
+
     fn run_part1(&self) -> SolverResult {
         let ouput_image = self.input_image.apply_image_enhancement_algorithm(&self.image_enhancement_algorithm, 2);
         ouput_image.count_lit_pixels().into()
@@ -107,7 +114,7 @@ impl Image {
         Some(x + y * self.width)
     }
 
-    fn apply_image_enhancement_algorithm(&self, image_enhancement_algorithm: &[bool; 512], iteration_count: usize) -> Image {
+    fn apply_image_enhancement_algorithm(&self, image_enhancement_algorithm: &[bool], iteration_count: usize) -> Image {
         let mut current_width = self.width;
         let mut current_heigth = self.width;
         let max_width = current_width + iteration_count * 2;
@@ -116,7 +123,6 @@ impl Image {
         let mut input_image = Image::new(max_width, max_heigth);
         let mut output_image = Image::new(max_width, max_heigth);
         self.copy_to(&mut input_image);
-
         for current_iteration in 0..iteration_count {
             current_width += 2;
             current_heigth += 2;
@@ -128,7 +134,7 @@ impl Image {
         input_image
     }
 
-    fn apply_image_enhancement_algorithm_internal(&self, output_image: &mut Image, image_enhancement_algorithm: &[bool; 512], current_iteration: usize) {
+    fn apply_image_enhancement_algorithm_internal(&self, output_image: &mut Image, image_enhancement_algorithm: &[bool], current_iteration: usize) {
         assert!(output_image.width == self.width + 2);
         assert!(output_image.heigth == self.heigth + 2);
         assert!(!(image_enhancement_algorithm[0] && image_enhancement_algorithm[image_enhancement_algorithm.len() - 1]));
@@ -171,11 +177,28 @@ impl Image {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use indoc::indoc;
 
     #[test]
     fn test() {
-        let day = create();
-        assert_eq!(day.run_part1(), 5301.into(), "Part1");
-        assert_eq!(day.run_part2(), 19492.into(), "Part2");
+        const TEST_INPUT: &str = indoc!{"
+            ..#.#..#####.#.#.#.###.##.....###.##.#..###.####..#####..#....#..#..##..##
+            #..######.###...####..#..#####..##..#.#####...##.#.#..#.##..#.#......#.###
+            .######.###.####...#.##.##..#..#..#####.....#.#....###..#.##......#.....#.
+            .#..#..##..#...##.######.####.####.#.#...#.......#..#.#.#...####.##.#.....
+            .#..#...##.#.##..#...##.#.##..###.#......#.#.......#.#.#.####.###.##...#..
+            ...####.#..#..#.##.#....##..#.####....##...##..#...#......#.#.......#.....
+            ..##..####..#...#.#.#...##..#.#..###..#####........#..####......#..#
+
+            #..#.
+            #....
+            ##..#
+            ..#..
+            ..###
+        "};
+
+        let day = Day20::from_input(TEST_INPUT);
+        assert_eq!(day.run_part1(), 35.into(), "Part1");
+        assert_eq!(day.run_part2(), 3351.into(), "Part2");
     }
 }

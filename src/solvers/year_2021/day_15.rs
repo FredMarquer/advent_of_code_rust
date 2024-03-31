@@ -9,22 +9,25 @@ const NEIGHBOUR_DIRS: [(isize, isize); 4] = [
     ( 0,  1),
 ];
 
-pub fn create() -> Day17 {
-    let input = include_str!("inputs/15.txt");
-
-    let map_part1 = Map::from_input(input);
-    let map_part2 = Map::from_other_map(&map_part1);
-    assert_eq!(map_part1.nodes[0].cost, map_part2.nodes[0].cost);
-
-    Day17 { map_part1, map_part2 }
-}
-
-pub struct Day17 {
+pub struct Day15 {
     map_part1: Map,
     map_part2: Map,
 }
 
-impl Solver for Day17 {
+impl Solver for Day15 {
+    const INPUT_PATH: &'static str = "inputs/2021/15.txt";
+
+    fn from_input(input: &str) -> Self {
+        let map_part1 = Map::from_input(input);
+        let map_part2 = Map::from_other_map(&map_part1);
+        assert_eq!(map_part1.nodes[0].cost, map_part2.nodes[0].cost);
+
+        Day15 {
+            map_part1,
+            map_part2,
+        }
+    }
+
     fn run_part1(&self) -> SolverResult {
         self.map_part1.dijkstra().into()
     }
@@ -260,11 +263,25 @@ impl PartialOrd for OpenNode {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use indoc::indoc;
 
     #[test]
     fn test() {
-        let day = create();
-        assert_eq!(day.run_part1(), 386.into(), "Part1");
-        assert_eq!(day.run_part2(), 2806.into(), "Part2");
+        const TEST_INPUT: &str = indoc!{"
+            1163751742
+            1381373672
+            2136511328
+            3694931569
+            7463417111
+            1319128137
+            1359912421
+            3125421639
+            1293138521
+            2311944581
+        "};
+
+        let day = Day15::from_input(TEST_INPUT);
+        assert_eq!(day.run_part1(), 40.into(), "Part1");
+        assert_eq!(day.run_part2(), 315.into(), "Part2");
     }
 }

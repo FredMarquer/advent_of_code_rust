@@ -1,18 +1,20 @@
 use itertools::Itertools;
 use crate::solvers::{Solver, SolverResult};
 
-pub fn create() -> Day6 {
-    let input = include_str!("inputs/06.txt");
-    let groups: Vec<String> = input.split("\r\n\r\n").map_into().collect_vec();
-
-    Day6 { groups }
-}
-
 pub struct Day6 {
     groups: Vec<String>
 }
 
 impl Solver for Day6 {
+    const INPUT_PATH: &'static str = "inputs/2020/06.txt";
+
+    fn from_input(input: &str) -> Self {
+        let pat = if input.contains('\r') { "\r\n\r\n" } else { "\n\n" };
+        Day6 {
+            groups: input.split(pat).map_into().collect_vec()
+        }
+    }
+
     fn run_part1(&self) -> SolverResult {
         let mut result = 0;
         for group in &self.groups {
@@ -56,11 +58,39 @@ impl Solver for Day6 {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use indoc::indoc;
 
     #[test]
     fn test() {
-        let day = create();
-        assert_eq!(day.run_part1(), 6630.into(), "Part1");
-        assert_eq!(day.run_part2(), 3437.into(), "Part2");
+        const TEST_INPUT_1A: &str = indoc!{"
+            abcx
+            abcy
+            abcz
+        "};
+
+        const TEST_INPUT: &str = indoc!{"
+            abc
+
+            a
+            b
+            c
+            
+            ab
+            ac
+            
+            a
+            a
+            a
+            a
+            
+            b
+        "};
+        
+        let day = Day6::from_input(TEST_INPUT_1A);
+        assert_eq!(day.run_part1(), 6.into(), "Part1");
+
+        let day = Day6::from_input(TEST_INPUT);
+        assert_eq!(day.run_part1(), 11.into(), "Part1");
+        assert_eq!(day.run_part2(), 6.into(), "Part2");
     }
 }

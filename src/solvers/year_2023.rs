@@ -3,15 +3,15 @@ mod day_02;
 mod day_03;
 mod day_04;
 
-use crate::solvers::Solver;
+use crate::solvers;
 
-pub fn create_solver(day: &str) -> Box<dyn Solver>
+pub fn run_solver(day: &str, run_part_1: bool, run_part_2: bool)
 {
     match day {
-        "1" => Box::new(day_01::create()),
-        "2" => Box::new(day_02::create()),
-        "3" => Box::new(day_03::create()),
-        "4" => Box::new(day_04::create()),
+        "1" => solvers::run_solver_generic::<day_01::Day01>(run_part_1, run_part_2),
+        "2" => solvers::run_solver_generic::<day_02::Day02>(run_part_1, run_part_2),
+        "3" => solvers::run_solver_generic::<day_03::Day03>(run_part_1, run_part_2),
+        "4" => solvers::run_solver_generic::<day_04::Day04>(run_part_1, run_part_2),
         _ => panic!("Invalid day argument: {day}"),
     }
 }

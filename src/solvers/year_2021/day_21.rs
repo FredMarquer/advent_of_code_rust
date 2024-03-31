@@ -12,18 +12,19 @@ const DIRAC_ROLLS: [DiracRoll; 7] = [
     DiracRoll::new(9, 1),
 ];
 
-pub fn create() -> Day21 {
-    let input = include_str!("inputs/21.txt");
-    let starting_positions = get_starting_positions(input);
-
-    Day21 { starting_positions }
-}
-
 pub struct Day21 {
     starting_positions: [usize; PLAYER_COUNT],
 }
 
 impl Solver for Day21 {
+    const INPUT_PATH: &'static str = "inputs/2021/21.txt";
+
+    fn from_input(input: &str) -> Self {
+        Day21 {
+            starting_positions: get_starting_positions(input)
+        }
+    }
+
     fn run_part1(&self) -> SolverResult {
         let mut game_state = GameState::new(&self.starting_positions, 1000);
         let mut dice = DeterministicDice::new();
@@ -144,11 +145,17 @@ impl DiracRoll {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use indoc::indoc;
 
     #[test]
     fn test() {
-        let day = create();
-        assert_eq!(day.run_part1(), 918081.into(), "Part1");
-        assert_eq!(day.run_part2(), 158631174219251_i64.into(), "Part2");
+        const TEST_INPUT: &str = indoc!{"
+            Player 1 starting position: 4
+            Player 2 starting position: 8
+        "};
+
+        let day = Day21::from_input(TEST_INPUT);
+        assert_eq!(day.run_part1(), 739785.into(), "Part1");
+        assert_eq!(day.run_part2(), 444356092776315_i64.into(), "Part2");
     }
 }

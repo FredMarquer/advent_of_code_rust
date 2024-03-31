@@ -2,7 +2,10 @@ mod year_2020;
 mod year_2021;
 mod year_2023;
 
+use std::time::Instant;
 pub trait Solver {
+    const INPUT_PATH: &'static str;
+    fn from_input(input: &str) -> Self;
     fn run_part1(&self) -> SolverResult;
     fn run_part2(&self) -> SolverResult;
 }
@@ -73,12 +76,44 @@ impl From<&str> for SolverResult {
     }
 }
 
-pub fn create_solver(year: &str, day: &str) -> Box<dyn Solver>
-{
+pub fn run_solver(year: &str, day: &str, run_part_1: bool, run_part_2: bool) {
     match year {
-        "2020" => year_2020::create_solver(day),
-        "2021" => year_2021::create_solver(day),
-        "2023" => year_2023::create_solver(day),
+        "2020" => year_2020::run_solver(day, run_part_1, run_part_2),
+        "2021" => year_2021::run_solver(day, run_part_1, run_part_2),
+        "2023" => year_2023::run_solver(day, run_part_1, run_part_2),
         _ => panic!("Invalid year argument: {year}"),
+    }
+}
+
+pub fn run_solver_generic<T: Solver>(run_part_1: bool, run_part_2: bool) {
+    let Ok(input) = std::fs::read_to_string(T::INPUT_PATH) else {
+        eprint!("Fail to read input at path: {}", T::INPUT_PATH);
+        return;
+    };
+
+    // Create solver
+    let now = Instant::now();
+    let solver = T::from_input(&input);
+    let duration = now.elapsed().as_micros() as f64 * 0.001;
+    println!("Solver created in {duration} ms");
+
+    if run_part_1 {
+        // Run part 1
+        println!("Running part 1");
+        let now = Instant::now();
+        let result = solver.run_part1();
+        let duration = now.elapsed().as_micros() as f64 * 0.001;
+        result.print();
+        println!("Part 1 executed in {duration} ms");
+    }
+
+    if run_part_2 {
+        // Run part 2
+        println!("Running part 2");
+        let now = Instant::now();
+        let result = solver.run_part2();
+        let duration = now.elapsed().as_micros() as f64 * 0.001;
+        result.print();
+        println!("Part 2 executed in {duration} ms");
     }
 }

@@ -1,34 +1,35 @@
 use crate::solvers::*;
 
-pub fn create() -> Day04 {
-    let input = include_str!("inputs/04.txt");
-    let mut win_counts = Vec::new();
-    for line in input.lines() {
-        let mut split = line.split('|');
-        let winning_numbers = split.next().unwrap();
-        let winning_numbers = winning_numbers[9..]
-            .split_whitespace()
-            .map(|number| number.parse::<u32>().unwrap())
-            .collect::<Vec<u32>>();
-        let my_numbers = split.next().unwrap();
-        let mut win_count = 0;
-        for number in my_numbers.split_whitespace() {
-            let number = number.parse::<u32>().unwrap();
-            if winning_numbers.contains(&number) {
-                win_count += 1;
-            }
-        }
-        win_counts.push(win_count);
-    }
-
-    Day04 { win_counts }
-}
-
 pub struct Day04 {
     win_counts: Vec<u32>,
 }
 
 impl Solver for Day04 {
+    const INPUT_PATH: &'static str = "inputs/2023/04.txt";
+
+    fn from_input(input: &str) -> Self {
+        let mut win_counts = Vec::new();
+        for line in input.lines() {
+            let mut split = line.split('|');
+            let winning_numbers = split.next().unwrap();
+            let winning_numbers = winning_numbers[9..]
+                .split_whitespace()
+                .map(|number| number.parse::<u32>().unwrap())
+                .collect::<Vec<u32>>();
+            let my_numbers = split.next().unwrap();
+            let mut win_count = 0;
+            for number in my_numbers.split_whitespace() {
+                let number = number.parse::<u32>().unwrap();
+                if winning_numbers.contains(&number) {
+                    win_count += 1;
+                }
+            }
+            win_counts.push(win_count);
+        }
+
+        Day04 { win_counts }
+    }
+
     fn run_part1(&self) -> SolverResult {
         self.win_counts
             .iter()
@@ -54,11 +55,21 @@ impl Solver for Day04 {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use indoc::indoc;
+
+    const TEST_INPUT: &str = indoc!{
+       "Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53
+        Card 2: 13 32 20 16 61 | 61 30 68 82 17 32 24 19
+        Card 3:  1 21 53 59 44 | 69 82 63 72 16 21 14  1
+        Card 4: 41 92 73 84 69 | 59 84 76 51 58  5 54 83
+        Card 5: 87 83 26 28 32 | 88 30 70 12 93 22 82 36
+        Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11"
+    };
 
     #[test]
     fn test() {
-        let day = create();
-        assert_eq!(day.run_part1(), 23750.into(), "Part1");
-        assert_eq!(day.run_part2(), 13261850.into(), "Part2");
+        let day = Day04::from_input(TEST_INPUT);
+        assert_eq!(day.run_part1(), 13.into(), "Part1");
+        assert_eq!(day.run_part2(), 30.into(), "Part2");
     }
 }

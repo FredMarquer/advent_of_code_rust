@@ -1,18 +1,19 @@
 use crate::solvers::{Solver, SolverResult};
 use regex::Regex;
 
-pub fn create() -> Day8 {
-    let input = include_str!("inputs/08.txt");
-    let instructions = compile_input(input);
-
-    Day8 { instructions: instructions.into_boxed_slice() }
-}
-
 pub struct Day8 {
     instructions: Box<[Instruction]>
 }
 
 impl Solver for Day8 {
+    const INPUT_PATH: &'static str = "inputs/2020/08.txt";
+
+    fn from_input(input: &str) -> Self {
+        Day8 {
+            instructions: compile_input(input).into_boxed_slice()
+        }
+    }
+
     fn run_part1(&self) -> SolverResult {
 
         let mut program = Program::from_instructions(&self.instructions);
@@ -184,11 +185,24 @@ fn str_to_op_code(s: &str) -> OpCodes
 #[cfg(test)]
 mod tests {
     use super::*;
+    use indoc::indoc;
 
     #[test]
     fn test() {
-        let day = create();
-        assert_eq!(day.run_part1(), 2025.into(), "Part1");
-        assert_eq!(day.run_part2(), 2001.into(), "Part2");
+        const TEST_INPUT: &str = indoc!{"
+            nop +0
+            acc +1
+            jmp +4
+            acc +3
+            jmp -3
+            acc -99
+            acc +1
+            jmp -4
+            acc +6
+        "};
+
+        let day = Day8::from_input(TEST_INPUT);
+        assert_eq!(day.run_part1(), 5.into(), "Part1");
+        assert_eq!(day.run_part2(), 8.into(), "Part2");
     }
 }

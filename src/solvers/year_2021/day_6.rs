@@ -1,17 +1,18 @@
 use crate::solvers::{Solver, SolverResult};
 
-pub fn create() -> Day6 {
-    let input = include_str!("inputs/06.txt");
-    let fishes = input.split(',').map(|fish| fish.parse().unwrap()).collect();
-
-    Day6 { fishes }
-}
-
 pub struct Day6 {
     fishes: Vec<usize>
 }
 
 impl Solver for Day6 {
+    const INPUT_PATH: &'static str = "inputs/2021/06.txt";
+
+    fn from_input(input: &str) -> Self {
+        Day6 {
+            fishes: input.split(',').map(|fish| fish.parse().unwrap()).collect()
+        }
+    }
+
     fn run_part1(&self) -> SolverResult {
         self.simulate(80).into()
     }
@@ -48,8 +49,10 @@ mod tests {
 
     #[test]
     fn test() {
-        let day = create();
-        assert_eq!(day.run_part1(), 358214.into(), "Part1");
-        assert_eq!(day.run_part2(), 1622533344325_i64.into(), "Part2");
+        const TEST_INPUT: &str = "3,4,3,1,2";
+
+        let day = Day6::from_input(TEST_INPUT);
+        assert_eq!(day.run_part1(), 5934.into(), "Part1");
+        assert_eq!(day.run_part2(), 26984457539_i64.into(), "Part2");
     }
 }

@@ -1,20 +1,21 @@
 use std::mem;
 use crate::solvers::{Solver, SolverResult};
 
-pub fn create() -> Day16 {
-    let input = include_str!("inputs/16.txt");
-    let data = hex::decode(input).unwrap();
-    let mut binary_reader = BinaryReader::from_buffer(&data);
-    let packet = Packet::from_binary_reader(&mut binary_reader);
-
-    Day16 { packet }
-}
-
 pub struct Day16 {
     packet: Packet
 }
 
 impl Solver for Day16 {
+    const INPUT_PATH: &'static str = "inputs/2021/16.txt";
+
+    fn from_input(input: &str) -> Self {
+        let data = hex::decode(input).unwrap();
+        let mut binary_reader = BinaryReader::from_buffer(&data);
+        let packet = Packet::from_binary_reader(&mut binary_reader);
+
+        Day16 { packet }
+    }
+
     fn run_part1(&self) -> SolverResult {
         self.packet.sum_verions().into()
     }
@@ -173,8 +174,36 @@ mod tests {
 
     #[test]
     fn test() {
-        let day = create();
-        assert_eq!(day.run_part1(), 993.into(), "Part1");
-        assert_eq!(day.run_part2(), 144595909277_i64.into(), "Part2");
+        const TEST_INPUT_1A: &str = "8A004A801A8002F478";
+        let day = Day16::from_input(TEST_INPUT_1A);
+        assert_eq!(day.run_part1(), 16.into(), "Part1A");
+
+        const TEST_INPUT_1B: &str = "620080001611562C8802118E34";
+        let day = Day16::from_input(TEST_INPUT_1B);
+        assert_eq!(day.run_part1(), 12.into(), "Part1B");
+
+        const TEST_INPUT_1C: &str = "C0015000016115A2E0802F182340";
+        let day = Day16::from_input(TEST_INPUT_1C);
+        assert_eq!(day.run_part1(), 23.into(), "Part1C");
+
+        const TEST_INPUT_1D: &str = "A0016C880162017C3686B18A3D4780";
+        let day = Day16::from_input(TEST_INPUT_1D);
+        assert_eq!(day.run_part1(), 31.into(), "Part1D");
+
+        const TEST_INPUT_2A: &str = "C200B40A82";
+        let day = Day16::from_input(TEST_INPUT_2A);
+        assert_eq!(day.run_part2(), 3.into(), "Part2A");
+        
+        const TEST_INPUT_2B: &str = "04005AC33890";
+        let day = Day16::from_input(TEST_INPUT_2B);
+        assert_eq!(day.run_part2(), 54.into(), "Part2B");
+
+        const TEST_INPUT_2C: &str = "880086C3E88112";
+        let day = Day16::from_input(TEST_INPUT_2C);
+        assert_eq!(day.run_part2(), 7.into(), "Part2C");
+
+        const TEST_INPUT_2D: &str = "CE00C43D881120";
+        let day = Day16::from_input(TEST_INPUT_2D);
+        assert_eq!(day.run_part2(), 9.into(), "Part2D");
     }
 }

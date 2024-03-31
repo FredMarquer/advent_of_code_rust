@@ -1,33 +1,33 @@
 use crate::solvers::{Solver, SolverResult};
 
-pub fn create() -> Day8 {
-    let input = include_str!("inputs/08.txt");
-
-    let mut entries = Vec::new();
-    for line in input.lines() {
-        let mut splits = line.split(" | ");
-
-        let mut digits: [Digit; 10] = Default::default();
-        for (index, digit) in splits.next().unwrap().split_whitespace().enumerate() {
-            digits[index] = Digit::from_str(digit);
-        }
-
-        let mut outputs: [Digit; 4] = Default::default();
-        for (index, output) in splits.next().unwrap().split_whitespace().enumerate() {
-            outputs[index] = Digit::from_str(output);
-        }
-
-        entries.push(Entry { digits, outputs });
-    }
-
-    Day8 { entries }
-}
-
 pub struct Day8 {
     entries: Vec<Entry>
 }
 
 impl Solver for Day8 {
+    const INPUT_PATH: &'static str = "inputs/2021/08.txt";
+
+    fn from_input(input: &str) -> Self {
+        let mut entries = Vec::new();
+        for line in input.lines() {
+            let mut splits = line.split(" | ");
+
+            let mut digits: [Digit; 10] = Default::default();
+            for (index, digit) in splits.next().unwrap().split_whitespace().enumerate() {
+                digits[index] = Digit::from_str(digit);
+            }
+
+            let mut outputs: [Digit; 4] = Default::default();
+            for (index, output) in splits.next().unwrap().split_whitespace().enumerate() {
+                outputs[index] = Digit::from_str(output);
+            }
+
+            entries.push(Entry { digits, outputs });
+        }
+
+        Day8 { entries }
+    }
+
     fn run_part1(&self) -> SolverResult {
         let mut count = 0;
         for entry in &self.entries {
@@ -138,11 +138,25 @@ fn index_of(ordered_digits: &[usize], bits: usize) -> i64 {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use indoc::indoc;
 
     #[test]
     fn test() {
-        let day = create();
-        assert_eq!(day.run_part1(), 342.into(), "Part1");
-        assert_eq!(day.run_part2(), 1068933.into(), "Part2");
+        const TEST_INPUT: &str = indoc!{"
+            be cfbegad cbdgef fgaecd cgeb fdcge agebfd fecdb fabcd edb | fdgacbe cefdb cefbgd gcbe
+            edbfga begcd cbg gc gcadebf fbgde acbgfd abcde gfcbed gfec | fcgedb cgb dgebacf gc
+            fgaebd cg bdaec gdafb agbcfd gdcbef bgcad gfac gcb cdgabef | cg cg fdcagb cbg
+            fbegcd cbd adcefb dageb afcb bc aefdc ecdab fgdeca fcdbega | efabcd cedba gadfec cb
+            aecbfdg fbg gf bafeg dbefa fcge gcbea fcaegb dgceab fcbdga | gecf egdcabf bgf bfgea
+            fgeab ca afcebg bdacfeg cfaedg gcfdb baec bfadeg bafgc acf | gebdcfa ecba ca fadegcb
+            dbcfg fgd bdegcaf fgec aegbdf ecdfab fbedc dacgb gdcebf gf | cefg dcbef fcge gbcadfe
+            bdfegc cbegaf gecbf dfcage bdacg ed bedf ced adcbefg gebcd | ed bcgafe cdgba cbgef
+            egadfb cdbfeg cegd fecab cgb gbdefca cg fgcdab egfdb bfceg | gbdfcae bgc cg cgb
+            gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
+        "};
+
+        let day = Day8::from_input(TEST_INPUT);
+        assert_eq!(day.run_part1(), 26.into(), "Part1");
+        assert_eq!(day.run_part2(), 61229.into(), "Part2");
     }
 }

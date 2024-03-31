@@ -1,18 +1,18 @@
 use crate::solvers::{Solver, SolverResult};
 
-pub fn create() -> Day25 {
-    let input = include_str!("inputs/25.txt");
-    let map = Map::from_input(input);
-    
-    Day25 { map }
-}
-
-
 pub struct Day25 {
     map: Map<SeaCucumber>
 }
 
 impl Solver for Day25 {
+    const INPUT_PATH: &'static str = "inputs/2021/25.txt";
+
+    fn from_input(input: &str) -> Self {
+        Day25 {
+            map: Map::from_input(input)
+        }
+    }
+
     fn run_part1(&self) -> SolverResult {
         let mut map = self.map.clone();
         let mut can_move = Map::new(map.width, map.height);
@@ -147,11 +147,24 @@ enum SeaCucumber {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use indoc::indoc;
 
     #[test]
     fn test() {
-        let day = create();
-        assert_eq!(day.run_part1(), 504.into(), "Part1");
+        const TEST_INPUT: &str = indoc!{"
+            v...>>.vv>
+            .vv>>.vv..
+            >>.>v>...v
+            >>v>>.>.v.
+            v>v.vv.v..
+            >.>>..v...
+            .vv..>.>v.
+            v.v..>>v.v
+            ....v..v.>
+        "};
+
+        let day = Day25::from_input(TEST_INPUT);
+        assert_eq!(day.run_part1(), 58.into(), "Part1");
         assert_eq!(day.run_part2(), SolverResult::Invalid, "Part2");
     }
 }

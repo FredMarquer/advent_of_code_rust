@@ -1,18 +1,19 @@
 use itertools::Itertools;
 use crate::solvers::{Solver, SolverResult};
 
-pub fn create() -> Day2 {
-    let input = include_str!("inputs/02.txt");
-    let lines = input.lines().map_into().collect_vec();
-
-    Day2 { lines }
-}
-
 pub struct Day2 {
     lines: Vec<String>
 }
 
 impl Solver for Day2 {
+    const INPUT_PATH: &'static str = "inputs/2020/02.txt";
+
+    fn from_input(input: &str) -> Self {
+        Day2 {
+            lines: input.lines().map_into().collect_vec()
+        }
+    }
+
     fn run_part1(&self) -> SolverResult {
         let mut valid_passwords = 0;
         for line in &self.lines {
@@ -60,11 +61,18 @@ impl Solver for Day2 {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use indoc::indoc;
 
     #[test]
     fn test() {
-        let day = create();
-        assert_eq!(day.run_part1(), 447.into(), "Part1");
-        assert_eq!(day.run_part2(), 249.into(), "Part2");
+        const TEST_INPUT: &str = indoc!{"
+            1-3 a: abcde
+            1-3 b: cdefg
+            2-9 c: ccccccccc
+        "};
+
+        let day = Day2::from_input(TEST_INPUT);
+        assert_eq!(day.run_part1(), 2.into(), "Part1");
+        assert_eq!(day.run_part2(), 1.into(), "Part2");
     }
 }

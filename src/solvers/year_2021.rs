@@ -24,36 +24,36 @@ mod day_23;
 mod day_24;
 mod day_25;
 
-use crate::solvers::Solver;
+use crate::solvers;
 
-pub fn create_solver(day: &str) -> Box<dyn Solver>
+pub fn run_solver(day: &str, run_part_1: bool, run_part_2: bool)
 {
     match day {
-        "1" => Box::new(day_1::create()),
-        "2" => Box::new(day_2::create()),
-        "3" => Box::new(day_3::create()),
-        "4" => Box::new(day_4::create()),
-        "5" => Box::new(day_5::create()),
-        "6" => Box::new(day_6::create()),
-        "7" => Box::new(day_7::create()),
-        "8" => Box::new(day_8::create()),
-        "9" => Box::new(day_9::create()),
-        "10" => Box::new(day_10::create()),
-        "11" => Box::new(day_11::create()),
-        "12" => Box::new(day_12::create()),
-        "13" => Box::new(day_13::create()),
-        "14" => Box::new(day_14::create()),
-        "15" => Box::new(day_15::create()),
-        "16" => Box::new(day_16::create()),
-        "17" => Box::new(day_17::create()),
-        "18" => Box::new(day_18::create()),
-        "19" => Box::new(day_19::create()),
-        "20" => Box::new(day_20::create()),
-        "21" => Box::new(day_21::create()),
-        "22" => Box::new(day_22::create()),
-        "23" => Box::new(day_23::create()),
-        "24" => Box::new(day_24::create()),
-        "25" => Box::new(day_25::create()),
+        "1"  => solvers::run_solver_generic::<day_1::Day1>(run_part_1, run_part_2),
+        "2"  => solvers::run_solver_generic::<day_2::Day2>(run_part_1, run_part_2),
+        "3"  => solvers::run_solver_generic::<day_3::Day3>(run_part_1, run_part_2),
+        "4"  => solvers::run_solver_generic::<day_4::Day4>(run_part_1, run_part_2),
+        "5"  => solvers::run_solver_generic::<day_5::Day5>(run_part_1, run_part_2),
+        "6"  => solvers::run_solver_generic::<day_6::Day6>(run_part_1, run_part_2),
+        "7"  => solvers::run_solver_generic::<day_7::Day7>(run_part_1, run_part_2),
+        "8"  => solvers::run_solver_generic::<day_8::Day8>(run_part_1, run_part_2),
+        "9"  => solvers::run_solver_generic::<day_9::Day9>(run_part_1, run_part_2),
+        "10" => solvers::run_solver_generic::<day_10::Day10>(run_part_1, run_part_2),
+        "11" => solvers::run_solver_generic::<day_11::Day11>(run_part_1, run_part_2),
+        "12" => solvers::run_solver_generic::<day_12::Day12>(run_part_1, run_part_2),
+        "13" => solvers::run_solver_generic::<day_13::Day13>(run_part_1, run_part_2),
+        "14" => solvers::run_solver_generic::<day_14::Day14>(run_part_1, run_part_2),
+        "15" => solvers::run_solver_generic::<day_15::Day15>(run_part_1, run_part_2),
+        "16" => solvers::run_solver_generic::<day_16::Day16>(run_part_1, run_part_2),
+        "17" => solvers::run_solver_generic::<day_17::Day17>(run_part_1, run_part_2),
+        "18" => solvers::run_solver_generic::<day_18::Day18>(run_part_1, run_part_2),
+        "19" => solvers::run_solver_generic::<day_19::Day19>(run_part_1, run_part_2),
+        "20" => solvers::run_solver_generic::<day_20::Day20>(run_part_1, run_part_2),
+        "21" => solvers::run_solver_generic::<day_21::Day21>(run_part_1, run_part_2),
+        "22" => solvers::run_solver_generic::<day_22::Day22>(run_part_1, run_part_2),
+        "23" => solvers::run_solver_generic::<day_23::Day23>(run_part_1, run_part_2),
+        "24" => solvers::run_solver_generic::<day_24::Day24>(run_part_1, run_part_2),
+        "25" => solvers::run_solver_generic::<day_25::Day25>(run_part_1, run_part_2),
         _ => panic!("Invalid day argument: {day}"),
     }
 }

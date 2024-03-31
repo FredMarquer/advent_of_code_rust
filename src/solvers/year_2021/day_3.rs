@@ -1,21 +1,22 @@
 use crate::solvers::{Solver, SolverResult};
 
-const BITS_COUNT: usize = 12;
-
-pub fn create() -> Day3 {
-    let input = include_str!("inputs/03.txt");
-    let values = input.lines().map(|line| i64::from_str_radix(line, 2).unwrap()).collect();
-
-    Day3 { values }
-}
-
 pub struct Day3 {
-    values: Vec<i64>
+    bit_count: usize,
+    values: Vec<i64>,
 }
 
 impl Solver for Day3 {
+    const INPUT_PATH: &'static str = "inputs/2021/03.txt";
+
+    fn from_input(input: &str) -> Self {
+        Day3 {
+            bit_count: input.lines().next().unwrap().len(),
+            values: input.lines().map(|line| i64::from_str_radix(line, 2).unwrap()).collect()
+        }
+    }
+
     fn run_part1(&self) -> SolverResult {
-        let mut counts: [usize; BITS_COUNT] = [0; BITS_COUNT];
+        let mut counts = vec![0; self.bit_count];
 
         for value in &self.values {
             for (index, count) in counts.iter_mut().enumerate() {
@@ -54,7 +55,7 @@ impl Day3 {
         let mut bits_criteria = 0;
         let mut filter_mask = 0;
 
-        for bit_position in (0..BITS_COUNT).rev() {
+        for bit_position in (0..self.bit_count).rev() {
             // Find the bit criteria for this position.
             let position_mask = 1 << bit_position;
             let mut value_count = 0;
@@ -117,11 +118,27 @@ impl Day3 {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use indoc::indoc;
 
     #[test]
     fn test() {
-        let day = create();
-        assert_eq!(day.run_part1(), 1082324.into(), "Part1");
-        assert_eq!(day.run_part2(), 1353024.into(), "Part2");
+        const TEST_INPUT: &str = indoc!{"
+            00100
+            11110
+            10110
+            10111
+            10101
+            01111
+            00111
+            11100
+            10000
+            11001
+            00010
+            01010
+        "};
+
+        let day = Day3::from_input(TEST_INPUT);
+        assert_eq!(day.run_part1(), 198.into(), "Part1");
+        assert_eq!(day.run_part2(), 230.into(), "Part2");
     }
 }

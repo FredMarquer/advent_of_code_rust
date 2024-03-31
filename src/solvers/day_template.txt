@@ -1,19 +1,22 @@
 use crate::solvers::*;
 
-pub fn create() -> Day00 {
-    Day00 { input: include_str!("inputs/00.txt") }
-}
-
-pub struct Day00 {
-    input: &'static str,
-}
+pub struct Day00 {}
 
 impl Solver for Day00 {
+    const INPUT_PATH: &'static str = "inputs/20XX/00.txt";
+
+    fn from_input(input: &str) -> Self {
+        // TODO
+        Day00 {}
+    }
+
     fn run_part1(&self) -> SolverResult {
+        // TODO
         SolverResult::Invalid
     }
 
     fn run_part2(&self) -> SolverResult {
+        // TODO
         SolverResult::Invalid
     }
 }
@@ -21,11 +24,16 @@ impl Solver for Day00 {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use indoc::indoc;
+
+    const TEST_INPUT: &str = indoc!{
+        "TODO"
+    };
 
     #[test]
     fn test() {
-        let day = create();
-        assert_eq!(day.run_part1(), 0.into(), "Part1");
-        assert_eq!(day.run_part2(), 0.into(), "Part2");
+        let day = Day00::from_input(TEST_INPUT);
+        assert_eq!(day.run_part1(), SolverResult::Invalid, "Part1");
+        assert_eq!(day.run_part2(), SolverResult::Invalid, "Part2");
     }
 }

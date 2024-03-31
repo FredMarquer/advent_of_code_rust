@@ -4,32 +4,33 @@ use crate::solvers::{Solver, SolverResult};
 const BOARD_SIZE: usize = 1000;
 const BOARD_CAPACITY: usize = BOARD_SIZE * BOARD_SIZE;
 
-pub fn create() -> Day5 {
-    let input = include_str!("inputs/05.txt");
-    let regex = Regex::new(r"([0-9]*),([0-9]*) -> ([0-9]*),([0-9]*)").unwrap();
-
-    let mut lines = Vec::new();
-    for line in input.lines() {
-        let captures = regex.captures(line).unwrap();
-
-        lines.push(
-            Line {
-                x1: captures.get(1).map(|m| m.as_str().parse().unwrap()).unwrap(),
-                y1: captures.get(2).map(|m| m.as_str().parse().unwrap()).unwrap(),
-                x2: captures.get(3).map(|m| m.as_str().parse().unwrap()).unwrap(),
-                y2: captures.get(4).map(|m| m.as_str().parse().unwrap()).unwrap(),
-            }
-        );
-    }
-
-    Day5 { lines }
-}
-
 pub struct Day5 {
     lines: Vec<Line>
 }
 
 impl Solver for Day5 {
+    const INPUT_PATH: &'static str = "inputs/2021/05.txt";
+
+    fn from_input(input: &str) -> Self {
+        let regex = Regex::new(r"([0-9]*),([0-9]*) -> ([0-9]*),([0-9]*)").unwrap();
+
+        let mut lines = Vec::new();
+        for line in input.lines() {
+            let captures = regex.captures(line).unwrap();
+
+            lines.push(
+                Line {
+                    x1: captures.get(1).map(|m| m.as_str().parse().unwrap()).unwrap(),
+                    y1: captures.get(2).map(|m| m.as_str().parse().unwrap()).unwrap(),
+                    x2: captures.get(3).map(|m| m.as_str().parse().unwrap()).unwrap(),
+                    y2: captures.get(4).map(|m| m.as_str().parse().unwrap()).unwrap(),
+                }
+            );
+        }
+
+        Day5 { lines }
+    }
+
     fn run_part1(&self) -> SolverResult {
         self.run(false).into()
     }
@@ -121,11 +122,25 @@ fn get_cell_index(x: usize, y: usize) -> usize {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use indoc::indoc;
 
     #[test]
     fn test() {
-        let day = create();
-        assert_eq!(day.run_part1(), 7674.into(), "Part1");
-        assert_eq!(day.run_part2(), 20898.into(), "Part2");
+        const TEST_INPUT: &str = indoc!{"
+            0,9 -> 5,9
+            8,0 -> 0,8
+            9,4 -> 3,4
+            2,2 -> 2,1
+            7,0 -> 7,4
+            6,4 -> 2,0
+            0,9 -> 2,9
+            3,4 -> 1,4
+            0,0 -> 8,8
+            5,5 -> 8,2
+        "};
+
+        let day = Day5::from_input(TEST_INPUT);
+        assert_eq!(day.run_part1(), 5.into(), "Part1");
+        assert_eq!(day.run_part2(), 12.into(), "Part2");
     }
 }

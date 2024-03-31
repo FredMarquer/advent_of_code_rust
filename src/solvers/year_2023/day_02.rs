@@ -1,20 +1,21 @@
 use crate::solvers::*;
 
-pub fn create() -> Day02 {
-    let input = include_str!("inputs/02.txt");
-
-    let games: Vec<Game> = input.lines()
-        .map(|line| Game::parse(line))
-        .collect();
-
-    Day02 { games: games.into_boxed_slice() }
-}
-
 pub struct Day02 {
     games: Box<[Game]>,
 }
 
 impl Solver for Day02 {
+    const INPUT_PATH: &'static str = "inputs/2023/02.txt";
+
+    fn from_input(input: &str) -> Self {
+        Day02 {
+            games: input.lines()
+                .map(|line| Game::parse(line))
+                .collect::<Vec<Game>>()
+                .into_boxed_slice()
+        }
+    }
+
     fn run_part1(&self) -> SolverResult {
         self.games
             .iter()
@@ -124,11 +125,21 @@ impl Subset {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use indoc::indoc;
+
+    const TEST_INPUT: &str = indoc!{
+       "Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
+        Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
+        Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
+        Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
+        Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green"
+    };
 
     #[test]
     fn test() {
-        let day = create();
-        assert_eq!(day.run_part1(), 2795.into(), "Part1");
-        assert_eq!(day.run_part2(), 75561.into(), "Part2");
+
+        let day = Day02::from_input(TEST_INPUT);
+        assert_eq!(day.run_part1(), 8.into(), "Part1");
+        assert_eq!(day.run_part2(), 2286.into(), "Part2");
     }
 }

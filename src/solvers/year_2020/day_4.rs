@@ -6,18 +6,20 @@ use crate::solvers::{Solver, SolverResult};
 const REQUIRED_FIELDS: [&str; 7] = ["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"];
 const VALID_EYE_COLORS: [&str; 7] = ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"];
 
-pub fn create() -> Day4 {
-    let input = include_str!("inputs/04.txt");
-    let passports: Vec<String> = input.split("\r\n\r\n").map_into().collect_vec();
-
-    Day4 { passports }
-}
-
 pub struct Day4 {
     passports: Vec<String>
 }
 
 impl Solver for Day4 {
+    const INPUT_PATH: &'static str = "inputs/2020/04.txt";
+
+    fn from_input(input: &str) -> Self {
+        let pat = if input.contains('\r') { "\r\n\r\n" } else { "\n\n" };
+        Day4 {
+            passports: input.split(pat).map_into().collect_vec()
+        }
+    }
+
     fn run_part1(&self) -> SolverResult {
         self.validate_passports(validate_passport_part1).into()
     }
@@ -182,11 +184,64 @@ bitflags! {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use indoc::indoc;
 
     #[test]
     fn test() {
-        let day = create();
-        assert_eq!(day.run_part1(), 219.into(), "Part1");
-        assert_eq!(day.run_part2(), 127.into(), "Part2");
+        const TEST_INPUT_1: &str = indoc!{"
+            ecl:gry pid:860033327 eyr:2020 hcl:#fffffd
+            byr:1937 iyr:2017 cid:147 hgt:183cm
+            
+            iyr:2013 ecl:amb cid:350 eyr:2023 pid:028048884
+            hcl:#cfa07d byr:1929
+            
+            hcl:#ae17e1 iyr:2013
+            eyr:2024
+            ecl:brn pid:760753108 byr:1931
+            hgt:179cm
+            
+            hcl:#cfa07d eyr:2025 pid:166559648
+            iyr:2011 ecl:brn hgt:59in
+        "};
+
+        const TEST_INPUT_2A: &str = indoc!{"
+            eyr:1972 cid:100
+            hcl:#18171d ecl:amb hgt:170 pid:186cm iyr:2018 byr:1926
+            
+            iyr:2019
+            hcl:#602927 eyr:1967 hgt:170cm
+            ecl:grn pid:012533040 byr:1946
+            
+            hcl:dab227 iyr:2012
+            ecl:brn hgt:182cm pid:021572410 eyr:2020 byr:1992 cid:277
+            
+            hgt:59cm ecl:zzz
+            eyr:2038 hcl:74454a iyr:2023
+            pid:3556412378 byr:2007
+        "};
+
+        const TEST_INPUT_2B: &str = indoc!{"
+            pid:087499704 hgt:74in ecl:grn iyr:2012 eyr:2030 byr:1980
+            hcl:#623a2f
+            
+            eyr:2029 ecl:blu cid:129 byr:1989
+            iyr:2014 pid:896056539 hcl:#a97842 hgt:165cm
+            
+            hcl:#888785
+            hgt:164cm byr:2001 iyr:2015 cid:88
+            pid:545766238 ecl:hzl
+            eyr:2022
+            
+            iyr:2010 hgt:158cm hcl:#b6652a ecl:blu byr:1944 eyr:2021 pid:093154719
+        "};
+
+        let day = Day4::from_input(TEST_INPUT_1);
+        assert_eq!(day.run_part1(), 2.into(), "Part1");
+
+        let day = Day4::from_input(TEST_INPUT_2A);
+        assert_eq!(day.run_part2(), 0.into(), "Part2A");
+
+        let day = Day4::from_input(TEST_INPUT_2B);
+        assert_eq!(day.run_part2(), 4.into(), "Part2B");
     }
 }

@@ -2,13 +2,11 @@ mod solvers;
 mod utils;
 
 use std::env;
-use std::time::Instant;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-
     if args.len() < 3 {
-        println!("Invalid command line arguments count: {}", args.len());
+        eprint!("Invalid command line arguments count: {}", args.len());
         return;
     }
 
@@ -23,33 +21,13 @@ fn main() {
         match part {
             1 => run_part_2 = false,
             2 => run_part_1 = false,
-            _ => panic!("Invalid part argument: {part}")
+            _ => {
+                eprint!("Invalid part argument: {part}");
+                return;
+            },
         }
     }
 
-    // Create solver
-    let now = Instant::now();
-    let solver = solvers::create_solver(year, day);
-    let duration = now.elapsed().as_micros() as f64 * 0.001;
-    println!("Solver created in {duration} ms");
-
-    if run_part_1 {
-        // Run part 1
-        println!("Running part 1");
-        let now = Instant::now();
-        let result = solver.run_part1();
-        let duration = now.elapsed().as_micros() as f64 * 0.001;
-        result.print();
-        println!("Part 1 executed in {duration} ms");
-    }
-
-    if run_part_2 {
-        // Run part 2
-        println!("Running part 2");
-        let now = Instant::now();
-        let result = solver.run_part2();
-        let duration = now.elapsed().as_micros() as f64 * 0.001;
-        result.print();
-        println!("Part 2 executed in {duration} ms");
-    }
+    // Run solver
+    solvers::run_solver(year, day, run_part_1, run_part_2);
 }

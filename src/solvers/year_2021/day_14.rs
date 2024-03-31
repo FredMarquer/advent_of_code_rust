@@ -1,20 +1,20 @@
 use crate::solvers::{Solver, SolverResult};
 
-pub fn create() -> Day14 {
-    let input = include_str!("inputs/14.txt");
-
-    Day14 {
-        naive: naive::Data::from_input(input),
-        opti: opti::Data::from_input(input),
-    }
-}
-
 pub struct Day14 {
     naive: naive::Data,
     opti: opti::Data,
 }
 
 impl Solver for Day14 {
+    const INPUT_PATH: &'static str = "inputs/2021/14.txt";
+
+    fn from_input(input: &str) -> Self {
+        Day14 {
+            naive: naive::Data::from_input(input),
+            opti: opti::Data::from_input(input),
+        }
+    }
+
     fn run_part1(&self) -> SolverResult {
         self.naive.simulate(10).into()
     }
@@ -32,7 +32,8 @@ mod naive {
 
     impl Data {
         pub fn from_input(input: &str) -> Data {
-            let mut splits = input.split("\r\n\r\n");
+            let pat = if input.contains('\r') { "\r\n\r\n" } else { "\n\n" };
+            let mut splits = input.split(pat);
 
             // Parse template
             let mut template = Vec::new();
@@ -149,7 +150,8 @@ mod opti {
 
     impl Data {
         pub fn from_input(input: &str) -> Data {
-            let mut splits = input.split("\r\n\r\n");
+            let pat = if input.contains('\r') { "\r\n\r\n" } else { "\n\n" };
+            let mut splits = input.split(pat);
             let template = splits.next().unwrap();
 
             // Parse insertion pairs
@@ -271,11 +273,33 @@ mod opti {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use indoc::indoc;
 
     #[test]
     fn test() {
-        let day = create();
-        assert_eq!(day.run_part1(), 2712.into(), "Part1");
-        assert_eq!(day.run_part2(), 8336623059567_i64.into(), "Part2");
+        const TEST_INPUT: &str = indoc!{"
+            NNCB
+
+            CH -> B
+            HH -> N
+            CB -> H
+            NH -> C
+            HB -> C
+            HC -> B
+            HN -> C
+            NN -> C
+            BH -> H
+            NC -> B
+            NB -> B
+            BN -> B
+            BB -> N
+            BC -> B
+            CC -> N
+            CN -> C
+        "};
+
+        let day = Day14::from_input(TEST_INPUT);
+        assert_eq!(day.run_part1(), 1588.into(), "Part1");
+        assert_eq!(day.run_part2(), 2188189693529_i64.into(), "Part2");
     }
 }

@@ -2,18 +2,19 @@ use std::collections::HashMap;
 use regex::Regex;
 use crate::solvers::{Solver, SolverResult};
 
-pub fn create() -> Day7 {
-    let input = include_str!("inputs/07.txt");
-    let bag_repository = BagRepository::from(input);
-
-    Day7 { bag_repository }
-}
-
 pub struct Day7 {
     bag_repository: BagRepository
 }
 
 impl Solver for Day7 {
+    const INPUT_PATH: &'static str = "inputs/2020/07.txt";
+
+    fn from_input(input: &str) -> Self {
+        Day7 {
+            bag_repository: BagRepository::from(input)
+        }
+    }
+
     fn run_part1(&self) -> SolverResult {
         match self.bag_repository.color_to_index.get("shiny gold") {
             Some(shiny_gold_index) => {let mut result = 0;
@@ -141,11 +142,37 @@ impl BagRepository {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use indoc::indoc;
 
     #[test]
     fn test() {
-        let day = create();
-        assert_eq!(day.run_part1(), 148.into(), "Part1");
-        assert_eq!(day.run_part2(), 24867.into(), "Part2");
+        const TEST_INPUT: &str = indoc!{"
+            light red bags contain 1 bright white bag, 2 muted yellow bags.
+            dark orange bags contain 3 bright white bags, 4 muted yellow bags.
+            bright white bags contain 1 shiny gold bag.
+            muted yellow bags contain 2 shiny gold bags, 9 faded blue bags.
+            shiny gold bags contain 1 dark olive bag, 2 vibrant plum bags.
+            dark olive bags contain 3 faded blue bags, 4 dotted black bags.
+            vibrant plum bags contain 5 faded blue bags, 6 dotted black bags.
+            faded blue bags contain no other bags.
+            dotted black bags contain no other bags.
+        "};
+
+        const TEST_INPUT_2B: &str = indoc!{"
+            shiny gold bags contain 2 dark red bags.
+            dark red bags contain 2 dark orange bags.
+            dark orange bags contain 2 dark yellow bags.
+            dark yellow bags contain 2 dark green bags.
+            dark green bags contain 2 dark blue bags.
+            dark blue bags contain 2 dark violet bags.
+            dark violet bags contain no other bags.
+        "};
+        
+        let day = Day7::from_input(TEST_INPUT);
+        assert_eq!(day.run_part1(), 4.into(), "Part1");
+        assert_eq!(day.run_part2(), 32.into(), "Part2");
+
+        let day = Day7::from_input(TEST_INPUT_2B);
+        assert_eq!(day.run_part2(), 126.into(), "Part2");
     }
 }

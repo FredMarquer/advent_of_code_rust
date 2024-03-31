@@ -1,17 +1,18 @@
 use crate::solvers::{Solver, SolverResult};
 
-pub fn create() -> Day9 {
-    let input = include_str!("inputs/09.txt");
-    let height_map = HeightMap::from_input(input);
-
-    Day9 { height_map }
-}
-
 pub struct Day9 {
     height_map: HeightMap,
 }
 
 impl Solver for Day9 {
+    const INPUT_PATH: &'static str = "inputs/2021/09.txt";
+
+    fn from_input(input: &str) -> Self {
+        Day9 {
+            height_map: HeightMap::from_input(input)
+        }
+    }
+
     fn run_part1(&self) -> SolverResult {
         let mut sum = 0;
 
@@ -166,11 +167,20 @@ impl HeightMap {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use indoc::indoc;
 
     #[test]
     fn test() {
-        let day = create();
-        assert_eq!(day.run_part1(), 439.into(), "Part1");
-        assert_eq!(day.run_part2(), 900900.into(), "Part2");
+        const TEST_INPUT: &str = indoc!{"
+            2199943210
+            3987894921
+            9856789892
+            8767896789
+            9899965678
+        "};
+
+        let day = Day9::from_input(TEST_INPUT);
+        assert_eq!(day.run_part1(), 15.into(), "Part1");
+        assert_eq!(day.run_part2(), 1134.into(), "Part2");
     }
 }

@@ -3,35 +3,40 @@ use crate::solvers::{Solver, SolverResult};
 const BOARD_SIZE: usize = 5;
 const BOARD_CAPACITY: usize = BOARD_SIZE * BOARD_SIZE;
 
-pub fn create() -> Day4 {
-    let input = include_str!("inputs/04.txt");
-    let mut splits = input.split("\r\n\r\n");
-
-    let numbers = splits.next().unwrap().split(',').map(|value| value.parse().unwrap()).collect();
-    
-    let mut boards = Vec::new();
-    for split in splits {
-        let mut board: [i64; BOARD_CAPACITY] = [0; BOARD_CAPACITY];
-        for (y, line) in split.lines().enumerate() {
-            let numbers = line.split_whitespace().map(|s| s.parse::<i64>().unwrap());
-            for (x, number) in numbers.enumerate() {
-                let cell_index = get_cell_index(x, y);
-                board[cell_index] = number;
-            }
-        }
-
-        boards.push(board);
-    }
-
-    Day4 { numbers, boards }
-}
-
 pub struct Day4 {
     numbers: Vec<i64>,
     boards: Vec<[i64; BOARD_CAPACITY]>,
 }
 
 impl Solver for Day4 {
+    const INPUT_PATH: &'static str = "inputs/2021/04.txt";
+
+    fn from_input(input: &str) -> Self {
+        let pat = if input.contains('\r') { "\r\n\r\n" } else { "\n\n" };
+        let mut splits = input.split(pat);
+
+        let numbers = splits.next().unwrap().split(',').map(|value| value.parse().unwrap()).collect();
+        
+        let mut boards = Vec::new();
+        for split in splits {
+            let mut board: [i64; BOARD_CAPACITY] = [0; BOARD_CAPACITY];
+            for (y, line) in split.lines().enumerate() {
+                let numbers = line.split_whitespace().map(|s| s.parse::<i64>().unwrap());
+                for (x, number) in numbers.enumerate() {
+                    let cell_index = get_cell_index(x, y);
+                    board[cell_index] = number;
+                }
+            }
+
+            boards.push(board);
+        }
+
+        Day4 {
+            numbers,
+            boards,
+        }
+    }
+
     fn run_part1(&self) -> SolverResult {
         self.run_bingo(false).into()
     }
@@ -123,11 +128,34 @@ fn get_score(board: &[i64], board_progression: u32, last_number: i64) -> i64{
 #[cfg(test)]
 mod tests {
     use super::*;
+    use indoc::indoc;
 
     #[test]
     fn test() {
-        let day = create();
-        assert_eq!(day.run_part1(), 10374.into(), "Part1");
-        assert_eq!(day.run_part2(), 24742.into(), "Part2");
+        const TEST_INPUT: &str = indoc!{"
+            7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3,26,1
+
+            22 13 17 11  0
+             8  2 23  4 24
+            21  9 14 16  7
+             6 10  3 18  5
+             1 12 20 15 19
+            
+             3 15  0  2 22
+             9 18 13 17  5
+            19  8  7 25 23
+            20 11 10 24  4
+            14 21 16 12  6
+            
+            14 21 17 24  4
+            10 16 15  9 19
+            18  8 23 26 20
+            22 11 13  6  5
+             2  0 12  3  7
+        "};
+
+        let day = Day4::from_input(TEST_INPUT);
+        assert_eq!(day.run_part1(), 4512.into(), "Part1");
+        assert_eq!(day.run_part2(), 1924.into(), "Part2");
     }
 }

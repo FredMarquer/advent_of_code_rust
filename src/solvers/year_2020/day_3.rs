@@ -1,18 +1,19 @@
 use itertools::Itertools;
 use crate::solvers::{Solver, SolverResult};
 
-pub fn create() -> Day3 {
-    let input = include_str!("inputs/03.txt");
-    let rows: Vec<String> = input.lines().map_into().collect_vec();
-
-    Day3 { rows }
-}
-
 pub struct Day3 {
     rows: Vec<String>
 }
 
 impl Solver for Day3 {
+    const INPUT_PATH: &'static str = "inputs/2020/03.txt";
+
+    fn from_input(input: &str) -> Self {
+        Day3 {
+            rows: input.lines().map_into().collect_vec()
+        }
+    }
+
     fn run_part1(&self) -> SolverResult {
         self.compute_slope(3, 1).into()
     }
@@ -59,11 +60,26 @@ impl Day3 {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use indoc::indoc;
 
     #[test]
     fn test() {
-        let day = create();
-        assert_eq!(day.run_part1(), 289.into(), "Part1");
-        assert_eq!(day.run_part2(), 5522401584_i64.into(), "Part2");
+        const TEST_INPUT: &str = indoc!{"
+            ..##.......
+            #...#...#..
+            .#....#..#.
+            ..#.#...#.#
+            .#...##..#.
+            ..#.##.....
+            .#.#.#....#
+            .#........#
+            #.##...#...
+            #...##....#
+            .#..#...#.#
+        "};
+
+        let day = Day3::from_input(TEST_INPUT);
+        assert_eq!(day.run_part1(), 7.into(), "Part1");
+        assert_eq!(day.run_part2(), 336.into(), "Part2");
     }
 }

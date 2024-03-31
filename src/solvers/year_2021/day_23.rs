@@ -11,22 +11,23 @@ const MOVE_COSTS: [u32; ROOM_COUNT] = [1, 10, 100, 1000];
 const VALID_HALLWAY_INDEXES: [usize; 7] = [0, 1, 3, 5, 7, 9, 10];
 const ENTRANCE_HALLWAY_INDEXES: [usize; ROOM_COUNT] = [2, 4, 6, 8];
 
-pub fn create() -> Day23 {
-    let input = include_str!("inputs/23.txt");
-    let regex = Regex::new(REGEX).unwrap();
-    let mut lines = input.lines();
-    let mut initial_state = State::new();
-    initial_state.add_line_to_rooms(lines.nth(2).unwrap(), &regex, 0);
-    initial_state.add_line_to_rooms(lines.next().unwrap(), &regex, 1);
-
-    Day23 { initial_state }
-}
-
 pub struct Day23 {
     initial_state: State<2>,
 }
 
 impl Solver for Day23 {
+    const INPUT_PATH: &'static str = "inputs/2021/23.txt";
+
+    fn from_input(input: &str) -> Self {
+        let regex = Regex::new(REGEX).unwrap();
+        let mut lines = input.lines();
+        let mut initial_state = State::new();
+        initial_state.add_line_to_rooms(lines.nth(2).unwrap(), &regex, 0);
+        initial_state.add_line_to_rooms(lines.next().unwrap(), &regex, 1);
+
+        Day23 { initial_state }
+    }
+
     fn run_part1(&self) -> SolverResult {
         search(&self.initial_state).into()
     }
@@ -344,11 +345,20 @@ impl<'a, const ROOM_SIZE: usize> Iterator for MoveIterator<'a, ROOM_SIZE> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use indoc::indoc;
 
     #[test]
     fn test() {
-        let day = create();
-        assert_eq!(day.run_part1(), 14350.into(), "Part1");
-        assert_eq!(day.run_part2(), 49742.into(), "Part2");
+        const TEST_INPUT: &str = indoc!{"
+            #############
+            #...........#
+            ###B#C#B#D###
+              #A#D#C#A#
+              #########
+        "};
+
+        let day = Day23::from_input(TEST_INPUT);
+        assert_eq!(day.run_part1(), 12521.into(), "Part1");
+        assert_eq!(day.run_part2(), 44169.into(), "Part2");
     }
 }

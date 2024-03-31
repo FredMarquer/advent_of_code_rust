@@ -1,60 +1,6 @@
 use std::collections::HashMap;
 use crate::solvers::{Solver, SolverResult};
 
-pub fn create() -> Day12 {
-    let input = include_str!("inputs/12.txt");
-
-    let mut nodes = vec![
-        Node::new(false, true), 
-        Node::new(false, false)];
-    
-    let mut node_indices = HashMap::new();
-    node_indices.insert("start", 0);
-    node_indices.insert("end", 1);
-    
-    for line in input.lines() {
-        let mut splits = line.split('-');
-        let left = splits.next().unwrap();
-        let right = splits.next().unwrap();
-
-        let left_index = {
-            match node_indices.get(left) {
-                Some(index) => *index,
-                None => {
-                    let index = nodes.len();
-                    nodes.push(Node::new(is_big(left), false));
-                    node_indices.insert(left, index);
-                    index
-                }
-            }
-        };
-
-        let right_index = {
-            match node_indices.get(right) {
-                Some(index) => *index,
-                None => {
-                    let index = nodes.len();
-                    nodes.push(Node::new(is_big(right), false));
-                    node_indices.insert(right, index);
-                    index
-                }
-            }
-        };
-
-        let left_node = &mut nodes[left_index];
-        left_node.connections.push(right_index);
-
-        let right_node = &mut nodes[right_index];
-        right_node.connections.push(left_index);
-    }
-
-    Day12 {
-        nodes: nodes.into_boxed_slice(),
-        start: node_indices["start"],
-        end: node_indices["end"],
-    }
-}
-
 pub struct Day12 {
     nodes: Box<[Node]>,
     start: usize,
@@ -62,6 +8,60 @@ pub struct Day12 {
 }
 
 impl Solver for Day12 {
+    const INPUT_PATH: &'static str = "inputs/2021/12.txt";
+
+    fn from_input(input: &str) -> Self {
+        let mut nodes = vec![
+        Node::new(false, true), 
+        Node::new(false, false)];
+    
+        let mut node_indices = HashMap::new();
+        node_indices.insert("start", 0);
+        node_indices.insert("end", 1);
+        
+        for line in input.lines() {
+            let mut splits = line.split('-');
+            let left = splits.next().unwrap();
+            let right = splits.next().unwrap();
+
+            let left_index = {
+                match node_indices.get(left) {
+                    Some(index) => *index,
+                    None => {
+                        let index = nodes.len();
+                        nodes.push(Node::new(is_big(left), false));
+                        node_indices.insert(left, index);
+                        index
+                    }
+                }
+            };
+
+            let right_index = {
+                match node_indices.get(right) {
+                    Some(index) => *index,
+                    None => {
+                        let index = nodes.len();
+                        nodes.push(Node::new(is_big(right), false));
+                        node_indices.insert(right, index);
+                        index
+                    }
+                }
+            };
+
+            let left_node = &mut nodes[left_index];
+            left_node.connections.push(right_index);
+
+            let right_node = &mut nodes[right_index];
+            right_node.connections.push(left_index);
+        }
+
+        Day12 {
+            nodes: nodes.into_boxed_slice(),
+            start: node_indices["start"],
+            end: node_indices["end"],
+        }
+    }
+
     fn run_part1(&self) -> SolverResult {
         let node_count = self.nodes.len();
         let mut visit_count = vec![0; node_count];
@@ -140,11 +140,38 @@ fn count_paths(nodes: &[Node], visit_counts: &mut [usize], current: usize, end: 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use indoc::indoc;
 
     #[test]
     fn test() {
-        let day = create();
-        assert_eq!(day.run_part1(), 3510.into(), "Part1");
-        assert_eq!(day.run_part2(), 122880.into(), "Part2");
+        const TEST_INPUT: &str = indoc!{"
+            start-A
+            start-b
+            A-c
+            A-b
+            b-d
+            A-end
+            b-end
+        "};
+
+        const TEST_INPUT_1B: &str = indoc!{"
+            dc-end
+            HN-start
+            start-kj
+            dc-start
+            dc-HN
+            LN-dc
+            HN-end
+            kj-sa
+            kj-HN
+            kj-dc
+        "};
+
+        let day = Day12::from_input(TEST_INPUT);
+        assert_eq!(day.run_part1(), 10.into(), "Part1");
+        assert_eq!(day.run_part2(), 36.into(), "Part2");
+
+        let day = Day12::from_input(TEST_INPUT_1B);
+        assert_eq!(day.run_part1(), 19.into(), "Part1");
     }
 }
