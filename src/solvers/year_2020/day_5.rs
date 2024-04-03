@@ -1,4 +1,4 @@
-use crate::solvers::{Solver, SolverResult};
+use crate::solvers::prelude::*;
 
 const SEAT_COUNT: usize = 1024;
 
@@ -6,12 +6,12 @@ pub struct Day5 {
     seats: [bool; SEAT_COUNT]
 }
 
-impl Solver for Day5 {
-    const INPUT_PATH: &'static str = "inputs/2020/05.txt";
+impl FromStr for Day5 {
+    type Err = String;
 
-    fn from_input(input: &str) -> Self {
+    fn from_str(s: &str) -> Result<Self, String> {
         let mut seats: [bool; SEAT_COUNT] = [false; SEAT_COUNT];
-        let lines = input.lines();
+        let lines = s.lines();
         for line in lines {
             let letters = line.chars();
             let mut seat_index = 0;
@@ -28,8 +28,12 @@ impl Solver for Day5 {
             seats[seat_index] = true;
         }
 
-        Day5 { seats }
+        Ok(Day5 { seats })
     }
+}
+
+impl Solver for Day5 {
+    const INPUT_PATH: &'static str = "inputs/2020/05.txt";
 
     fn run_part1(&self) -> SolverResult {
         for index in (0..self.seats.len()).rev() {
@@ -69,10 +73,10 @@ mod tests {
             BBFFBBFRLL
         "};
 
-        let day = Day5::from_input(TEST_INPUT_1A);
+        let day = Day5::from_str(TEST_INPUT_1A).unwrap();
         assert_eq!(day.run_part1(), 357.into(), "Part1A");
 
-        let day = Day5::from_input(TEST_INPUT_1B);
+        let day = Day5::from_str(TEST_INPUT_1B).unwrap();
         assert_eq!(day.run_part1(), 820.into(), "Part1B");
     }
 }

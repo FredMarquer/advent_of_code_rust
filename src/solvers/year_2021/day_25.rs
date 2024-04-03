@@ -1,17 +1,21 @@
-use crate::solvers::{Solver, SolverResult};
+use crate::solvers::prelude::*;
 
 pub struct Day25 {
     map: Map<SeaCucumber>
 }
 
+impl FromStr for Day25 {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, String> {
+        Ok(Day25 {
+            map: Map::from_input(s)
+        })
+    }
+}
+
 impl Solver for Day25 {
     const INPUT_PATH: &'static str = "inputs/2021/25.txt";
-
-    fn from_input(input: &str) -> Self {
-        Day25 {
-            map: Map::from_input(input)
-        }
-    }
 
     fn run_part1(&self) -> SolverResult {
         let mut map = self.map.clone();
@@ -163,7 +167,7 @@ mod tests {
             ....v..v.>
         "};
 
-        let day = Day25::from_input(TEST_INPUT);
+        let day = Day25::from_str(TEST_INPUT).unwrap();
         assert_eq!(day.run_part1(), 58.into(), "Part1");
         assert_eq!(day.run_part2(), SolverResult::Invalid, "Part2");
     }

@@ -1,19 +1,23 @@
+use crate::solvers::prelude::*;
+
 use itertools::Itertools;
-use crate::solvers::{Solver, SolverResult};
 
 pub struct Day6 {
     groups: Vec<String>
 }
 
+impl FromStr for Day6 {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, String> {
+        let pat = if s.contains('\r') { "\r\n\r\n" } else { "\n\n" };
+        let groups = s.split(pat).map_into().collect_vec(); 
+        Ok(Day6 { groups })
+    }
+}
+
 impl Solver for Day6 {
     const INPUT_PATH: &'static str = "inputs/2020/06.txt";
-
-    fn from_input(input: &str) -> Self {
-        let pat = if input.contains('\r') { "\r\n\r\n" } else { "\n\n" };
-        Day6 {
-            groups: input.split(pat).map_into().collect_vec()
-        }
-    }
 
     fn run_part1(&self) -> SolverResult {
         let mut result = 0;
@@ -86,10 +90,10 @@ mod tests {
             b
         "};
         
-        let day = Day6::from_input(TEST_INPUT_1A);
+        let day = Day6::from_str(TEST_INPUT_1A).unwrap();
         assert_eq!(day.run_part1(), 6.into(), "Part1");
 
-        let day = Day6::from_input(TEST_INPUT);
+        let day = Day6::from_str(TEST_INPUT).unwrap();
         assert_eq!(day.run_part1(), 11.into(), "Part1");
         assert_eq!(day.run_part2(), 6.into(), "Part2");
     }

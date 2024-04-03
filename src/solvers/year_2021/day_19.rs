@@ -3,7 +3,8 @@ use std::fmt;
 use std::ops::Add;
 use std::ops::Sub;
 use std::ops::Mul;
-use crate::solvers::{Solver, SolverResult};
+
+use crate::solvers::prelude::*;
 
 const ROTATION_SEQUENCE: [RotationMatrix; 24] = [
     RotationMatrix::identity(),
@@ -37,13 +38,13 @@ pub struct Day19 {
     scanner_positions: Vec<Position>,
 }
 
-impl Solver for Day19 {
-    const INPUT_PATH: &'static str = "inputs/2021/19.txt";
+impl FromStr for Day19 {
+    type Err = String;
 
-    fn from_input(input: &str) -> Self {
+    fn from_str(s: &str) -> Result<Self, String> {
         let mut scanner_reports = Vec::new();
-        let pat = if input.contains('\r') { "\r\n\r\n" } else { "\n\n" };
-        for split in input.split(pat) {
+        let pat = if s.contains('\r') { "\r\n\r\n" } else { "\n\n" };
+        for split in s.split(pat) {
             scanner_reports.push(ScannerReport::from_str(split));
         }
 
@@ -51,11 +52,15 @@ impl Solver for Day19 {
         let mut scanner_positions = Vec::new();
         resolve(&mut scanner_reports, &mut beacon_positions, &mut scanner_positions);
 
-        Day19 {
+        Ok(Day19 {
             beacon_positions,
             scanner_positions,
-        }
+        })
     }
+}
+
+impl Solver for Day19 {
+    const INPUT_PATH: &'static str = "inputs/2021/19.txt";
 
     fn run_part1(&self) -> SolverResult {
         self.beacon_positions.len().into()
@@ -486,7 +491,7 @@ mod tests {
             30,-46,-14
         "};
 
-        let day = Day19::from_input(TEST_INPUT);
+        let day = Day19::from_str(TEST_INPUT).unwrap();
         assert_eq!(day.run_part1(), 79.into(), "Part1");
         assert_eq!(day.run_part2(), 3621.into(), "Part2");
     }

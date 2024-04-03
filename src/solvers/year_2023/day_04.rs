@@ -1,15 +1,15 @@
-use crate::solvers::*;
+use crate::solvers::prelude::*;
 
 pub struct Day04 {
     win_counts: Vec<u32>,
 }
 
-impl Solver for Day04 {
-    const INPUT_PATH: &'static str = "inputs/2023/04.txt";
+impl FromStr for Day04 {
+    type Err = String;
 
-    fn from_input(input: &str) -> Self {
+    fn from_str(s: &str) -> Result<Self, String> {
         let mut win_counts = Vec::new();
-        for line in input.lines() {
+        for line in s.lines() {
             let mut split = line.split('|');
             let winning_numbers = split.next().unwrap();
             let winning_numbers = winning_numbers[9..]
@@ -27,8 +27,12 @@ impl Solver for Day04 {
             win_counts.push(win_count);
         }
 
-        Day04 { win_counts }
+        Ok(Day04 { win_counts })    
     }
+}
+
+impl Solver for Day04 {
+    const INPUT_PATH: &'static str = "inputs/2023/04.txt";
 
     fn run_part1(&self) -> SolverResult {
         self.win_counts
@@ -68,7 +72,7 @@ mod tests {
 
     #[test]
     fn test() {
-        let day = Day04::from_input(TEST_INPUT);
+        let day = Day04::from_str(TEST_INPUT).unwrap();
         assert_eq!(day.run_part1(), 13.into(), "Part1");
         assert_eq!(day.run_part2(), 30.into(), "Part2");
     }

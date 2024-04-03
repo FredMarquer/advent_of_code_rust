@@ -1,26 +1,31 @@
 use core::str::Chars;
 use std::collections::VecDeque;
 use std::mem;
-use crate::solvers::{Solver, SolverResult};
+
+use crate::solvers::prelude::*;
 
 pub struct Day18 {
     pairs: Vec<Box<Pair>>
 }
 
-impl Solver for Day18 {
-    const INPUT_PATH: &'static str = "inputs/2021/18.txt";
+impl FromStr for Day18 {
+    type Err = String;
 
-    fn from_input(input: &str) -> Self {
+    fn from_str(s: &str) -> Result<Self, String> {
         let mut pairs = Vec::new();
-        for line in input.lines() {
+        for line in s.lines() {
             let mut chars = line.chars();
             let first = chars.next().unwrap();
             assert_eq!(first, '[');
             pairs.push(Box::new(Pair::from_chars(&mut chars)));
         }
 
-        Day18 { pairs }
+        Ok(Day18 { pairs })
     }
+}
+
+impl Solver for Day18 {
+    const INPUT_PATH: &'static str = "inputs/2021/18.txt";
 
     fn run_part1(&self) -> SolverResult {
         let mut pairs = VecDeque::from(self.pairs.clone());
@@ -261,7 +266,7 @@ mod tests {
             [[[[5,2],5],[8,[3,7]]],[[5,[7,5]],[4,4]]]
         "};
 
-        let day = Day18::from_input(TEST_INPUT);
+        let day = Day18::from_str(TEST_INPUT).unwrap();
         assert_eq!(day.run_part1(), 4140.into(), "Part1");
         assert_eq!(day.run_part2(), 3993.into(), "Part2");
     }

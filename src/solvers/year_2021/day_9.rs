@@ -1,17 +1,21 @@
-use crate::solvers::{Solver, SolverResult};
+use crate::solvers::prelude::*;
 
 pub struct Day9 {
     height_map: HeightMap,
 }
 
+impl FromStr for Day9 {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, String> {
+        Ok(Day9 {
+            height_map: HeightMap::from_input(s)
+        })
+    }
+}
+
 impl Solver for Day9 {
     const INPUT_PATH: &'static str = "inputs/2021/09.txt";
-
-    fn from_input(input: &str) -> Self {
-        Day9 {
-            height_map: HeightMap::from_input(input)
-        }
-    }
 
     fn run_part1(&self) -> SolverResult {
         let mut sum = 0;
@@ -179,7 +183,7 @@ mod tests {
             9899965678
         "};
 
-        let day = Day9::from_input(TEST_INPUT);
+        let day = Day9::from_str(TEST_INPUT).unwrap();
         assert_eq!(day.run_part1(), 15.into(), "Part1");
         assert_eq!(day.run_part2(), 1134.into(), "Part2");
     }

@@ -1,7 +1,9 @@
 use std::cmp::Ordering;
 use std::collections::{BinaryHeap, HashSet};
+
+use crate::solvers::prelude::*;
+
 use regex::Regex;
-use crate::solvers::{Solver, SolverResult};
 
 const REGEX: &str = r"#([A-D])#([A-D])#([A-D])#([A-D])#";
 const NEW_RAW_1: &str = "#D#C#B#A#";
@@ -15,18 +17,22 @@ pub struct Day23 {
     initial_state: State<2>,
 }
 
-impl Solver for Day23 {
-    const INPUT_PATH: &'static str = "inputs/2021/23.txt";
+impl FromStr for Day23 {
+    type Err = String;
 
-    fn from_input(input: &str) -> Self {
+    fn from_str(s: &str) -> Result<Self, String> {
         let regex = Regex::new(REGEX).unwrap();
-        let mut lines = input.lines();
+        let mut lines = s.lines();
         let mut initial_state = State::new();
         initial_state.add_line_to_rooms(lines.nth(2).unwrap(), &regex, 0);
         initial_state.add_line_to_rooms(lines.next().unwrap(), &regex, 1);
 
-        Day23 { initial_state }
+        Ok(Day23 { initial_state })
     }
+}
+
+impl Solver for Day23 {
+    const INPUT_PATH: &'static str = "inputs/2021/23.txt";
 
     fn run_part1(&self) -> SolverResult {
         search(&self.initial_state).into()
@@ -357,7 +363,7 @@ mod tests {
               #########
         "};
 
-        let day = Day23::from_input(TEST_INPUT);
+        let day = Day23::from_str(TEST_INPUT).unwrap();
         assert_eq!(day.run_part1(), 12521.into(), "Part1");
         assert_eq!(day.run_part2(), 44169.into(), "Part2");
     }

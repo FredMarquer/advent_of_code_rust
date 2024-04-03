@@ -1,20 +1,23 @@
-use crate::solvers::*;
+use crate::solvers::prelude::*;
 
 pub struct Day02 {
     games: Box<[Game]>,
 }
 
+impl FromStr for Day02 {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, String> {
+        let games = s.lines()
+            .map(|line| line.parse::<Game>().unwrap())
+            .collect::<Vec<Game>>()
+            .into_boxed_slice();
+        Ok(Day02 { games })
+    }
+}
+
 impl Solver for Day02 {
     const INPUT_PATH: &'static str = "inputs/2023/02.txt";
-
-    fn from_input(input: &str) -> Self {
-        Day02 {
-            games: input.lines()
-                .map(|line| Game::parse(line))
-                .collect::<Vec<Game>>()
-                .into_boxed_slice()
-        }
-    }
 
     fn run_part1(&self) -> SolverResult {
         self.games
@@ -39,22 +42,26 @@ struct Game {
     subsets: Box<[Subset]>,
 }
 
-impl Game {
-    fn parse(line: &str) -> Game {
-        let mut split = line.split(": ");
-        let id_str = split.next().unwrap_or_else(|| panic!("can't find game id for: '{line}'"));
+impl FromStr for Game {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, String> {
+        let mut split = s.split(": ");
+        let id_str = split.next().unwrap_or_else(|| panic!("can't find game id for: '{s}'"));
         let id = id_str[5..].parse().unwrap_or_else(|err| panic!("fail to parse game id for: '{id_str}', error: '{err}'"));
-        let subsets_str = split.next().unwrap_or_else(|| panic!("can't find subsets for: '{line}'"));
+        let subsets_str = split.next().unwrap_or_else(|| panic!("can't find subsets for: '{s}'"));
         let subsets: Vec<Subset> = subsets_str.split("; ")
             .map(|subset_str| Subset::parse(subset_str))
             .collect();
 
-        Game {
+        Ok(Game {
             id,
             subsets: subsets.into_boxed_slice(),
-        }
+        })
     }
+}
 
+impl Game {
     fn is_valid(&self) -> bool {
         for subset in self.subsets.iter() {
             if !subset.is_valid() {
@@ -138,7 +145,7 @@ mod tests {
     #[test]
     fn test() {
 
-        let day = Day02::from_input(TEST_INPUT);
+        let day = Day02::from_str(TEST_INPUT).unwrap();
         assert_eq!(day.run_part1(), 8.into(), "Part1");
         assert_eq!(day.run_part2(), 2286.into(), "Part2");
     }

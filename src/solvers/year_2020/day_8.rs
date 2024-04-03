@@ -1,18 +1,22 @@
-use crate::solvers::{Solver, SolverResult};
+use crate::solvers::prelude::*;
+
 use regex::Regex;
 
 pub struct Day8 {
     instructions: Box<[Instruction]>
 }
 
+impl FromStr for Day8 {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, String> {
+        let instructions = compile_input(s).into_boxed_slice();
+        Ok(Day8 { instructions })
+    }
+}
+
 impl Solver for Day8 {
     const INPUT_PATH: &'static str = "inputs/2020/08.txt";
-
-    fn from_input(input: &str) -> Self {
-        Day8 {
-            instructions: compile_input(input).into_boxed_slice()
-        }
-    }
 
     fn run_part1(&self) -> SolverResult {
 
@@ -201,7 +205,7 @@ mod tests {
             acc +6
         "};
 
-        let day = Day8::from_input(TEST_INPUT);
+        let day = Day8::from_str(TEST_INPUT).unwrap();
         assert_eq!(day.run_part1(), 5.into(), "Part1");
         assert_eq!(day.run_part2(), 8.into(), "Part2");
     }

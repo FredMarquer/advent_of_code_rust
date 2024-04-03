@@ -1,4 +1,4 @@
-use crate::solvers::{Solver, SolverResult};
+use crate::solvers::prelude::*;
 
 const GRID_SIZE: usize = 10;
 const GRID_CAPACITY: usize = GRID_SIZE * GRID_SIZE;
@@ -18,20 +18,24 @@ pub struct Day11 {
     grid: [usize; GRID_CAPACITY]
 }
 
-impl Solver for Day11 {
-    const INPUT_PATH: &'static str = "inputs/2021/11.txt";
+impl FromStr for Day11 {
+    type Err = String;
 
-    fn from_input(input: &str) -> Self {
+    fn from_str(s: &str) -> Result<Self, String> {
         let mut grid= [0; GRID_CAPACITY];
-        for (y, line) in input.lines().enumerate() {
+        for (y, line) in s.lines().enumerate() {
             for (x, c) in line.chars().enumerate() {
                 let index = get_index(x, y);
                 grid[index] = (c as usize) - ('0' as usize);
             }
         }
 
-        Day11 { grid }
+        Ok(Day11 { grid })
     }
+}
+
+impl Solver for Day11 {
+    const INPUT_PATH: &'static str = "inputs/2021/11.txt";
 
     fn run_part1(&self) -> SolverResult {
         let mut grid = self.grid;
@@ -123,7 +127,7 @@ mod tests {
             5283751526
         "};
 
-        let day = Day11::from_input(TEST_INPUT);
+        let day = Day11::from_str(TEST_INPUT).unwrap();
         assert_eq!(day.run_part1(), 1656.into(), "Part1");
         assert_eq!(day.run_part2(), 195.into(), "Part2");
     }

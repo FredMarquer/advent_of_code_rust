@@ -1,14 +1,18 @@
-use crate::solvers::*;
+use crate::solvers::prelude::*;
 
 pub struct Day00 {}
 
+impl FromStr for Day00 {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, String> {
+        // TODO
+        Ok(Day00 {})
+    }
+}
+
 impl Solver for Day00 {
     const INPUT_PATH: &'static str = "inputs/20XX/00.txt";
-
-    fn from_input(input: &str) -> Self {
-        // TODO
-        Day00 {}
-    }
 
     fn run_part1(&self) -> SolverResult {
         // TODO
@@ -32,7 +36,7 @@ mod tests {
 
     #[test]
     fn test() {
-        let day = Day00::from_input(TEST_INPUT);
+        let day = Day00::from_str(TEST_INPUT).unwrap();
         assert_eq!(day.run_part1(), SolverResult::Invalid, "Part1");
         assert_eq!(day.run_part2(), SolverResult::Invalid, "Part2");
     }

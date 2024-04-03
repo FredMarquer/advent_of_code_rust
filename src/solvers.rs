@@ -2,10 +2,19 @@ mod year_2020;
 mod year_2021;
 mod year_2023;
 
+use std::fmt::Display;
+use std::str::FromStr;
 use std::time::Instant;
-pub trait Solver {
+
+mod prelude {
+    pub use crate::solvers::{Solver,SolverResult};
+    pub use std::str::FromStr;
+}
+
+pub trait Solver : FromStr 
+    where Self::Err: Display
+{
     const INPUT_PATH: &'static str;
-    fn from_input(input: &str) -> Self;
     fn run_part1(&self) -> SolverResult;
     fn run_part2(&self) -> SolverResult;
 }
@@ -85,7 +94,10 @@ pub fn run_solver(year: &str, day: &str, run_part_1: bool, run_part_2: bool) {
     }
 }
 
-pub fn run_solver_generic<T: Solver>(run_part_1: bool, run_part_2: bool) {
+pub fn run_solver_generic<T>(run_part_1: bool, run_part_2: bool)
+    where T: Solver,
+          T::Err: Display
+{
     let Ok(input) = std::fs::read_to_string(T::INPUT_PATH) else {
         eprint!("Fail to read input at path: {}", T::INPUT_PATH);
         return;
@@ -93,7 +105,14 @@ pub fn run_solver_generic<T: Solver>(run_part_1: bool, run_part_2: bool) {
 
     // Create solver
     let now = Instant::now();
-    let solver = T::from_input(&input);
+    let solver = input.parse::<T>();
+    let solver = match solver {
+        Ok(solver) => solver,
+        Err(err) => {
+            eprint!("Fail to create solver from input: {err}");
+            return;
+        }
+    };
     let duration = now.elapsed().as_micros() as f64 * 0.001;
     println!("Solver created in {duration} ms");
 

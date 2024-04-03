@@ -1,19 +1,25 @@
 use std::collections::HashMap;
+
+use crate::solvers::prelude::*;
+
 use regex::Regex;
-use crate::solvers::{Solver, SolverResult};
 
 pub struct Day7 {
     bag_repository: BagRepository
 }
 
+impl FromStr for Day7 {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, String> {
+        Ok(Day7 {
+            bag_repository: BagRepository::from(s)
+        })
+    }
+}
+
 impl Solver for Day7 {
     const INPUT_PATH: &'static str = "inputs/2020/07.txt";
-
-    fn from_input(input: &str) -> Self {
-        Day7 {
-            bag_repository: BagRepository::from(input)
-        }
-    }
 
     fn run_part1(&self) -> SolverResult {
         match self.bag_repository.color_to_index.get("shiny gold") {
@@ -168,11 +174,11 @@ mod tests {
             dark violet bags contain no other bags.
         "};
         
-        let day = Day7::from_input(TEST_INPUT);
+        let day = Day7::from_str(TEST_INPUT).unwrap();
         assert_eq!(day.run_part1(), 4.into(), "Part1");
         assert_eq!(day.run_part2(), 32.into(), "Part2");
 
-        let day = Day7::from_input(TEST_INPUT_2B);
+        let day = Day7::from_str(TEST_INPUT_2B).unwrap();
         assert_eq!(day.run_part2(), 126.into(), "Part2");
     }
 }

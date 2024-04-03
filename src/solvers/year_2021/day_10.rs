@@ -1,15 +1,15 @@
-use crate::solvers::{Solver, SolverResult};
+use crate::solvers::prelude::*;
 
 pub struct Day10 {
     lines: Vec<Vec<Token>>
 }
 
-impl Solver for Day10 {
-    const INPUT_PATH: &'static str = "inputs/2021/10.txt";
+impl FromStr for Day10 {
+    type Err = String;
 
-    fn from_input(input: &str) -> Self {
+    fn from_str(s: &str) -> Result<Self, String> {
         let mut lines = Vec::new();
-        for line in input.lines() {
+        for line in s.lines() {
             let mut tokens = Vec::new();
             for c in line.chars() {
                 let token = match c {
@@ -30,8 +30,12 @@ impl Solver for Day10 {
             lines.push(tokens);
         }
 
-        Day10 { lines }
+        Ok(Day10 { lines })
     }
+}
+
+impl Solver for Day10 {
+    const INPUT_PATH: &'static str = "inputs/2021/10.txt";
 
     fn run_part1(&self) -> SolverResult {
         let mut score = 0;
@@ -125,7 +129,7 @@ mod tests {
             <{([{{}}[<[[[<>{}]]]>[]]
         "};
 
-        let day = Day10::from_input(TEST_INPUT);
+        let day = Day10::from_str(TEST_INPUT).unwrap();
         assert_eq!(day.run_part1(), 26397.into(), "Part1");
         assert_eq!(day.run_part2(), 288957.into(), "Part2");
     }

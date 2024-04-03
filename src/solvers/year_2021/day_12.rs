@@ -1,5 +1,6 @@
 use std::collections::HashMap;
-use crate::solvers::{Solver, SolverResult};
+
+use crate::solvers::prelude::*;
 
 pub struct Day12 {
     nodes: Box<[Node]>,
@@ -7,10 +8,10 @@ pub struct Day12 {
     end: usize,
 }
 
-impl Solver for Day12 {
-    const INPUT_PATH: &'static str = "inputs/2021/12.txt";
+impl FromStr for Day12 {
+    type Err = String;
 
-    fn from_input(input: &str) -> Self {
+    fn from_str(s: &str) -> Result<Self, String> {
         let mut nodes = vec![
         Node::new(false, true), 
         Node::new(false, false)];
@@ -19,7 +20,7 @@ impl Solver for Day12 {
         node_indices.insert("start", 0);
         node_indices.insert("end", 1);
         
-        for line in input.lines() {
+        for line in s.lines() {
             let mut splits = line.split('-');
             let left = splits.next().unwrap();
             let right = splits.next().unwrap();
@@ -55,12 +56,16 @@ impl Solver for Day12 {
             right_node.connections.push(left_index);
         }
 
-        Day12 {
+        Ok(Day12 {
             nodes: nodes.into_boxed_slice(),
             start: node_indices["start"],
             end: node_indices["end"],
-        }
+        })
     }
+}
+
+impl Solver for Day12 {
+    const INPUT_PATH: &'static str = "inputs/2021/12.txt";
 
     fn run_part1(&self) -> SolverResult {
         let node_count = self.nodes.len();
@@ -167,11 +172,11 @@ mod tests {
             kj-dc
         "};
 
-        let day = Day12::from_input(TEST_INPUT);
+        let day = Day12::from_str(TEST_INPUT).unwrap();
         assert_eq!(day.run_part1(), 10.into(), "Part1");
         assert_eq!(day.run_part2(), 36.into(), "Part2");
 
-        let day = Day12::from_input(TEST_INPUT_1B);
+        let day = Day12::from_str(TEST_INPUT_1B).unwrap();
         assert_eq!(day.run_part1(), 19.into(), "Part1");
     }
 }

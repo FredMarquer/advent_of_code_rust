@@ -1,17 +1,20 @@
-use crate::solvers::{Solver, SolverResult};
+use crate::solvers::prelude::*;
 
 pub struct Day7 {
     values: Vec<i64>
 }
 
+impl FromStr for Day7 {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, String> {
+        let values = s.split(',').map(|value| value.parse().unwrap()).collect();
+        Ok(Day7 { values })
+    }
+}
+
 impl Solver for Day7 {
     const INPUT_PATH: &'static str = "inputs/2021/07.txt";
-
-    fn from_input(input: &str) -> Self {
-        Day7 {
-            values: input.split(',').map(|value| value.parse().unwrap()).collect()
-        }
-    }
 
     fn run_part1(&self) -> SolverResult {
         let mut previous = self.compute_fuel_needed_part1(0);
@@ -74,7 +77,7 @@ mod tests {
     fn test() {
         const TEST_INPUT: &str = "16,1,2,0,4,2,7,1,2,14";
 
-        let day = Day7::from_input(TEST_INPUT);
+        let day = Day7::from_str(TEST_INPUT).unwrap();
         assert_eq!(day.run_part1(), 37.into(), "Part1");
         assert_eq!(day.run_part2(), 168.into(), "Part2");
     }

@@ -1,4 +1,4 @@
-use crate::solvers::*;
+use crate::solvers::prelude::*;
 use crate::utils::array_2d::*;
 use crate::utils::graph::*;
 
@@ -15,11 +15,11 @@ enum NodeValue {
     Symbol(char),
 }
 
-impl Solver for Day03 {
-    const INPUT_PATH: &'static str = "inputs/2023/03.txt";
+impl FromStr for Day03 {
+    type Err = String;
 
-    fn from_input(input: &str) -> Self {
-        let input = Array2D::from_input(input);
+    fn from_str(s: &str) -> Result<Self, String> {
+        let input = Array2D::from_input(s);
         let mut symbol_node_ids = Array2D::new(input.width(), input.height());
         let mut graph = Graph::new();
         let mut number = 0;
@@ -39,8 +39,12 @@ impl Solver for Day03 {
             }
         }
 
-        Day03 { graph }
+        Ok(Day03 { graph })
     }
+}
+
+impl Solver for Day03 {
+    const INPUT_PATH: &'static str = "inputs/2023/03.txt";
 
     fn run_part1(&self) -> SolverResult {
         let mut sum = 0;
@@ -131,7 +135,7 @@ mod tests {
 
     #[test]
     fn test() {
-        let day = Day03::from_input(TEST_INPUT);
+        let day = Day03::from_str(TEST_INPUT).unwrap();
         assert_eq!(day.run_part1(), 4361.into(), "Part1");
         assert_eq!(day.run_part2(), 467835.into(), "Part2");
     }

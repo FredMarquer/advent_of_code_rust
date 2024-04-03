@@ -1,27 +1,33 @@
 use std::ops::RangeInclusive;
+
+use crate::solvers::prelude::*;
+
 use regex::Regex;
-use crate::solvers::{Solver, SolverResult};
 
 pub struct Day17 {
     target_area: Rect
 }
 
-impl Solver for Day17 {
-    const INPUT_PATH: &'static str = "inputs/2021/17.txt";
+impl FromStr for Day17 {
+    type Err = String;
 
-    fn from_input(input: &str) -> Self {
+    fn from_str(s: &str) -> Result<Self, String> {
         let regex = Regex::new(r"target area: x=(-?[0-9]*)..(-?[0-9]*), y=(-?[0-9]*)..(-?[0-9]*)").unwrap();
-        let captures = regex.captures(input).unwrap();
+        let captures = regex.captures(s).unwrap();
 
-        Day17 {
+        Ok(Day17 {
             target_area: Rect {
                 x_min: captures.get(1).unwrap().as_str().parse().unwrap(),
                 x_max: captures.get(2).unwrap().as_str().parse().unwrap(),
                 y_min: captures.get(3).unwrap().as_str().parse().unwrap(),
                 y_max: captures.get(4).unwrap().as_str().parse().unwrap(),
             }
-        }
+        })
     }
+}
+
+impl Solver for Day17 {
+    const INPUT_PATH: &'static str = "inputs/2021/17.txt";
 
     fn run_part1(&self) -> SolverResult {
         let mut y_velocity = -self.target_area.y_min - 1;
@@ -124,7 +130,7 @@ mod tests {
     fn test() {
         const TEST_INPUT: &str = "target area: x=20..30, y=-10..-5";
 
-        let day = Day17::from_input(TEST_INPUT);
+        let day = Day17::from_str(TEST_INPUT).unwrap();
         assert_eq!(day.run_part1(), 45.into(), "Part1");
         assert_eq!(day.run_part2(), 112.into(), "Part2");
     }

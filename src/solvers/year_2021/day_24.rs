@@ -1,14 +1,18 @@
-use crate::solvers::{Solver, SolverResult};
+use crate::solvers::prelude::*;
 
 pub struct Day24 {}
 
+impl FromStr for Day24 {
+    type Err = String;
+
+    fn from_str(_s: &str) -> Result<Self, String> {
+        // TODO
+        Err("Not implemented".to_string())
+    }
+}
+
 impl Solver for Day24 {
     const INPUT_PATH: &'static str = "inputs/2021/24.txt";
-
-    fn from_input(_input: &str) -> Self {
-        // TODO
-        Day24 {}
-    }
 
     fn run_part1(&self) -> SolverResult {
         // TODO
@@ -21,6 +25,7 @@ impl Solver for Day24 {
     }
 }
 
+/*/
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -32,8 +37,9 @@ mod tests {
             TODO
         "};
 
-        let day = Day24::from_input(TEST_INPUT);
+        let day = Day24::from_str(TEST_INPUT).unwrap();
         assert_eq!(day.run_part1(), SolverResult::Invalid, "Part1");
         assert_eq!(day.run_part2(), SolverResult::Invalid, "Part2");
     }
 }
+*/

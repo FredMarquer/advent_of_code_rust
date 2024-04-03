@@ -1,4 +1,4 @@
-use crate::solvers::{Solver, SolverResult};
+use crate::solvers::prelude::*;
 
 const BOARD_SIZE: usize = 5;
 const BOARD_CAPACITY: usize = BOARD_SIZE * BOARD_SIZE;
@@ -8,12 +8,12 @@ pub struct Day4 {
     boards: Vec<[i64; BOARD_CAPACITY]>,
 }
 
-impl Solver for Day4 {
-    const INPUT_PATH: &'static str = "inputs/2021/04.txt";
+impl FromStr for Day4 {
+    type Err = String;
 
-    fn from_input(input: &str) -> Self {
-        let pat = if input.contains('\r') { "\r\n\r\n" } else { "\n\n" };
-        let mut splits = input.split(pat);
+    fn from_str(s: &str) -> Result<Self, String> {
+        let pat = if s.contains('\r') { "\r\n\r\n" } else { "\n\n" };
+        let mut splits = s.split(pat);
 
         let numbers = splits.next().unwrap().split(',').map(|value| value.parse().unwrap()).collect();
         
@@ -31,11 +31,12 @@ impl Solver for Day4 {
             boards.push(board);
         }
 
-        Day4 {
-            numbers,
-            boards,
-        }
+        Ok(Day4 { numbers, boards })
     }
+}
+
+impl Solver for Day4 {
+    const INPUT_PATH: &'static str = "inputs/2021/04.txt";
 
     fn run_part1(&self) -> SolverResult {
         self.run_bingo(false).into()
@@ -154,7 +155,7 @@ mod tests {
              2  0 12  3  7
         "};
 
-        let day = Day4::from_input(TEST_INPUT);
+        let day = Day4::from_str(TEST_INPUT).unwrap();
         assert_eq!(day.run_part1(), 4512.into(), "Part1");
         assert_eq!(day.run_part2(), 1924.into(), "Part2");
     }

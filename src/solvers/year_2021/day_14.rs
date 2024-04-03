@@ -1,19 +1,23 @@
-use crate::solvers::{Solver, SolverResult};
+use crate::solvers::prelude::*;
 
 pub struct Day14 {
     naive: naive::Data,
     opti: opti::Data,
 }
 
+impl FromStr for Day14 {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, String> {
+        Ok(Day14 {
+            naive: naive::Data::from_input(s),
+            opti: opti::Data::from_input(s),
+        })
+    }
+}
+
 impl Solver for Day14 {
     const INPUT_PATH: &'static str = "inputs/2021/14.txt";
-
-    fn from_input(input: &str) -> Self {
-        Day14 {
-            naive: naive::Data::from_input(input),
-            opti: opti::Data::from_input(input),
-        }
-    }
 
     fn run_part1(&self) -> SolverResult {
         self.naive.simulate(10).into()
@@ -298,7 +302,7 @@ mod tests {
             CN -> C
         "};
 
-        let day = Day14::from_input(TEST_INPUT);
+        let day = Day14::from_str(TEST_INPUT).unwrap();
         assert_eq!(day.run_part1(), 1588.into(), "Part1");
         assert_eq!(day.run_part2(), 2188189693529_i64.into(), "Part2");
     }

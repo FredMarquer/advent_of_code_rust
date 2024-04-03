@@ -1,4 +1,4 @@
-use crate::solvers::{Solver, SolverResult};
+use crate::solvers::prelude::*;
 
 const PLAYER_COUNT: usize = 2;
 const BOARD_SIZE: usize = 10;
@@ -16,14 +16,18 @@ pub struct Day21 {
     starting_positions: [usize; PLAYER_COUNT],
 }
 
+impl FromStr for Day21 {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, String> {
+        Ok(Day21 {
+            starting_positions: get_starting_positions(s)
+        })
+    }
+}
+
 impl Solver for Day21 {
     const INPUT_PATH: &'static str = "inputs/2021/21.txt";
-
-    fn from_input(input: &str) -> Self {
-        Day21 {
-            starting_positions: get_starting_positions(input)
-        }
-    }
 
     fn run_part1(&self) -> SolverResult {
         let mut game_state = GameState::new(&self.starting_positions, 1000);
@@ -154,7 +158,7 @@ mod tests {
             Player 2 starting position: 8
         "};
 
-        let day = Day21::from_input(TEST_INPUT);
+        let day = Day21::from_str(TEST_INPUT).unwrap();
         assert_eq!(day.run_part1(), 739785.into(), "Part1");
         assert_eq!(day.run_part2(), 444356092776315_i64.into(), "Part2");
     }

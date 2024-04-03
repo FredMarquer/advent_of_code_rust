@@ -1,17 +1,18 @@
+use crate::solvers::prelude::*;
+
 use regex::Regex;
-use crate::solvers::{Solver, SolverResult};
 
 pub struct Day13 {
     dots: Vec<(usize, usize)>,
     fold_instructions: Vec<FoldInstruction>,
 }
 
-impl Solver for Day13 {
-    const INPUT_PATH: &'static str = "inputs/2021/13.txt";
+impl FromStr for Day13 {
+    type Err = String;
 
-    fn from_input(input: &str) -> Self {
-        let pat = if input.contains('\r') { "\r\n\r\n" } else { "\n\n" };
-        let mut splits = input.split(pat);
+    fn from_str(s: &str) -> Result<Self, String> {
+        let pat = if s.contains('\r') { "\r\n\r\n" } else { "\n\n" };
+        let mut splits = s.split(pat);
 
         let lines = splits.next().unwrap().lines();
         let mut dots= Vec::new();
@@ -43,11 +44,12 @@ impl Solver for Day13 {
             });
         }
 
-        Day13 {
-            dots,
-            fold_instructions,
-        }
+        Ok(Day13 { dots, fold_instructions })
     }
+}
+
+impl Solver for Day13 {
+    const INPUT_PATH: &'static str = "inputs/2021/13.txt";
 
     fn run_part1(&self) -> SolverResult {
         let mut pixels = Vec::new();
@@ -182,7 +184,7 @@ mod tests {
             #...#
             #####"};
 
-        let day = Day13::from_input(TEST_INPUT);
+        let day = Day13::from_str(TEST_INPUT).unwrap();
         assert_eq!(day.run_part1(), 17.into(), "Part1");
         assert_eq!(day.run_part2(), TEST_PART2_RESULT.into(), "Part2");
     }

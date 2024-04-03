@@ -1,19 +1,23 @@
+use crate::solvers::prelude::*;
+
 use itertools::Itertools;
-use crate::solvers::{Solver, SolverResult};
 
 pub struct Day3 {
     rows: Vec<String>
 }
 
+impl FromStr for Day3 {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, String> {
+        let rows = s.lines().map_into().collect_vec();
+        Ok(Day3 { rows })
+    }
+}
+
 impl Solver for Day3 {
     const INPUT_PATH: &'static str = "inputs/2020/03.txt";
-
-    fn from_input(input: &str) -> Self {
-        Day3 {
-            rows: input.lines().map_into().collect_vec()
-        }
-    }
-
+    
     fn run_part1(&self) -> SolverResult {
         self.compute_slope(3, 1).into()
     }
@@ -78,7 +82,7 @@ mod tests {
             .#..#...#.#
         "};
 
-        let day = Day3::from_input(TEST_INPUT);
+        let day = Day3::from_str(TEST_INPUT).unwrap();
         assert_eq!(day.run_part1(), 7.into(), "Part1");
         assert_eq!(day.run_part2(), 336.into(), "Part2");
     }

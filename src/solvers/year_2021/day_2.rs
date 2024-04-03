@@ -1,15 +1,15 @@
-use crate::solvers::{Solver, SolverResult};
+use crate::solvers::prelude::*;
 
 pub struct Day2 {
     instructions: Vec<Instruction>
 }
 
-impl Solver for Day2 {
-    const INPUT_PATH: &'static str = "inputs/2021/02.txt";
+impl FromStr for Day2 {
+    type Err = String;
 
-    fn from_input(input: &str) -> Self {
+    fn from_str(s: &str) -> Result<Self, String> {
         let mut instructions: Vec<Instruction> = Vec::new();
-        for line in input.lines() {
+        for line in s.lines() {
             let mut splits = line.split(' ');
             let operation = splits.next().unwrap();
             let value = splits.next().unwrap();
@@ -20,8 +20,12 @@ impl Solver for Day2 {
             });
         }
 
-        Day2 { instructions }
+        Ok(Day2 { instructions })
     }
+}
+
+impl Solver for Day2 {
+    const INPUT_PATH: &'static str = "inputs/2021/02.txt";
 
     fn run_part1(&self) -> SolverResult {
         let mut horizontal = 0;
@@ -96,7 +100,7 @@ mod tests {
             forward 2
         "};
 
-        let day = Day2::from_input(TEST_INPUT);
+        let day = Day2::from_str(TEST_INPUT).unwrap();
         assert_eq!(day.run_part1(), 150.into(), "Part1");
         assert_eq!(day.run_part2(), 900.into(), "Part2");
     }

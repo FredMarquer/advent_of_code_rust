@@ -1,5 +1,6 @@
+use crate::solvers::prelude::*;
+
 use regex::Regex;
-use crate::solvers::{Solver, SolverResult};
 
 const BOARD_SIZE: usize = 1000;
 const BOARD_CAPACITY: usize = BOARD_SIZE * BOARD_SIZE;
@@ -8,14 +9,14 @@ pub struct Day5 {
     lines: Vec<Line>
 }
 
-impl Solver for Day5 {
-    const INPUT_PATH: &'static str = "inputs/2021/05.txt";
+impl FromStr for Day5 {
+    type Err = String;
 
-    fn from_input(input: &str) -> Self {
+    fn from_str(s: &str) -> Result<Self, String> {
         let regex = Regex::new(r"([0-9]*),([0-9]*) -> ([0-9]*),([0-9]*)").unwrap();
 
         let mut lines = Vec::new();
-        for line in input.lines() {
+        for line in s.lines() {
             let captures = regex.captures(line).unwrap();
 
             lines.push(
@@ -28,8 +29,12 @@ impl Solver for Day5 {
             );
         }
 
-        Day5 { lines }
+        Ok(Day5 { lines })
     }
+}
+
+impl Solver for Day5 {
+    const INPUT_PATH: &'static str = "inputs/2021/05.txt";
 
     fn run_part1(&self) -> SolverResult {
         self.run(false).into()
@@ -139,7 +144,7 @@ mod tests {
             5,5 -> 8,2
         "};
 
-        let day = Day5::from_input(TEST_INPUT);
+        let day = Day5::from_str(TEST_INPUT).unwrap();
         assert_eq!(day.run_part1(), 5.into(), "Part1");
         assert_eq!(day.run_part2(), 12.into(), "Part2");
     }

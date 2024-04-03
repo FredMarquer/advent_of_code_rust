@@ -1,7 +1,8 @@
+use crate::solvers::prelude::*;
+
 use bitflags::bitflags;
 use itertools::Itertools;
 use regex::Regex;
-use crate::solvers::{Solver, SolverResult};
 
 const REQUIRED_FIELDS: [&str; 7] = ["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"];
 const VALID_EYE_COLORS: [&str; 7] = ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"];
@@ -10,15 +11,18 @@ pub struct Day4 {
     passports: Vec<String>
 }
 
+impl FromStr for Day4 {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, String> {
+        let pat = if s.contains('\r') { "\r\n\r\n" } else { "\n\n" };
+        let passports = s.split(pat).map_into().collect_vec();
+        Ok(Day4 { passports })
+    }
+}
+
 impl Solver for Day4 {
     const INPUT_PATH: &'static str = "inputs/2020/04.txt";
-
-    fn from_input(input: &str) -> Self {
-        let pat = if input.contains('\r') { "\r\n\r\n" } else { "\n\n" };
-        Day4 {
-            passports: input.split(pat).map_into().collect_vec()
-        }
-    }
 
     fn run_part1(&self) -> SolverResult {
         self.validate_passports(validate_passport_part1).into()
@@ -235,13 +239,13 @@ mod tests {
             iyr:2010 hgt:158cm hcl:#b6652a ecl:blu byr:1944 eyr:2021 pid:093154719
         "};
 
-        let day = Day4::from_input(TEST_INPUT_1);
+        let day = Day4::from_str(TEST_INPUT_1).unwrap();
         assert_eq!(day.run_part1(), 2.into(), "Part1");
 
-        let day = Day4::from_input(TEST_INPUT_2A);
+        let day = Day4::from_str(TEST_INPUT_2A).unwrap();
         assert_eq!(day.run_part2(), 0.into(), "Part2A");
 
-        let day = Day4::from_input(TEST_INPUT_2B);
+        let day = Day4::from_str(TEST_INPUT_2B).unwrap();
         assert_eq!(day.run_part2(), 4.into(), "Part2B");
     }
 }

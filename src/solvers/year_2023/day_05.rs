@@ -1,34 +1,33 @@
-use itertools::Itertools;
+use crate::solvers::prelude::*;
 
-use crate::solvers::*;
+use itertools::Itertools;
 
 pub struct Day05 {
     seeds: Vec<i64>,
     maps: Vec<Map>,
 }
 
-impl Solver for Day05 {
-    const INPUT_PATH: &'static str = "inputs/2023/05.txt";
+impl FromStr for Day05 {
+    type Err = String;
 
-    fn from_input(input: &str) -> Self {
-        let pat = if input.contains('\r') { "\r\n\r\n" } else { "\n\n" };
-        let Some((seeds, maps)) = input.split_once(pat) else {
-            panic!("can't split input");
-        };
+    fn from_str(s: &str) -> Result<Self, String> {
+        let pat = if s.contains('\r') { "\r\n\r\n" } else { "\n\n" };
+        let (seeds, maps) = s.split_once(pat).ok_or(format!("fail to split input with pattern: {pat}"))?;
 
         let seeds = seeds[7..].split_whitespace()
             .map(|seed| seed.parse::<i64>().unwrap())
             .collect_vec();
 
         let maps = maps.split(pat)
-            .map(|map| Map::from_input(map))
+            .map(|map| map.parse::<Map>().unwrap())
             .collect_vec();
 
-        Day05 {
-            seeds,
-            maps,
-        }
+        Ok(Day05 { seeds, maps })
     }
+}
+
+impl Solver for Day05 {
+    const INPUT_PATH: &'static str = "inputs/2023/05.txt";
 
     fn run_part1(&self) -> SolverResult {
         let mut min = i64::MAX;
@@ -76,15 +75,18 @@ struct Map {
     ranges: Vec<MapRange>,
 }
 
-impl Map {
-    fn from_input(input: &str) -> Self {
-        let mut lines = input.lines();
-        lines.next();
-        Map {
-            ranges: lines.map(|range| MapRange::from_input(range)).collect_vec()
-        }
-    }
+impl FromStr for Map {
+    type Err = String;
 
+    fn from_str(s: &str) -> Result<Self, String> {
+        let mut lines = s.lines();
+        lines.next();
+        let ranges = lines.map(|range| range.parse::<MapRange>().unwrap()).collect_vec();
+        Ok(Map { ranges })
+    }
+}
+
+impl Map {
     fn convert(&self, number: i64) -> i64 {
         for range in self.ranges.iter() {
             if range.contains(number) {
@@ -159,18 +161,22 @@ struct MapRange {
     destination_start: i64,
 }
 
-impl MapRange {
-    fn from_input(input: &str) -> Self {
-        let mut split = input.split_whitespace();
-        MapRange {
+impl FromStr for MapRange {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, String> {
+        let mut split = s.split_whitespace();
+        Ok(MapRange {
             destination_start: split.next().unwrap().parse().unwrap(),
             source_range: Range {
                 start: split.next().unwrap().parse().unwrap(),
                 length: split.next().unwrap().parse().unwrap(),
             },
-        }
+        })
     }
+}
 
+impl MapRange {
     fn contains(&self, number: i64) -> bool {
         number >= self.source_range.start && number <= self.source_range.end()
     }
@@ -235,7 +241,7 @@ mod tests {
 
     #[test]
     fn test() {
-        let day = Day05::from_input(TEST_INPUT);
+        let day = Day05::from_str(TEST_INPUT).unwrap();
         assert_eq!(day.run_part1(), 35.into(), "Part1");
         assert_eq!(day.run_part2(), 46.into(), "Part2");
     }

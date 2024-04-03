@@ -1,6 +1,7 @@
 use std::collections::BinaryHeap;
 use std::cmp::Ordering;
-use crate::solvers::{Solver, SolverResult};
+
+use crate::solvers::prelude::*;
 
 const NEIGHBOUR_DIRS: [(isize, isize); 4] = [
     (-1,  0),
@@ -14,19 +15,20 @@ pub struct Day15 {
     map_part2: Map,
 }
 
-impl Solver for Day15 {
-    const INPUT_PATH: &'static str = "inputs/2021/15.txt";
+impl FromStr for Day15 {
+    type Err = String;
 
-    fn from_input(input: &str) -> Self {
-        let map_part1 = Map::from_input(input);
+    fn from_str(s: &str) -> Result<Self, String> {
+        let map_part1 = Map::from_input(s);
         let map_part2 = Map::from_other_map(&map_part1);
         assert_eq!(map_part1.nodes[0].cost, map_part2.nodes[0].cost);
 
-        Day15 {
-            map_part1,
-            map_part2,
-        }
+        Ok(Day15 { map_part1, map_part2 })
     }
+}
+
+impl Solver for Day15 {
+    const INPUT_PATH: &'static str = "inputs/2021/15.txt";
 
     fn run_part1(&self) -> SolverResult {
         self.map_part1.dijkstra().into()
@@ -280,7 +282,7 @@ mod tests {
             2311944581
         "};
 
-        let day = Day15::from_input(TEST_INPUT);
+        let day = Day15::from_str(TEST_INPUT).unwrap();
         assert_eq!(day.run_part1(), 40.into(), "Part1");
         assert_eq!(day.run_part2(), 315.into(), "Part2");
     }

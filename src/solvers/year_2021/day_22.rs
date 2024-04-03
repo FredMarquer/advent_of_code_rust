@@ -1,19 +1,21 @@
 use std::ops::Add;
+
+use crate::solvers::prelude::*;
+
 use regex::Regex;
-use crate::solvers::{Solver, SolverResult};
 
 pub struct Day22 {
     reboot_steps: Box<[RebootStep]>
 }
 
-impl Solver for Day22 {
-    const INPUT_PATH: &'static str = "inputs/2021/22.txt";
+impl FromStr for Day22 {
+    type Err = String;
 
-    fn from_input(input: &str) -> Self {
+    fn from_str(s: &str) -> Result<Self, String> {
         let regex = Regex::new(r"(\w*) x=(-?\d*)..(-?\d*),y=(-?\d*)..(-?\d*),z=(-?\d*)..(-?\d*)").unwrap();
 
         let mut reboot_steps = Vec::new();
-        for line in input.lines() {
+        for line in s.lines() {
             let captures = regex.captures(line).unwrap();
             let value = str_to_bool(captures.get(1).unwrap().as_str());
             let cuboid = Cuboid {
@@ -27,10 +29,14 @@ impl Solver for Day22 {
             });
         }
 
-        Day22 {
+        Ok(Day22 {
             reboot_steps: reboot_steps.into_boxed_slice()
-        }
+        })
     }
+}
+
+impl Solver for Day22 {
+    const INPUT_PATH: &'static str = "inputs/2021/22.txt";
 
     fn run_part1(&self) -> SolverResult {
         let starting_cubiod = Cuboid::new(-50, 50);
@@ -319,13 +325,13 @@ mod tests {
             off x=-93533..-4276,y=-16170..68771,z=-104985..-24507
         "};
 
-        let day = Day22::from_input(TEST_INPUT_1A);
+        let day = Day22::from_str(TEST_INPUT_1A).unwrap();
         assert_eq!(day.run_part1(), 39.into(), "Part1A");
 
-        let day = Day22::from_input(TEST_INPUT_1B);
+        let day = Day22::from_str(TEST_INPUT_1B).unwrap();
         assert_eq!(day.run_part1(), 590784.into(), "Part1B");
 
-        let day = Day22::from_input(TEST_INPUT_2);
+        let day = Day22::from_str(TEST_INPUT_2).unwrap();
         assert_eq!(day.run_part2(), 2758514936282235_i64.into(), "Part2");
     }
 }

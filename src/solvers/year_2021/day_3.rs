@@ -1,19 +1,22 @@
-use crate::solvers::{Solver, SolverResult};
+use crate::solvers::prelude::*;
 
 pub struct Day3 {
     bit_count: usize,
     values: Vec<i64>,
 }
 
+impl FromStr for Day3 {
+    type Err = String;
+
+    fn from_str(input: &str) -> Result<Self, String> {
+        let bit_count = input.lines().next().unwrap().len();
+        let values = input.lines().map(|line| i64::from_str_radix(line, 2).unwrap()).collect();
+        Ok(Day3 { bit_count, values })
+    }
+}
+
 impl Solver for Day3 {
     const INPUT_PATH: &'static str = "inputs/2021/03.txt";
-
-    fn from_input(input: &str) -> Self {
-        Day3 {
-            bit_count: input.lines().next().unwrap().len(),
-            values: input.lines().map(|line| i64::from_str_radix(line, 2).unwrap()).collect()
-        }
-    }
 
     fn run_part1(&self) -> SolverResult {
         let mut counts = vec![0; self.bit_count];
@@ -137,7 +140,7 @@ mod tests {
             01010
         "};
 
-        let day = Day3::from_input(TEST_INPUT);
+        let day = Day3::from_str(TEST_INPUT).unwrap();
         assert_eq!(day.run_part1(), 198.into(), "Part1");
         assert_eq!(day.run_part2(), 230.into(), "Part2");
     }

@@ -1,23 +1,27 @@
-use crate::solvers::{Solver, SolverResult};
+use crate::solvers::prelude::*;
 
 pub struct Day1 {
     values: Vec<i64>
 }
 
-impl Solver for Day1 {
-    const INPUT_PATH: &'static str = "inputs/2020/01.txt";
+impl FromStr for Day1 {
+    type Err = String;
 
-    fn from_input(input: &str) -> Self {
-        let lines = input.lines();
+    fn from_str(s: &str) -> Result<Self, String> {
+        let lines = s.lines();
         let mut values = Vec::with_capacity(200);
         for line in lines {
             let value = line.parse().unwrap_or_default();
             values.push(value);
         }
 
-        Day1 { values }
+        Ok(Day1 { values })
     }
+}
 
+impl Solver for Day1 {
+    const INPUT_PATH: &'static str = "inputs/2020/01.txt";
+    
     fn run_part1(&self) -> SolverResult {
         let length = self.values.len();
         for i in 0..length {
@@ -68,7 +72,7 @@ mod tests {
             1456
         "};
 
-        let day = Day1::from_input(TEST_INPUT);
+        let day = Day1::from_str(TEST_INPUT).unwrap();
         assert_eq!(day.run_part1(), 514579.into(), "Part1");
         assert_eq!(day.run_part2(), 241861950.into(), "Part2");
     }

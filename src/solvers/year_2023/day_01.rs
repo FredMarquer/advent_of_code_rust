@@ -1,6 +1,4 @@
-use std::str::FromStr;
-
-use crate::solvers::*;
+use crate::solvers::prelude::*;
 
 const NUMBERS: [&str; 9] = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
 
@@ -8,14 +6,18 @@ pub struct Day01 {
     input: String,
 }
 
+impl FromStr for Day01 {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, String> {
+        Ok(Day01 {
+            input: String::from_str(s).map_err(|err| err.to_string())?
+        })
+    }
+}
+
 impl Solver for Day01 {
     const INPUT_PATH: &'static str = "inputs/2023/01.txt";
-
-    fn from_input(input: &str) -> Self {
-        Day01 {
-            input: String::from_str(input).unwrap()
-        }
-    }
 
     fn run_part1(&self) -> SolverResult {
         sum_lines(self.input.as_str(), false)
@@ -102,10 +104,10 @@ mod tests {
 
     #[test]
     fn test() {
-        let day = Day01::from_input(TEST_INPUT_1);
+        let day = Day01::from_str(TEST_INPUT_1).unwrap();
         assert_eq!(day.run_part1(), 142.into(), "Part1");
 
-        let day = Day01::from_input(TEST_INPUT_2);
+        let day = Day01::from_str(TEST_INPUT_2).unwrap();
         assert_eq!(day.run_part2(), 281.into(), "Part2");
     }
 }

@@ -1,15 +1,15 @@
-use crate::solvers::{Solver, SolverResult};
+use crate::solvers::prelude::*;
 
 pub struct Day8 {
     entries: Vec<Entry>
 }
 
-impl Solver for Day8 {
-    const INPUT_PATH: &'static str = "inputs/2021/08.txt";
+impl FromStr for Day8 {
+    type Err = String;
 
-    fn from_input(input: &str) -> Self {
+    fn from_str(s: &str) -> Result<Self, String> {
         let mut entries = Vec::new();
-        for line in input.lines() {
+        for line in s.lines() {
             let mut splits = line.split(" | ");
 
             let mut digits: [Digit; 10] = Default::default();
@@ -25,8 +25,12 @@ impl Solver for Day8 {
             entries.push(Entry { digits, outputs });
         }
 
-        Day8 { entries }
+        Ok(Day8 { entries })
     }
+}
+
+impl Solver for Day8 {
+    const INPUT_PATH: &'static str = "inputs/2021/08.txt";
 
     fn run_part1(&self) -> SolverResult {
         let mut count = 0;
@@ -155,7 +159,7 @@ mod tests {
             gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
         "};
 
-        let day = Day8::from_input(TEST_INPUT);
+        let day = Day8::from_str(TEST_INPUT).unwrap();
         assert_eq!(day.run_part1(), 26.into(), "Part1");
         assert_eq!(day.run_part2(), 61229.into(), "Part2");
     }
