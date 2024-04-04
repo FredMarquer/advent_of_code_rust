@@ -16,9 +16,9 @@ pub struct Day15 {
 }
 
 impl FromStr for Day15 {
-    type Err = String;
+    type Err = ParseSolverError;
 
-    fn from_str(s: &str) -> Result<Self, String> {
+    fn from_str(s: &str) -> Result<Self, ParseSolverError> {
         let map_part1 = Map::from_input(s);
         let map_part2 = Map::from_other_map(&map_part1);
         assert_eq!(map_part1.nodes[0].cost, map_part2.nodes[0].cost);

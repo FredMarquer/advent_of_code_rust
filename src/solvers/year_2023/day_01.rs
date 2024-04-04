@@ -7,11 +7,11 @@ pub struct Day01 {
 }
 
 impl FromStr for Day01 {
-    type Err = String;
+    type Err = ParseSolverError;
 
-    fn from_str(s: &str) -> Result<Self, String> {
+    fn from_str(s: &str) -> Result<Self, ParseSolverError> {
         Ok(Day01 {
-            input: String::from_str(s).map_err(|err| err.to_string())?
+            input: s.to_string()
         })
     }
 }

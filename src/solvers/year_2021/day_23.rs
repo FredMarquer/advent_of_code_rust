@@ -18,9 +18,9 @@ pub struct Day23 {
 }
 
 impl FromStr for Day23 {
-    type Err = String;
+    type Err = ParseSolverError;
 
-    fn from_str(s: &str) -> Result<Self, String> {
+    fn from_str(s: &str) -> Result<Self, ParseSolverError> {
         let regex = Regex::new(REGEX).unwrap();
         let mut lines = s.lines();
         let mut initial_state = State::new();

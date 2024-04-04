@@ -3,11 +3,11 @@ use crate::solvers::prelude::*;
 pub struct Day24 {}
 
 impl FromStr for Day24 {
-    type Err = String;
+    type Err = ParseSolverError;
 
-    fn from_str(_s: &str) -> Result<Self, String> {
+    fn from_str(_s: &str) -> Result<Self, ParseSolverError> {
         // TODO
-        Err("Not implemented".to_string())
+        Err(ParseSolverError::new("Not implemented"))
     }
 }
 

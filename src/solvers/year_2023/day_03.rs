@@ -16,9 +16,9 @@ enum NodeValue {
 }
 
 impl FromStr for Day03 {
-    type Err = String;
+    type Err = ParseSolverError;
 
-    fn from_str(s: &str) -> Result<Self, String> {
+    fn from_str(s: &str) -> Result<Self, ParseSolverError> {
         let input = Array2D::from_input(s);
         let mut symbol_node_ids = Array2D::new(input.width(), input.height());
         let mut graph = Graph::new();

@@ -9,9 +9,9 @@ pub struct Day22 {
 }
 
 impl FromStr for Day22 {
-    type Err = String;
+    type Err = ParseSolverError;
 
-    fn from_str(s: &str) -> Result<Self, String> {
+    fn from_str(s: &str) -> Result<Self, ParseSolverError> {
         let regex = Regex::new(r"(\w*) x=(-?\d*)..(-?\d*),y=(-?\d*)..(-?\d*),z=(-?\d*)..(-?\d*)").unwrap();
 
         let mut reboot_steps = Vec::new();

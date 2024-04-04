@@ -39,9 +39,9 @@ pub struct Day19 {
 }
 
 impl FromStr for Day19 {
-    type Err = String;
+    type Err = ParseSolverError;
 
-    fn from_str(s: &str) -> Result<Self, String> {
+    fn from_str(s: &str) -> Result<Self, ParseSolverError> {
         let mut scanner_reports = Vec::new();
         let pat = if s.contains('\r') { "\r\n\r\n" } else { "\n\n" };
         for split in s.split(pat) {

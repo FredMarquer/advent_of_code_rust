@@ -3,9 +3,9 @@ use crate::solvers::prelude::*;
 pub struct Day00 {}
 
 impl FromStr for Day00 {
-    type Err = String;
+    type Err = ParseSolverError;
 
-    fn from_str(s: &str) -> Result<Self, String> {
+    fn from_str(s: &str) -> Result<Self, ParseSolverError> {
         // TODO
         Ok(Day00 {})
     }

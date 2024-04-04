@@ -9,9 +9,9 @@ pub struct Day12 {
 }
 
 impl FromStr for Day12 {
-    type Err = String;
+    type Err = ParseSolverError;
 
-    fn from_str(s: &str) -> Result<Self, String> {
+    fn from_str(s: &str) -> Result<Self, ParseSolverError> {
         let mut nodes = vec![
         Node::new(false, true), 
         Node::new(false, false)];

@@ -5,9 +5,9 @@ pub struct Day9 {
 }
 
 impl FromStr for Day9 {
-    type Err = String;
+    type Err = ParseSolverError;
 
-    fn from_str(s: &str) -> Result<Self, String> {
+    fn from_str(s: &str) -> Result<Self, ParseSolverError> {
         Ok(Day9 {
             height_map: HeightMap::from_input(s)
         })

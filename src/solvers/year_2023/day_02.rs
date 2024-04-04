@@ -1,17 +1,18 @@
+use itertools::Itertools;
+
 use crate::solvers::prelude::*;
 
 pub struct Day02 {
-    games: Box<[Game]>,
+    games: Vec<Game>,
 }
 
 impl FromStr for Day02 {
-    type Err = String;
+    type Err = ParseSolverError;
 
-    fn from_str(s: &str) -> Result<Self, String> {
+    fn from_str(s: &str) -> Result<Self, ParseSolverError> {
         let games = s.lines()
-            .map(|line| line.parse::<Game>().unwrap())
-            .collect::<Vec<Game>>()
-            .into_boxed_slice();
+            .map(|line| line.parse::<Game>())
+            .try_collect()?;
         Ok(Day02 { games })
     }
 }
@@ -43,9 +44,9 @@ struct Game {
 }
 
 impl FromStr for Game {
-    type Err = String;
+    type Err = ParseSolverError;
 
-    fn from_str(s: &str) -> Result<Self, String> {
+    fn from_str(s: &str) -> Result<Self, ParseSolverError> {
         let mut split = s.split(": ");
         let id_str = split.next().unwrap_or_else(|| panic!("can't find game id for: '{s}'"));
         let id = id_str[5..].parse().unwrap_or_else(|err| panic!("fail to parse game id for: '{id_str}', error: '{err}'"));

@@ -10,9 +10,9 @@ pub struct Day5 {
 }
 
 impl FromStr for Day5 {
-    type Err = String;
+    type Err = ParseSolverError;
 
-    fn from_str(s: &str) -> Result<Self, String> {
+    fn from_str(s: &str) -> Result<Self, ParseSolverError> {
         let regex = Regex::new(r"([0-9]*),([0-9]*) -> ([0-9]*),([0-9]*)").unwrap();
 
         let mut lines = Vec::new();

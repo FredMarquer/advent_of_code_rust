@@ -12,9 +12,9 @@ pub struct Day4 {
 }
 
 impl FromStr for Day4 {
-    type Err = String;
+    type Err = ParseSolverError;
 
-    fn from_str(s: &str) -> Result<Self, String> {
+    fn from_str(s: &str) -> Result<Self, ParseSolverError> {
         let pat = if s.contains('\r') { "\r\n\r\n" } else { "\n\n" };
         let passports = s.split(pat).map_into().collect_vec();
         Ok(Day4 { passports })

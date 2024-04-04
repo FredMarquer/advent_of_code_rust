@@ -19,9 +19,9 @@ pub struct Day11 {
 }
 
 impl FromStr for Day11 {
-    type Err = String;
+    type Err = ParseSolverError;
 
-    fn from_str(s: &str) -> Result<Self, String> {
+    fn from_str(s: &str) -> Result<Self, ParseSolverError> {
         let mut grid= [0; GRID_CAPACITY];
         for (y, line) in s.lines().enumerate() {
             for (x, c) in line.chars().enumerate() {

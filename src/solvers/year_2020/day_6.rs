@@ -7,9 +7,9 @@ pub struct Day6 {
 }
 
 impl FromStr for Day6 {
-    type Err = String;
+    type Err = ParseSolverError;
 
-    fn from_str(s: &str) -> Result<Self, String> {
+    fn from_str(s: &str) -> Result<Self, ParseSolverError> {
         let pat = if s.contains('\r') { "\r\n\r\n" } else { "\n\n" };
         let groups = s.split(pat).map_into().collect_vec(); 
         Ok(Day6 { groups })

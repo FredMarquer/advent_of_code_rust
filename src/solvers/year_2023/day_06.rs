@@ -6,17 +6,17 @@ pub struct Day06 {
 }
 
 impl FromStr for Day06 {
-    type Err = String;
+    type Err = ParseSolverError;
 
-    fn from_str(s: &str) -> Result<Self, String> {
+    fn from_str(s: &str) -> Result<Self, ParseSolverError> {
         let mut lines = s.lines();
 
         let times = lines.next()
-            .ok_or("times not found")?[5..]
+            .ok_or(ParseSolverError::new("times not found"))?[5..]
             .to_string();
 
         let distances = lines.next()
-            .ok_or("distances not found")?[9..]
+            .ok_or(ParseSolverError::new("distances not found"))?[9..]
             .to_string();
 
         Ok(Day06 { times, distances })
@@ -28,10 +28,10 @@ impl Solver for Day06 {
 
     fn run_part1(&self) -> SolverResult {
         let times = self.times.split_whitespace()
-            .map(|time| time.parse::<i64>().unwrap());
+            .map(|time| time.parse().unwrap());
 
         let distances = self.distances.split_whitespace()
-            .map(|time| time.parse::<i64>().unwrap());
+            .map(|time| time.parse().unwrap());
 
         times.zip(distances)
             .fold(1, |acc, (time, distance)| acc * compute_beat_record(time, distance))

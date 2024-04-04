@@ -8,9 +8,9 @@ pub struct Day13 {
 }
 
 impl FromStr for Day13 {
-    type Err = String;
+    type Err = ParseSolverError;
 
-    fn from_str(s: &str) -> Result<Self, String> {
+    fn from_str(s: &str) -> Result<Self, ParseSolverError> {
         let pat = if s.contains('\r') { "\r\n\r\n" } else { "\n\n" };
         let mut splits = s.split(pat);
 

@@ -7,9 +7,9 @@ pub struct Day16 {
 }
 
 impl FromStr for Day16 {
-    type Err = String;
+    type Err = ParseSolverError;
 
-    fn from_str(s: &str) -> Result<Self, String> {
+    fn from_str(s: &str) -> Result<Self, ParseSolverError> {
         let data = hex::decode(s).unwrap();
         let mut binary_reader = BinaryReader::from_buffer(&data);
         let packet = Packet::from_binary_reader(&mut binary_reader);

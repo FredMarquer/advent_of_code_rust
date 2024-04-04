@@ -5,9 +5,9 @@ pub struct Day8 {
 }
 
 impl FromStr for Day8 {
-    type Err = String;
+    type Err = ParseSolverError;
 
-    fn from_str(s: &str) -> Result<Self, String> {
+    fn from_str(s: &str) -> Result<Self, ParseSolverError> {
         let mut entries = Vec::new();
         for line in s.lines() {
             let mut splits = line.split(" | ");

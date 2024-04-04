@@ -8,19 +8,19 @@ pub struct Day05 {
 }
 
 impl FromStr for Day05 {
-    type Err = String;
+    type Err = ParseSolverError;
 
-    fn from_str(s: &str) -> Result<Self, String> {
-        let pat = if s.contains('\r') { "\r\n\r\n" } else { "\n\n" };
-        let (seeds, maps) = s.split_once(pat).ok_or(format!("fail to split input with pattern: {pat}"))?;
+    fn from_str(s: &str) -> Result<Self, ParseSolverError> {
+        let delimiter = if s.contains('\r') { "\r\n\r\n" } else { "\n\n" };
+        let (seeds, maps) = s.split_once(delimiter).ok_or(ParseSolverError::new(format!("fail to split input with delimiter: {delimiter}")))?;
 
         let seeds = seeds[7..].split_whitespace()
-            .map(|seed| seed.parse::<i64>().unwrap())
-            .collect_vec();
+            .map(|seed| seed.parse())
+            .try_collect()?;
 
-        let maps = maps.split(pat)
-            .map(|map| map.parse::<Map>().unwrap())
-            .collect_vec();
+        let maps = maps.split(delimiter)
+            .map(|map| map.parse())
+            .try_collect()?;
 
         Ok(Day05 { seeds, maps })
     }
@@ -76,12 +76,12 @@ struct Map {
 }
 
 impl FromStr for Map {
-    type Err = String;
+    type Err = ParseSolverError;
 
-    fn from_str(s: &str) -> Result<Self, String> {
+    fn from_str(s: &str) -> Result<Self, ParseSolverError> {
         let mut lines = s.lines();
         lines.next();
-        let ranges = lines.map(|range| range.parse::<MapRange>().unwrap()).collect_vec();
+        let ranges = lines.map(|range| range.parse::<MapRange>()).try_collect()?;
         Ok(Map { ranges })
     }
 }
@@ -162,15 +162,15 @@ struct MapRange {
 }
 
 impl FromStr for MapRange {
-    type Err = String;
+    type Err = ParseSolverError;
 
-    fn from_str(s: &str) -> Result<Self, String> {
+    fn from_str(s: &str) -> Result<Self, ParseSolverError> {
         let mut split = s.split_whitespace();
         Ok(MapRange {
-            destination_start: split.next().unwrap().parse().unwrap(),
+            destination_start: split.next().unwrap().parse()?,
             source_range: Range {
-                start: split.next().unwrap().parse().unwrap(),
-                length: split.next().unwrap().parse().unwrap(),
+                start: split.next().unwrap().parse()?,
+                length: split.next().unwrap().parse()?,
             },
         })
     }

@@ -7,9 +7,9 @@ pub struct Day3 {
 }
 
 impl FromStr for Day3 {
-    type Err = String;
+    type Err = ParseSolverError;
 
-    fn from_str(s: &str) -> Result<Self, String> {
+    fn from_str(s: &str) -> Result<Self, ParseSolverError> {
         let rows = s.lines().map_into().collect_vec();
         Ok(Day3 { rows })
     }

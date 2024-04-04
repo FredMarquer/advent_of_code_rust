@@ -9,9 +9,9 @@ pub struct Day17 {
 }
 
 impl FromStr for Day17 {
-    type Err = String;
+    type Err = ParseSolverError;
 
-    fn from_str(s: &str) -> Result<Self, String> {
+    fn from_str(s: &str) -> Result<Self, ParseSolverError> {
         let regex = Regex::new(r"target area: x=(-?[0-9]*)..(-?[0-9]*), y=(-?[0-9]*)..(-?[0-9]*)").unwrap();
         let captures = regex.captures(s).unwrap();
 

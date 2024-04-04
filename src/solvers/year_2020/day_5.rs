@@ -7,9 +7,9 @@ pub struct Day5 {
 }
 
 impl FromStr for Day5 {
-    type Err = String;
+    type Err = ParseSolverError;
 
-    fn from_str(s: &str) -> Result<Self, String> {
+    fn from_str(s: &str) -> Result<Self, ParseSolverError> {
         let mut seats: [bool; SEAT_COUNT] = [false; SEAT_COUNT];
         let lines = s.lines();
         for line in lines {

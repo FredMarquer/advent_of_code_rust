@@ -6,9 +6,9 @@ pub struct Day3 {
 }
 
 impl FromStr for Day3 {
-    type Err = String;
+    type Err = ParseSolverError;
 
-    fn from_str(input: &str) -> Result<Self, String> {
+    fn from_str(input: &str) -> Result<Self, ParseSolverError> {
         let bit_count = input.lines().next().unwrap().len();
         let values = input.lines().map(|line| i64::from_str_radix(line, 2).unwrap()).collect();
         Ok(Day3 { bit_count, values })

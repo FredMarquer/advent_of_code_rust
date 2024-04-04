@@ -5,9 +5,9 @@ pub struct Day6 {
 }
 
 impl FromStr for Day6 {
-    type Err = String;
+    type Err = ParseSolverError;
 
-    fn from_str(s: &str) -> Result<Self, String> {
+    fn from_str(s: &str) -> Result<Self, ParseSolverError> {
         let fishes = s.split(',').map(|fish| fish.parse().unwrap()).collect();
         Ok(Day6 { fishes })
     }

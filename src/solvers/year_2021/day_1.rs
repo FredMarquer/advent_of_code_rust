@@ -5,9 +5,9 @@ pub struct Day1 {
 }
 
 impl FromStr for Day1 {
-    type Err = String;
+    type Err = ParseSolverError;
 
-    fn from_str(s: &str) -> Result<Self, String> {
+    fn from_str(s: &str) -> Result<Self, ParseSolverError> {
         let values = s.lines().map(|value| value.parse().unwrap()).collect();
         Ok(Day1 { values })
     }

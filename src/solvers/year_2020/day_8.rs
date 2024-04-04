@@ -7,9 +7,9 @@ pub struct Day8 {
 }
 
 impl FromStr for Day8 {
-    type Err = String;
+    type Err = ParseSolverError;
 
-    fn from_str(s: &str) -> Result<Self, String> {
+    fn from_str(s: &str) -> Result<Self, ParseSolverError> {
         let instructions = compile_input(s).into_boxed_slice();
         Ok(Day8 { instructions })
     }

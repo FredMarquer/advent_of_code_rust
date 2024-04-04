@@ -17,9 +17,9 @@ pub struct Day21 {
 }
 
 impl FromStr for Day21 {
-    type Err = String;
+    type Err = ParseSolverError;
 
-    fn from_str(s: &str) -> Result<Self, String> {
+    fn from_str(s: &str) -> Result<Self, ParseSolverError> {
         Ok(Day21 {
             starting_positions: get_starting_positions(s)
         })
