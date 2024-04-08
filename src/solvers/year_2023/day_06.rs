@@ -40,12 +40,12 @@ impl Solver for Day06 {
 
     fn run_part2(&self) -> SolverResult {
         let time = self.times.chars()
-            .filter(|c| c.is_ascii_digit())
-            .fold(0i64, |acc, c| (acc * 10) + i64::from(c.to_digit(10).unwrap()));
+            .filter_map(|c| c.to_digit(10))
+            .fold(0i64, |acc, d| (acc * 10) + i64::from(d));
 
         let distance = self.distances.chars()
-            .filter(|c| c.is_ascii_digit())
-            .fold(0i64, |acc, c| (acc * 10) + i64::from(c.to_digit(10).unwrap()));
+            .filter_map(|c| c.to_digit(10))
+            .fold(0i64, |acc, d| (acc * 10) + i64::from(d));
 
         compute_beat_record_binary_search(time, distance).into()
     }
@@ -53,8 +53,7 @@ impl Solver for Day06 {
 
 fn compute_beat_record(time: i64, distance: i64) -> i64 {
     (1..time)
-        .map(|i| compute_distance(i, time) > distance)
-        .filter(|b| *b)
+        .filter(|i| compute_distance(*i, time) > distance)
         .count()
         .try_into()
         .unwrap()
