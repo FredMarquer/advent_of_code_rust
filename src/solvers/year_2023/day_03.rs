@@ -1,10 +1,6 @@
 use crate::solvers::prelude::*;
-use crate::utils::array_2d::*;
+use crate::utils::Array2D;
 use crate::utils::graph::*;
-
-fn is_symbol(c: char) -> bool {
-    (c < '0' || c > '9') && c != '.'
-}
 
 pub struct Day03 {
     graph: Graph<NodeValue>,
@@ -19,14 +15,14 @@ impl FromStr for Day03 {
     type Err = ParseSolverError;
 
     fn from_str(s: &str) -> Result<Self, ParseSolverError> {
-        let input = Array2D::from_input(s);
-        let mut symbol_node_ids = Array2D::new(input.width(), input.height());
+        let input: Array2D<char> = s.parse()?;
+        let mut symbol_node_ids = Array2D::new(input.sizes());
         let mut graph = Graph::new();
         let mut number = 0;
         let mut number_width = 0;
         for y in 0..input.height() {
             for x in 0..input.width() {
-                let c = input.get(x, y);
+                let c = input.get([x, y]);
                 if let Some(digit) = c.to_digit(10) {
                     number = (number * 10) + digit;
                     number_width += 1;
@@ -88,31 +84,35 @@ impl Solver for Day03 {
     }
 }
 
-fn process_number(number: &mut u32, number_width: &mut usize, x: usize, y: usize, input: &Array2D<char>, symbol_node_ids: &mut Array2D<Option<usize>>, graph: &mut Graph<NodeValue>) {
+fn process_number(number: &mut u32, number_width: &mut i32, x: i32, y: i32, input: &Array2D<char>, symbol_node_ids: &mut Array2D<Option<usize>>, graph: &mut Graph<NodeValue>) {
     if *number == 0 {
         return;
     }
     let number_node_id = graph.create_node(NodeValue::Number(*number));
-    let x_min = x.saturating_sub(*number_width + 1);
-    let x_max = usize::min(x, input.width() - 1);
-    let y_min = y.saturating_sub(1);
-    let y_max = usize::min(y + 1, input.height() - 1);
+    let x_min = x - *number_width - 1;
+    let x_max = i32::min(x, input.width() - 1);
+    let y_min = y - 1;
+    let y_max = i32::min(y + 1, input.height() - 1);
     for y in y_min..=y_max {
         for x in x_min..=x_max {
-            let c = *input.get(x, y);
+            let c = *input.get([x, y]);
             if is_symbol(c) {
-                if let Some(symbol_node_id) = symbol_node_ids.get(x, y) {
+                if let Some(symbol_node_id) = symbol_node_ids.get([x, y]) {
                     graph.create_connection(number_node_id, *symbol_node_id, true)
                 } else {
                     let symbol_node_id = graph.create_node(NodeValue::Symbol(c));
                     graph.create_connection(number_node_id, symbol_node_id, true);
-                    *symbol_node_ids.get_mut(x, y) = Some(symbol_node_id);
+                    *symbol_node_ids.get_mut([x, y]) = Some(symbol_node_id);
                 }
             }
         }
     }
     *number = 0;
     *number_width = 0;
+}
+
+fn is_symbol(c: char) -> bool {
+    (c < '0' || c > '9') && c != '.'
 }
 
 #[cfg(test)]

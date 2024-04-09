@@ -90,7 +90,7 @@ pub struct ParseSolverError {
 }
 
 impl ParseSolverError {
-    fn new(s: impl ToString) -> Self {
+    pub fn new(s: impl ToString) -> Self {
         ParseSolverError { msg: s.to_string() }
     }
 }
