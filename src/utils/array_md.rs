@@ -156,29 +156,44 @@ impl<T> Array2D<T> {
         self.sizes[1]
     }
 
-    pub fn from_str_map(s: &str, mut f: impl FnMut(Point2D, char) -> Result<T, ParseSolverError>) -> Result<Self, ParseSolverError> {
+    pub fn from_str_map(s: &str, inverse_y: bool, f: impl FnMut(Point2D, char) -> Result<T, ParseSolverError>) -> Result<Self, ParseSolverError> {
         let width = s.lines().next().ok_or(ParseSolverError::new("fail to parse array width"))?.chars().count();
         let height = s.lines().count();
         if width  == 0 || height == 0 {
             return Err(ParseSolverError::new(format!("invalid array width (= {width}) or height (= {height})")));
         }
 
-        let size = width * height;
-        let mut data = Vec::with_capacity(size);
-        for (y, line) in s.lines().enumerate() {
-            for (x, c) in line.chars().enumerate() {
-                data.push(f(Point2D::new(x as i32, y as i32), c)?);
-            }
-        }
+        let data = if inverse_y {
+            parse_str_internal(s.lines().rev(), width, height, f)?
+        } else {
+            parse_str_internal(s.lines(), width, height, f)?
+        };
 
-        if data.len() != size {
-            return Err(ParseSolverError::new(format!("array data length (= {}) don't match total size (= {} (width = {}, height = {}))", data.len(), size, width, height)));
-        }
-        
-        Ok(ArrayMD {
+        return Ok(Array2D {
             data,
-            sizes: Point2D::new(width as i32, height as i32)
-        })
+            sizes: Point2D::new(width as i32, height as i32),
+        });
+
+        fn parse_str_internal<'a, T>(lines: impl Iterator<Item = &'a str>, width: usize, height: usize, mut f: impl FnMut(Point2D, char) -> Result<T, ParseSolverError>) -> Result<Vec<T>, ParseSolverError> {
+            let size = width * height;
+            let mut data = Vec::with_capacity(size);
+            for (y, line) in lines.enumerate() {
+                for (x, c) in line.chars().enumerate() {
+                    let coords = Point2D::new(x as i32, y as i32);
+                    data.push(f(coords, c)?);
+                }
+            }
+            if data.len() != size {
+                return Err(ParseSolverError::new(format!("array data length (= {}) don't match total size (= {} (width = {}, height = {}))", data.len(), size, width, height)));
+            }
+            Ok(data)
+        }
+    }
+}
+
+impl Array2D<char> {
+    pub fn from_str(s: &str, inverse_y: bool) -> Result<Self, ParseSolverError> {
+        ArrayMD::from_str_map(s, inverse_y, |_, c| Ok(c))
     }
 }
 
@@ -186,7 +201,7 @@ impl FromStr for Array2D<char> {
     type Err = ParseSolverError;
 
     fn from_str(s: &str) -> Result<Self, ParseSolverError> {
-        ArrayMD::from_str_map(s, |_, c| Ok(c))
+        ArrayMD::from_str(s, false)
     }
 }
 
