@@ -118,7 +118,7 @@ impl<const D: usize, T: Clone> ArrayMD<D, T> {
         }
 
         let width = usize::try_from(self.sizes[0]).unwrap();
-        let mut current = Point::zero();
+        let mut current = Point::ZERO;
         loop {
             let src_start = self.get_index(current);
             let src_end = src_start + width;
@@ -167,17 +167,17 @@ impl<T> Array2D<T> {
         let mut data = Vec::with_capacity(size);
         for (y, line) in s.lines().enumerate() {
             for (x, c) in line.chars().enumerate() {
-                data.push(f(Point::new([x as i32, y as i32]), c)?);
+                data.push(f(Point2D::new(x as i32, y as i32), c)?);
             }
         }
 
         if data.len() != size {
             return Err(ParseSolverError::new(format!("array data length (= {}) don't match total size (= {} (width = {}, height = {}))", data.len(), size, width, height)));
         }
-
+        
         Ok(ArrayMD {
             data,
-            sizes: Point::new([width as i32, height as i32])
+            sizes: Point2D::new(width as i32, height as i32)
         })
     }
 }
