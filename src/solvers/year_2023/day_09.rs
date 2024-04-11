@@ -26,19 +26,17 @@ impl Solver for Day09 {
     const INPUT_PATH: &'static str = "inputs/2023/09.txt";
 
     fn run_part1(&self) -> SolverResult {
-        let mut sum = 0;
-        for history in self.histories.iter() {
-            sum += process_history(history.iter())
-        }
-        sum.into()
+        self.histories.iter()
+            .map(|history| process_history(history.iter()))
+            .sum::<i64>()
+            .into()
     }
 
     fn run_part2(&self) -> SolverResult {
-        let mut sum = 0;
-        for history in self.histories.iter() {
-            sum += process_history(history.iter().rev())
-        }
-        sum.into()
+        self.histories.iter()
+            .map(|history| process_history(history.iter().rev()))
+            .sum::<i64>()
+            .into()
     }
 }
 
