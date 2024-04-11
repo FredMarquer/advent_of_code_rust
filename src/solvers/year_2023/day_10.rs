@@ -13,7 +13,7 @@ impl FromStr for Day10 {
     fn from_str(s: &str) -> Result<Self, ParseSolverError> {
         // parse input
         let mut start = None;
-        let mut grid = Array2D::from_str_map(s, |coords, c| {
+        let mut grid = Array2D::from_str_map(s, true, |coords, c| {
             if c == 'S' {
                 start = Some(coords);
             }
@@ -26,15 +26,9 @@ impl FromStr for Day10 {
         };
         grid[start] = find_start_tile_type(&grid, start)?;
 
-        // extend the grid for part 2
-        let extended_grid_sizes = grid.sizes() + [2, 2];
-        let mut extended_grid = Array2D::new(extended_grid_sizes);
-        grid.copy_to_with_offset(&mut extended_grid, [1, 1]);
-        let extended_start = start + [1, 1];
-
         Ok(Day10 {
-            grid: extended_grid,
-            start: extended_start,
+            grid: grid,
+            start: start,
         })
     }
 }
@@ -48,29 +42,54 @@ impl Solver for Day10 {
     }
 
     fn run_part2(&self) -> SolverResult {
-        let mut zones: Array2D<TileZone> = Array2D::new(self.grid.sizes());
-        run_loop(&self.grid, self.start, Some(&mut zones));
-        
-        flood_fill_zones(&mut zones);
+        let mut loop_grid: Array2D<Tile> = Array2D::new(self.grid.sizes());
+        run_loop(&self.grid, self.start, Some(&mut loop_grid));
 
-        let zone_to_count = match zones[[0, 0]] {
-            TileZone::Left => TileZone::Right,
-            TileZone::Right => TileZone::Left,
-            zone => panic!("invalid zone: {:?}", zone),
-        };
+        let mut area = 0;
+        for y in 0..loop_grid.height() {
+            let mut state = ParseAreaState::Outside;
+            for x in 0..loop_grid.width() {
+                let tile = loop_grid[[x, y]];
+                let mut entered_loop_this_frame = false;
+                let was_on_loop = match state {
+                    ParseAreaState::OnLoop(_) => true,
+                    _ => false,
+                };
 
-        zones.iter()
-            .filter(|zone| **zone == zone_to_count)
-            .count()
-            .into()
+                if !was_on_loop && tile != Tile::Empty {
+                    let enter_direction = tile.definition().connections.unwrap()[0];
+                    assert!(enter_direction == Point2D::UP || enter_direction == Point2D::DOWN);
+                    state = ParseAreaState::OnLoop(OnLoopData {
+                        was_inside: state == ParseAreaState::Inside,
+                        enter_direction: enter_direction,
+                    });
+                    entered_loop_this_frame = true;
+                }
+
+                if state == ParseAreaState::Inside {
+                    area += 1;
+                }
+
+                if let ParseAreaState::OnLoop(on_loop_data) = &state {
+                    if tile.definition().contains_connection(on_loop_data.enter_direction.opposite()) {
+                        state = if on_loop_data.was_inside { ParseAreaState::Outside } else { ParseAreaState::Inside };
+                    } else if !entered_loop_this_frame && tile.definition().contains_connection(on_loop_data.enter_direction) {
+                        state = if on_loop_data.was_inside { ParseAreaState::Inside } else { ParseAreaState::Outside };
+                    }
+                }
+            }
+            assert_eq!(state, ParseAreaState::Outside);
+        }
+
+        area.into()
     }
 }
 
 fn find_start_tile_type(grid: &Array2D<Tile>, start: Point2D) -> Result<Tile, ParseSolverError> {
-    let mut connections = [Direction::NONE, Direction::NONE];
+    let mut connections = [Point2D::ZERO, Point2D::ZERO];
     let mut i = 0;
-    for dir in Direction::ALL {
-        let neighbour_coords = start + dir.to_offset();
+    for dir in [Point2D::UP, Point2D::RIGHT, Point2D::DOWN, Point2D::LEFT] {
+        let neighbour_coords = start + dir;
         if let Some(neighbour) = grid.try_get(neighbour_coords) {
             if neighbour.definition().contains_connection(dir.opposite()) {
                 if i >= 2 {
@@ -87,20 +106,20 @@ fn find_start_tile_type(grid: &Array2D<Tile>, start: Point2D) -> Result<Tile, Pa
     }
 
     let tile = match connections {
-        [Direction::NONE,  Direction::NONE] => Tile::Empty,
-        [Direction::NORTH, Direction::SOUTH] | [Direction::SOUTH, Direction::NORTH] => Tile::NorthSouth,
-        [Direction::EAST,  Direction::WEST]  | [Direction::WEST,  Direction::EAST]  => Tile::EastWeast,
-        [Direction::NORTH, Direction::EAST]  | [Direction::EAST,  Direction::NORTH] => Tile::NorthEast,
-        [Direction::NORTH, Direction::WEST]  | [Direction::WEST,  Direction::NORTH] => Tile::NorthWest,
-        [Direction::SOUTH, Direction::WEST]  | [Direction::WEST,  Direction::SOUTH] => Tile::SouthWest,
-        [Direction::SOUTH, Direction::EAST]  | [Direction::EAST,  Direction::SOUTH] => Tile::SouthEast,
+        [Point2D::ZERO,  Point2D::ZERO] => Tile::Empty,
+        [Point2D::UP,    Point2D::DOWN]  | [Point2D::DOWN,  Point2D::UP]    => Tile::NorthSouth,
+        [Point2D::RIGHT, Point2D::LEFT]  | [Point2D::LEFT,  Point2D::RIGHT] => Tile::EastWeast,
+        [Point2D::UP,    Point2D::RIGHT] | [Point2D::RIGHT, Point2D::UP]    => Tile::NorthEast,
+        [Point2D::UP,    Point2D::LEFT]  | [Point2D::LEFT,  Point2D::UP]    => Tile::NorthWest,
+        [Point2D::DOWN,  Point2D::LEFT]  | [Point2D::LEFT,  Point2D::DOWN]  => Tile::SouthWest,
+        [Point2D::DOWN,  Point2D::RIGHT] | [Point2D::RIGHT, Point2D::DOWN]  => Tile::SouthEast,
         _ => return Err(ParseSolverError::new(format!("tile not found for connections: {connections:?}"))),
     };
 
     Ok(tile)
 }
 
-fn run_loop(grid: &Array2D<Tile>, start: Point2D, mut zones: Option<&mut Array2D<TileZone>>) -> i32 {
+fn run_loop(grid: &Array2D<Tile>, start: Point2D, mut loop_grid: Option<&mut Array2D<Tile>>) -> i32 {
     let mut current_coords = start;
     let mut from = grid[start].definition().connections.unwrap()[0].opposite();
     let mut distance = 0;
@@ -110,11 +129,11 @@ fn run_loop(grid: &Array2D<Tile>, start: Point2D, mut zones: Option<&mut Array2D
         let tile_def = current_tile.definition();
         let next_dir = tile_def.get_next_dir(from);
 
-        if let Some(zones) = zones.as_deref_mut() {
-            update_zones(grid, zones, current_coords, from);
+        if let Some(loop_grid) = loop_grid.as_deref_mut() {
+            loop_grid[current_coords] = current_tile;
         }
 
-        current_coords = current_coords + next_dir.to_offset();
+        current_coords = current_coords + next_dir;
         from = next_dir;
         distance += 1;
 
@@ -126,98 +145,7 @@ fn run_loop(grid: &Array2D<Tile>, start: Point2D, mut zones: Option<&mut Array2D
     distance
 }
 
-fn update_zones(grid: &Array2D<Tile>, zones: &mut Array2D<TileZone>, coords: Point2D, from: Direction) {
-    zones[coords] = TileZone::Loop;
-    
-    let (left_directions, right_directions) = grid[coords].definition().get_left_right_directions(from);
-
-    for direction in left_directions {
-        if let Some(direction) = direction {
-            let neighbour_coords = coords + direction.to_offset();
-            if let Some(neighbour_zone) = zones.try_get_mut(neighbour_coords) {
-                if *neighbour_zone != TileZone::Loop {
-                    *neighbour_zone = TileZone::Left;
-                }
-            }
-        }
-    }
-
-    for direction in right_directions {
-        if let Some(direction) = direction {
-            let neighbour_coords = coords + direction.to_offset();
-            if let Some(neighbour_zone) = zones.try_get_mut(neighbour_coords) {
-                if *neighbour_zone != TileZone::Loop {
-                    *neighbour_zone = TileZone::Right;
-                }
-            }
-        }
-    }
-}
-
-fn flood_fill_zones(zones: &mut Array2D<TileZone>) {
-    let mut queue: Vec<Point2D> = Vec::new();
-    for y in 0..zones.height() {
-        for x in 0..zones.width() {
-            let zone = zones.get([x, y]);
-            if *zone == TileZone::Left || *zone == TileZone::Right {
-                queue.push(Point2D::new([x, y]));
-            }
-        }
-    }
-    
-    loop {
-        let Some(coords) = queue.pop() else {
-            break;
-        };
-        let zone = *zones.get(coords);
-        for dir in Direction::ALL {
-            let neighbour_coords = coords + dir.to_offset();
-            if let Some(neighbour_zone) = zones.try_get_mut(neighbour_coords) {
-                if *neighbour_zone == TileZone::None {
-                    *neighbour_zone = zone;
-                    queue.push(neighbour_coords);
-                }
-            }
-        }
-    }
-}
-
-#[derive(Eq, PartialEq, Clone, Copy, Debug)]
-struct Direction {
-    dir: usize,
-}
-
-impl Direction {
-    const NONE : Direction = Direction { dir: usize::MAX };
-    const NORTH: Direction = Direction { dir: 0 };
-    const EAST : Direction = Direction { dir: 1 };
-    const SOUTH: Direction = Direction { dir: 2 };
-    const WEST : Direction = Direction { dir: 3 };
-    const ALL  : [Direction; 4] = [Direction::NORTH, Direction::EAST, Direction::SOUTH, Direction::WEST];
-
-    const OFFSETS: [Point2D; 4] = [
-        Point2D::new([ 0, -1]),
-        Point2D::new([ 1,  0]),
-        Point2D::new([ 0,  1]),
-        Point2D::new([-1,  0]),
-    ];
-
-    fn opposite(&self) -> Direction {
-        if *self == Direction::NONE {
-            panic!("can't get opposite of NONE");
-        }
-        Direction { dir: (self.dir + 2) % 4 }
-    }
-
-    fn to_offset(&self) -> Point2D {
-        if *self == Direction::NONE {
-            panic!("can't convert NONE to offset");
-        }
-        Direction::OFFSETS[self.dir]
-    }
-}
-
-#[derive(Clone, Copy, Default)]
+#[derive(Clone, Copy, Default, Eq, PartialEq)]
 enum Tile {
     #[default]
     Empty,
@@ -231,41 +159,13 @@ enum Tile {
 
 impl Tile {
     const DEFINITIONS: [TileDefinition; 7] = [
-        TileDefinition { // Empty
-            connections: None,
-            left_directions: [None, None],
-            right_directions: [None, None],
-        },
-        TileDefinition { // NorthSouth
-            connections: Some([Direction::NORTH, Direction::SOUTH]),
-            left_directions: [Some(Direction::EAST), None],
-            right_directions: [Some(Direction::WEST), None],
-        },
-        TileDefinition { // EastWeast
-            connections: Some([Direction::EAST, Direction::WEST]),
-            left_directions: [Some(Direction::SOUTH), None],
-            right_directions: [Some(Direction::NORTH), None],
-        },
-        TileDefinition { // NorthEast
-            connections: Some([Direction::NORTH, Direction::EAST]),
-            left_directions: [None, None],
-            right_directions: [Some(Direction::WEST), Some(Direction::SOUTH)],
-        },
-        TileDefinition { // NorthWest
-            connections: Some([Direction::NORTH, Direction::WEST]),
-            left_directions: [Some(Direction::EAST), Some(Direction::SOUTH)],
-            right_directions: [None, None],
-        },
-        TileDefinition { // SouthWest
-            connections: Some([Direction::SOUTH, Direction::WEST]),
-            left_directions: [None, None],
-            right_directions: [Some(Direction::EAST), Some(Direction::NORTH)],
-        },
-        TileDefinition { // SouthEast
-            connections: Some([Direction::SOUTH, Direction::EAST]),
-            left_directions: [Some(Direction::WEST), Some(Direction::NORTH)],
-            right_directions: [None, None],
-        },
+        TileDefinition::new(None),
+        TileDefinition::new(Some([Point2D::UP,    Point2D::DOWN])),
+        TileDefinition::new(Some([Point2D::RIGHT, Point2D::LEFT])),
+        TileDefinition::new(Some([Point2D::UP,    Point2D::RIGHT])),
+        TileDefinition::new(Some([Point2D::UP,    Point2D::LEFT])),
+        TileDefinition::new(Some([Point2D::DOWN,  Point2D::LEFT])),
+        TileDefinition::new(Some([Point2D::DOWN,  Point2D::RIGHT])),
     ];
 
     fn from_char(c: char) -> Result<Self, ParseSolverError> {
@@ -287,41 +187,42 @@ impl Tile {
 }
 
 struct TileDefinition {
-    connections: Option<[Direction; 2]>,
-    left_directions: [Option<Direction>; 2],
-    right_directions: [Option<Direction>; 2],
+    connections: Option<[Point2D; 2]>,
 }
 
 impl TileDefinition {
-    fn contains_connection(&self, dir: Direction) -> bool {
+    const fn new(connections: Option<[Point2D; 2]>) -> TileDefinition {
+        TileDefinition { connections }
+    }
+
+    fn contains_connection(&self, dir: Point2D) -> bool {
         if let Some(connections) = &self.connections {
             return connections[0] == dir || connections[1] == dir;
         }
         false
     }
 
-    fn get_next_dir(&self, from: Direction) -> Direction {
-        let connections = self.connections.unwrap();
-        if from.opposite() == connections[0] { connections[1] } else { connections[0] }
-    }
-
-    fn get_left_right_directions(&self, from: Direction) -> ([Option<Direction>; 2], [Option<Direction>; 2]) {
+    fn get_next_dir(&self, from: Point2D) -> Point2D {
         let connections = self.connections.unwrap();
         if from.opposite() == connections[0] {
-            (self.left_directions, self.right_directions)
+            connections[1]
         } else {
-            (self.right_directions, self.left_directions)
+            connections[0]
         }
     }
 }
 
-#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
-enum TileZone {
-    #[default]
-    None,
-    Loop,
-    Left,
-    Right,
+#[derive(Eq, PartialEq, Debug)]
+enum ParseAreaState {
+    Outside,
+    OnLoop(OnLoopData),
+    Inside,
+}
+
+#[derive(Eq, PartialEq, Debug)]
+struct OnLoopData {
+    was_inside: bool,
+    enter_direction: Point2D,
 }
 
 #[cfg(test)]
