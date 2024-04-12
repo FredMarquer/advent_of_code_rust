@@ -14,6 +14,10 @@ impl<const D: usize> Point<D> {
     pub const MIN:  Point<D> = Point { coords: [i32::MIN; D] };
     pub const MAX:  Point<D> = Point { coords: [i32::MAX; D] };
 
+    pub fn is_zero(&self) -> bool {
+        *self == Point::ZERO
+    }
+
     pub fn max(self, other: Self) -> Self {
         let mut coords = [0; D];
         for d in 0..D {
