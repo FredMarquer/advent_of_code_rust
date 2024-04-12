@@ -58,7 +58,7 @@ impl Solver for Day17 {
 
 impl Day17 {
     fn find_x_velocity_range(&self) -> RangeInclusive<i64> {
-        assert!(self.target_area.x_min > 0);
+        debug_assert!(self.target_area.x_min > 0);
 
         let mut x_velocity = 0;
         let mut x = 0;
@@ -69,7 +69,7 @@ impl Day17 {
                 break x_velocity;
             }
 
-            assert!(x <= self.target_area.x_max, "no possible x velocity found");
+            debug_assert!(x <= self.target_area.x_max, "no possible x velocity found");
 
             x_velocity += 1;
         };
@@ -78,13 +78,13 @@ impl Day17 {
     }
 
     fn find_y_velocity_range(&self) -> RangeInclusive<i64> {
-        assert!(self.target_area.y_min < 0);
+        debug_assert!(self.target_area.y_min < 0);
         self.target_area.y_min..=(-self.target_area.y_min - 1)
     }
 
     fn simulate(&self, mut x_velocity: i64, mut y_velocity: i64) -> bool {
-        assert!(self.target_area.x_min > 0);
-        assert!(self.target_area.y_min < 0);
+        debug_assert!(self.target_area.x_min > 0);
+        debug_assert!(self.target_area.y_min < 0);
 
         let mut x = 0;
         let mut y = 0;

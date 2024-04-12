@@ -24,7 +24,7 @@ impl FromStr for Day5 {
                 offset /= 2;
             }
 
-            assert!(!seats[seat_index]);
+            debug_assert!(!seats[seat_index]);
             seats[seat_index] = true;
         }
 

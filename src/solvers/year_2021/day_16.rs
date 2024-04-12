@@ -61,7 +61,7 @@ impl Packet {
                 loop {
                     let sub_packet = Packet::from_binary_reader(binary_reader);
                     sub_packets.push(sub_packet);
-                    assert!(binary_reader.bit_position() <= end_position);
+                    debug_assert!(binary_reader.bit_position() <= end_position);
                     if binary_reader.bit_position() == end_position {
                         break;
                     }
@@ -149,7 +149,7 @@ impl<'a> BinaryReader<'a> {
     }
 
     fn read_bits(&mut self, bits_count: usize) -> usize {
-        assert!(bits_count > 0 && bits_count <= mem::size_of::<usize>() * 8);
+        debug_assert!(bits_count > 0 && bits_count <= mem::size_of::<usize>() * 8);
 
         let mut reaming_bits_to_read = bits_count;
         let mut value = 0;

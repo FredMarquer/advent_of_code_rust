@@ -62,8 +62,8 @@ fn compute_beat_record(time: i64, distance: i64) -> i64 {
 fn compute_beat_record_binary_search(time: i64, distance: i64) -> i64 {
     let mut l = 0;
     let mut r = (time / 2) + (time % 2);
-    assert!(compute_distance(l, time) < distance);
-    assert!(compute_distance(r, time) > distance);
+    debug_assert!(compute_distance(l, time) < distance);
+    debug_assert!(compute_distance(r, time) > distance);
     
     loop {
         if l >= (r - 1) {
@@ -71,8 +71,8 @@ fn compute_beat_record_binary_search(time: i64, distance: i64) -> i64 {
         }
 
         let mid = (l + r) / 2;
-        assert_ne!(mid, l);
-        assert_ne!(mid, r);
+        debug_assert_ne!(mid, l);
+        debug_assert_ne!(mid, r);
 
         if compute_distance(mid, time) > distance {
             r = mid
@@ -81,9 +81,9 @@ fn compute_beat_record_binary_search(time: i64, distance: i64) -> i64 {
         }
     }
 
-    assert_eq!(l, r - 1);
-    assert!(compute_distance(l, time) < distance);
-    assert!(compute_distance(r, time) > distance);
+    debug_assert_eq!(l, r - 1);
+    debug_assert!(compute_distance(l, time) < distance);
+    debug_assert!(compute_distance(r, time) > distance);
     
     time - (l * 2) - 1
 }

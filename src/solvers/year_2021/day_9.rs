@@ -87,7 +87,7 @@ impl HeightMap {
             }
         }
 
-        assert_eq!(array.len(), array.capacity());
+        debug_assert_eq!(array.len(), array.capacity());
 
         HeightMap {
             array,
@@ -97,8 +97,8 @@ impl HeightMap {
     }
 
     fn get_index(&self, x: usize, y: usize) -> usize {
-        assert!(x < self.width);
-        assert!(y < self.height);
+        debug_assert!(x < self.width);
+        debug_assert!(y < self.height);
         x + y * self.width
     }
 

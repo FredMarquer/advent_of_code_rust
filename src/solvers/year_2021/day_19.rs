@@ -83,8 +83,8 @@ impl Solver for Day19 {
 }
 
 fn resolve(scanner_reports: &mut [ScannerReport], beacon_positions: &mut Vec<Position>, scanner_positions: &mut Vec<Position>) {
-    assert_eq!(beacon_positions.len(), 0);
-    assert_eq!(scanner_positions.len(), 0);
+    debug_assert_eq!(beacon_positions.len(), 0);
+    debug_assert_eq!(scanner_positions.len(), 0);
 
     let scanner_count = scanner_reports.len();
     *scanner_positions = vec![Position::default(); scanner_count];
@@ -121,8 +121,8 @@ fn resolve(scanner_reports: &mut [ScannerReport], beacon_positions: &mut Vec<Pos
         }
     }
 
-    assert_eq!(scanners_to_find.len(), 0);
-    assert_eq!(last_scanners_found.len(), 0);
+    debug_assert_eq!(scanners_to_find.len(), 0);
+    debug_assert_eq!(last_scanners_found.len(), 0);
 
     for scanner_index in 0..scanner_count {
         let scanner_position = &scanner_positions[scanner_index];

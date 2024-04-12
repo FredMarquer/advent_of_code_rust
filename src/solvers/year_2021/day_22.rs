@@ -196,7 +196,7 @@ impl Node {
                     }
                 }
 
-                assert!(new_nodes.len() >= 2);
+                debug_assert!(new_nodes.len() >= 2);
                 self.node_type = NodeType::Branch(new_nodes);
             }
         }

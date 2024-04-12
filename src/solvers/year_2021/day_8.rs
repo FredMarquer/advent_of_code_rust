@@ -114,7 +114,7 @@ impl Digit {
         let mut bits = 0;
         for c in s.chars() {
             let offset = (c as usize) - ('a' as usize);
-            assert!(offset < 7);
+            debug_assert!(offset < 7);
             bits |= 1 << offset;
         }
 

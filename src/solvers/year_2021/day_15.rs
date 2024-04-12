@@ -21,7 +21,7 @@ impl FromStr for Day15 {
     fn from_str(s: &str) -> Result<Self, ParseSolverError> {
         let map_part1 = Map::from_input(s);
         let map_part2 = Map::from_other_map(&map_part1);
-        assert_eq!(map_part1.nodes[0].cost, map_part2.nodes[0].cost);
+        debug_assert_eq!(map_part1.nodes[0].cost, map_part2.nodes[0].cost);
 
         Ok(Day15 { map_part1, map_part2 })
     }

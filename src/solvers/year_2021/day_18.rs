@@ -16,7 +16,7 @@ impl FromStr for Day18 {
         for line in s.lines() {
             let mut chars = line.chars();
             let first = chars.next().unwrap();
-            assert_eq!(first, '[');
+            debug_assert_eq!(first, '[');
             pairs.push(Box::new(Pair::from_chars(&mut chars)));
         }
 
@@ -64,10 +64,10 @@ impl Pair {
     fn from_chars(chars: &mut Chars) -> Pair {
         let left = Element::from_chars(chars);
         let separator = chars.next().unwrap();
-        assert_eq!(separator, ',');
+        debug_assert_eq!(separator, ',');
         let right = Element::from_chars(chars);
         let end = chars.next().unwrap();
-        assert_eq!(end, ']');
+        debug_assert_eq!(end, ']');
 
         Pair { left, right }
     }
@@ -92,7 +92,7 @@ impl Pair {
     }
 
     fn try_explode_internal(&mut self, state: &mut ExplodeState, nesting_level: usize) {
-        assert!(!state.found);
+        debug_assert!(!state.found);
         self.left.try_explode(state, nesting_level);
         if state.found {
             if !state.right_value_added {
@@ -107,7 +107,7 @@ impl Pair {
     }
 
     fn add_to_first_left_number(&mut self, state: &mut ExplodeState) {
-        assert!(!state.left_value_added);
+        debug_assert!(!state.left_value_added);
         self.right.add_to_first_left_number(state);
         if state.left_value_added {
             return;
@@ -116,7 +116,7 @@ impl Pair {
     }
 
     fn add_to_first_right_number(&mut self, state: &mut ExplodeState) {
-        assert!(!state.right_value_added);
+        debug_assert!(!state.right_value_added);
         self.left.add_to_first_right_number(state);
         if state.right_value_added {
             return;
@@ -167,7 +167,7 @@ impl Element {
     }
 
     fn try_explode(&mut self, state: &mut ExplodeState, mut nesting_level: usize) {
-        assert!(!state.found);
+        debug_assert!(!state.found);
         if let Element::Pair(pair) = self {
             nesting_level += 1;
             if nesting_level > 3 {
@@ -185,7 +185,7 @@ impl Element {
     }
 
     fn add_to_first_left_number(&mut self, state: &mut ExplodeState) {
-        assert!(!state.left_value_added);
+        debug_assert!(!state.left_value_added);
         match self {
             Element::RegularNumber(regular_number) => {
                 *regular_number += state.left_value;
@@ -198,7 +198,7 @@ impl Element {
     }
 
     fn add_to_first_right_number(&mut self, state: &mut ExplodeState) {
-        assert!(!state.right_value_added);
+        debug_assert!(!state.right_value_added);
         match self {
             Element::RegularNumber(regular_number) => {
                 *regular_number += state.right_value;

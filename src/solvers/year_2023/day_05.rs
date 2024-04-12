@@ -45,7 +45,7 @@ impl Solver for Day05 {
     }
 
     fn run_part2(&self) -> SolverResult {
-        assert!(self.seeds.len() % 2 == 0);
+        debug_assert!(self.seeds.len() % 2 == 0);
         let mut min = i64::MAX;
         for seed_range in self.seeds.chunks(2) {
             let mut seed_ranges = vec![Range {

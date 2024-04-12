@@ -70,7 +70,7 @@ impl Day08 {
 type NodeId = [char; 3];
 
 fn parse_node_id(s: &str) -> NodeId {
-    assert_eq!(s.len(), 3);
+    debug_assert_eq!(s.len(), 3);
     let mut node_id = ['x'; 3];
     for (i, c) in s.chars().enumerate() {
         node_id[i] = c;

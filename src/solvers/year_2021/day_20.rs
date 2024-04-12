@@ -106,7 +106,7 @@ impl Image {
     }
 
     fn set_size(&mut self, width: usize, heigth: usize) {
-        assert!(width * heigth <= self.pixels.len());
+        debug_assert!(width * heigth <= self.pixels.len());
         self.width = width;
         self.heigth = heigth;
     }
@@ -140,9 +140,9 @@ impl Image {
     }
 
     fn apply_image_enhancement_algorithm_internal(&self, output_image: &mut Image, image_enhancement_algorithm: &[bool], current_iteration: usize) {
-        assert!(output_image.width == self.width + 2);
-        assert!(output_image.heigth == self.heigth + 2);
-        assert!(!(image_enhancement_algorithm[0] && image_enhancement_algorithm[image_enhancement_algorithm.len() - 1]));
+        debug_assert!(output_image.width == self.width + 2);
+        debug_assert!(output_image.heigth == self.heigth + 2);
+        debug_assert!(!(image_enhancement_algorithm[0] && image_enhancement_algorithm[image_enhancement_algorithm.len() - 1]));
 
         let infinite_pixel = if current_iteration % 2 == 1 { image_enhancement_algorithm[0] } else { image_enhancement_algorithm[image_enhancement_algorithm.len() - 1] };
         

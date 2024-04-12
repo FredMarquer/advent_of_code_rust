@@ -103,7 +103,7 @@ impl<const ROOM_SIZE: usize> State<ROOM_SIZE> {
     }
 
     fn add_line_to_rooms(&mut self, line: &str, regex: &Regex, room_depth: usize) {
-        assert!(room_depth < ROOM_SIZE);
+        debug_assert!(room_depth < ROOM_SIZE);
         let captures = regex.captures(line).unwrap();
         for room_index in 0..ROOM_COUNT {
             let capture = captures.get(room_index + 1).unwrap().as_str().chars().next().unwrap();
@@ -112,8 +112,8 @@ impl<const ROOM_SIZE: usize> State<ROOM_SIZE> {
     }
 
     fn swap_room_depths(&mut self, room_depth_a: usize, room_depth_b: usize) {
-        assert!(room_depth_a < ROOM_SIZE);
-        assert!(room_depth_b < ROOM_SIZE);
+        debug_assert!(room_depth_a < ROOM_SIZE);
+        debug_assert!(room_depth_b < ROOM_SIZE);
         for room_index in 0..ROOM_COUNT {
             self.rooms[room_index].swap(room_depth_a, room_depth_b);
         }
@@ -181,7 +181,7 @@ impl<const ROOM_SIZE: usize> State<ROOM_SIZE> {
     fn path_length(&self, room_index: usize, room_depth: usize, hallway_index: usize, check_collision: bool, ignore_collision_at_hallway_index: bool) -> u32 {
         let entrance_hallway_index = ENTRANCE_HALLWAY_INDEXES[room_index];
         if check_collision {
-            assert!(!ignore_collision_at_hallway_index || self.rooms[room_index][room_depth] == u8::MAX);
+            debug_assert!(!ignore_collision_at_hallway_index || self.rooms[room_index][room_depth] == u8::MAX);
             if entrance_hallway_index <= hallway_index {
                 for index in entrance_hallway_index..=hallway_index {
                     if ignore_collision_at_hallway_index && index == hallway_index {
@@ -296,8 +296,8 @@ impl<'a, const ROOM_SIZE: usize> Iterator for MoveIterator<'a, ROOM_SIZE> {
                     }
                 }
 
-                assert_ne!(room_depth, usize::MAX);
-                assert_ne!(amphipod_to_move, u8::MAX);
+                debug_assert_ne!(room_depth, usize::MAX);
+                debug_assert_ne!(amphipod_to_move, u8::MAX);
 
                 let to_hallway_index = VALID_HALLWAY_INDEXES[self.hallway_index];
                 let amphipod_in_hallway = current_state.hallway[to_hallway_index];
@@ -319,7 +319,7 @@ impl<'a, const ROOM_SIZE: usize> Iterator for MoveIterator<'a, ROOM_SIZE> {
                 }
             } else {
                 self.room_index += 1;
-                assert_eq!(self.hallway_index, 0);
+                debug_assert_eq!(self.hallway_index, 0);
             }
         }
 

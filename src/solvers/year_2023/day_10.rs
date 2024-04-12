@@ -58,7 +58,7 @@ impl Solver for Day10 {
 
                 if !was_on_loop && tile != Tile::Empty {
                     let enter_direction = tile.definition().connections.unwrap()[0];
-                    assert!(enter_direction == Point2D::UP || enter_direction == Point2D::DOWN);
+                    debug_assert!(enter_direction == Point2D::UP || enter_direction == Point2D::DOWN);
                     state = ParseAreaState::OnLoop(OnLoopData {
                         was_inside: state == ParseAreaState::Inside,
                         enter_direction: enter_direction,
@@ -78,7 +78,7 @@ impl Solver for Day10 {
                     }
                 }
             }
-            assert_eq!(state, ParseAreaState::Outside);
+            debug_assert_eq!(state, ParseAreaState::Outside);
         }
 
         area.into()

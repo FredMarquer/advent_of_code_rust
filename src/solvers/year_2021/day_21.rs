@@ -64,13 +64,13 @@ fn get_starting_positions(input: &str) -> [usize; PLAYER_COUNT] {
         index += 1;
     }
 
-    assert!(index == PLAYER_COUNT, "The input player count (= {index}) doesn't match the expected player count (= {PLAYER_COUNT}).");
+    debug_assert!(index == PLAYER_COUNT, "The input player count (= {index}) doesn't match the expected player count (= {PLAYER_COUNT}).");
 
     starting_positions
 }
 
 fn get_player_starting_position(line: &str) -> usize {
-    assert!(line.len() > 28);
+    debug_assert!(line.len() > 28);
     let value: usize = line[28..line.len()].parse().unwrap();
     value - 1
 }

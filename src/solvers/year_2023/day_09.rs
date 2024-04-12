@@ -54,7 +54,7 @@ fn process_value(value: i64, sequences: &mut Vec<i64>, depth: usize) {
             sequences.push(value);
         }
     } else {
-        assert!(depth < sequences.len());
+        debug_assert!(depth < sequences.len());
         let delta = value - sequences[depth];
         process_value(delta, sequences, depth + 1);
         sequences[depth] = value;

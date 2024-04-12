@@ -88,8 +88,8 @@ impl Day4 {
 }
 
 fn get_cell_index(x: usize, y: usize) -> usize {
-    assert!(x < BOARD_SIZE);
-    assert!(y < BOARD_SIZE);
+    debug_assert!(x < BOARD_SIZE);
+    debug_assert!(y < BOARD_SIZE);
     x + y * BOARD_SIZE
 }
 

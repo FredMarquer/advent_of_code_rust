@@ -22,7 +22,7 @@ impl Solver for Day8 {
 
         let mut program = Program::from_instructions(&self.instructions);
         let output = program.run();
-        assert_eq!(output.result, ProgramResults::InfiniteLoop);
+        debug_assert_eq!(output.result, ProgramResults::InfiniteLoop);
         
         output.accumulator.into()
     }
