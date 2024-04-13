@@ -9,6 +9,7 @@ use std::time::Instant;
 
 mod prelude {
     pub use crate::solvers::{Solver, SolverResult, ParseSolverError};
+    pub use crate::parse_solver_error;
     pub use std::str::FromStr;
 }
 
@@ -110,6 +111,13 @@ impl From<ParseIntError> for ParseSolverError {
     fn from(err: ParseIntError) -> Self {
         ParseSolverError::new(err)
     }
+}
+
+#[macro_export]
+macro_rules! parse_solver_error {
+    ($($arg:tt)*) => {{
+        ParseSolverError::new(format!($($arg)*))
+    }}
 }
 
 pub fn run_solver(year: &str, day: &str, run_part_1: bool, run_part_2: bool) {
