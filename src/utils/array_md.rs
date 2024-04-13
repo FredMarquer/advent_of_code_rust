@@ -14,7 +14,7 @@ impl<const D: usize, T> ArrayMD<D, T> {
         self.sizes
     }
 
-    pub fn size(&self, d: usize) -> i32 {
+    pub fn size(&self, d: usize) -> i64 {
         self.sizes[d]
     }
 
@@ -148,11 +148,11 @@ impl<const D: usize, T: Clone> ArrayMD<D, T> {
 pub type Array2D<T> = ArrayMD<2, T>;
 
 impl<T> Array2D<T> {
-    pub fn width(&self) -> i32 {
+    pub fn width(&self) -> i64 {
         self.sizes[0]
     }
 
-    pub fn height(&self) -> i32 {
+    pub fn height(&self) -> i64 {
         self.sizes[1]
     }
 
@@ -171,7 +171,7 @@ impl<T> Array2D<T> {
 
         return Ok(Array2D {
             data,
-            sizes: Point2D::new(width as i32, height as i32),
+            sizes: Point2D::new(width as i64, height as i64),
         });
 
         fn parse_str_internal<'a, T>(lines: impl Iterator<Item = &'a str>, width: usize, height: usize, mut f: impl FnMut(Point2D, char) -> Result<T, ParseSolverError>) -> Result<Vec<T>, ParseSolverError> {
@@ -179,7 +179,7 @@ impl<T> Array2D<T> {
             let mut data = Vec::with_capacity(size);
             for (y, line) in lines.enumerate() {
                 for (x, c) in line.chars().enumerate() {
-                    let coords = Point2D::new(x as i32, y as i32);
+                    let coords = Point2D::new(x as i64, y as i64);
                     data.push(f(coords, c)?);
                 }
             }
@@ -208,15 +208,15 @@ impl FromStr for Array2D<char> {
 pub type Array3D<T> = ArrayMD<3, T>;
 
 impl<T> Array3D<T> {
-    pub fn width(&self) -> i32 {
+    pub fn width(&self) -> i64 {
         self.sizes[0]
     }
 
-    pub fn height(&self) -> i32 {
+    pub fn height(&self) -> i64 {
         self.sizes[1]
     }
 
-    pub fn depth(&self) -> i32 {
+    pub fn depth(&self) -> i64 {
         self.sizes[2]
     }
 }

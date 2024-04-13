@@ -84,15 +84,15 @@ impl Solver for Day03 {
     }
 }
 
-fn process_number(number: &mut u32, number_width: &mut i32, x: i32, y: i32, input: &Array2D<char>, symbol_node_ids: &mut Array2D<Option<usize>>, graph: &mut Graph<NodeValue>) {
+fn process_number(number: &mut u32, number_width: &mut i64, x: i64, y: i64, input: &Array2D<char>, symbol_node_ids: &mut Array2D<Option<usize>>, graph: &mut Graph<NodeValue>) {
     if *number == 0 {
         return;
     }
     let number_node_id = graph.create_node(NodeValue::Number(*number));
-    let x_min = i32::max(x - *number_width - 1, 0);
-    let x_max = i32::min(x, input.width() - 1);
-    let y_min = i32::max(y - 1, 0);
-    let y_max = i32::min(y + 1, input.height() - 1);
+    let x_min = i64::max(x - *number_width - 1, 0);
+    let x_max = i64::min(x, input.width() - 1);
+    let y_min = i64::max(y - 1, 0);
+    let y_max = i64::min(y + 1, input.height() - 1);
     for y in y_min..=y_max {
         for x in x_min..=x_max {
             let c = *input.get([x, y]);

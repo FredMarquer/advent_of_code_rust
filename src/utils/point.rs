@@ -5,17 +5,29 @@ use std::cmp::Ord;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct Point<const D: usize> {
-    coords: [i32; D]
+    coords: [i64; D]
 }
 
 impl<const D: usize> Point<D> {
     pub const ZERO: Point<D> = Point { coords: [0; D] };
     pub const ONE:  Point<D> = Point { coords: [1; D] };
-    pub const MIN:  Point<D> = Point { coords: [i32::MIN; D] };
-    pub const MAX:  Point<D> = Point { coords: [i32::MAX; D] };
+    pub const MIN:  Point<D> = Point { coords: [i64::MIN; D] };
+    pub const MAX:  Point<D> = Point { coords: [i64::MAX; D] };
 
     pub fn is_zero(&self) -> bool {
         *self == Point::ZERO
+    }
+
+    pub fn magnitude(&self) -> i64 {
+        self.as_slice()
+            .iter()
+            .map(|coord| coord.abs())
+            .sum()
+    }
+
+    pub fn distance(self, other: Self) -> i64 {
+        self.sub(other)
+            .magnitude()
     }
 
     pub fn max(self, other: Self) -> Self {
@@ -46,23 +58,32 @@ impl<const D: usize> Point<D> {
         self.mul(-1)
     }
 
-    pub fn dot(self, other: Self) -> i32 {
-        self.mul(other).as_slice().iter().sum()
+    pub fn dot(self, other: Self) -> i64 {
+        self.mul(other)
+            .as_slice()
+            .iter()
+            .sum()
     }
 
-    pub fn max_coord(&self) -> i32 {
-        *self.as_slice().iter().max().unwrap()
+    pub fn max_coord(&self) -> i64 {
+        *self.as_slice()
+            .iter()
+            .max()
+            .unwrap()
     }
 
-    pub fn min_coord(&self) -> i32 {
-        *self.as_slice().iter().min().unwrap()
+    pub fn min_coord(&self) -> i64 {
+        *self.as_slice()
+            .iter()
+            .min()
+            .unwrap()
     }
 
-    pub const fn as_slice(&self) -> &[i32; D] {
+    pub const fn as_slice(&self) -> &[i64; D] {
         &self.coords
     }
 
-    pub fn as_mut_slice(&mut self) -> &mut [i32; D] {
+    pub fn as_mut_slice(&mut self) -> &mut [i64; D] {
         &mut self.coords
     }
 }
@@ -126,7 +147,7 @@ impl<const D: usize, T: Into<Point<D>>> Div<T> for Point<D> {
 }
 
 impl<const D: usize> Index<usize> for Point<D> {
-    type Output = i32;
+    type Output = i64;
 
     fn index(&self, index: usize) -> &Self::Output {
         &self.coords[index]
@@ -134,7 +155,7 @@ impl<const D: usize> Index<usize> for Point<D> {
 }
 
 impl<const D: usize> Index<i32> for Point<D> {
-    type Output = i32;
+    type Output = i64;
 
     fn index(&self, index: i32) -> &Self::Output {
         &self.coords[usize::try_from(index).unwrap()]
@@ -153,15 +174,32 @@ impl<const D: usize> IndexMut<i32> for Point<D> {
     }
 }
 
-impl<const D: usize> From<i32> for Point<D> {
-    fn from(value: i32) -> Self {
+impl<const D: usize> From<i64> for Point<D> {
+    fn from(value: i64) -> Self {
         Self { coords: [value; D] }
     }
 }
 
-impl<const D: usize> From<[i32; D]> for Point<D> {
-    fn from(coords: [i32; D]) -> Self {
+impl<const D: usize> From<[i64; D]> for Point<D> {
+    fn from(coords: [i64; D]) -> Self {
         Self { coords }
+    }
+}
+
+impl<const D: usize> From<[usize; D]> for Point<D> {
+    fn from(coords: [usize; D]) -> Self {
+        let mut new_coors = [0; D];
+        for d in 0..D {
+            new_coors[d] = i64::try_from(coords[d]).unwrap();
+        }
+        Self { coords: new_coors }
+    }
+}
+
+use std::fmt;
+impl<const D: usize> fmt::Display for Point<D> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "({:?})", self.coords)
     }
 }
 
@@ -173,29 +211,29 @@ impl Point2D {
     pub const UP:    Point2D = Point2D::new( 0,  1);
     pub const DOWN:  Point2D = Point2D::new( 0, -1);
 
-    pub const fn new(x: i32, y: i32) -> Self {
+    pub const fn new(x: i64, y: i64) -> Self {
         Point2D { coords: [x, y]}
     }
 
-    pub const fn x(&self) -> i32 {
+    pub const fn x(&self) -> i64 {
         self.coords[0]
     }
 
-    pub fn x_mut(&mut self) -> &mut i32 {
+    pub fn x_mut(&mut self) -> &mut i64 {
         &mut self.coords[0]
     }
 
-    pub const fn y(&self) -> i32 {
+    pub const fn y(&self) -> i64 {
         self.coords[1]
     }
 
-    pub fn y_mut(&mut self) -> &mut i32 {
+    pub fn y_mut(&mut self) -> &mut i64 {
         &mut self.coords[1]
     }
 }
 
-impl From<(i32, i32)> for Point2D {
-    fn from(coords: (i32, i32)) -> Self {
+impl From<(i64, i64)> for Point2D {
+    fn from(coords: (i64, i64)) -> Self {
         Self { coords: [coords.0, coords.1] }
     }
 }
@@ -210,31 +248,31 @@ impl Point3D {
     pub const FORWARD:  Point3D = Point3D::new( 0,  0,  1);
     pub const BACKWARD: Point3D = Point3D::new( 0,  0, -1);
 
-    pub const fn new(x: i32, y: i32, z: i32) -> Self {
+    pub const fn new(x: i64, y: i64, z: i64) -> Self {
         Point3D { coords: [x, y, z]}
     }
 
-    pub const fn x(&self) -> i32 {
+    pub const fn x(&self) -> i64 {
         self.coords[0]
     }
 
-    pub fn x_mut(&mut self) -> &mut i32 {
+    pub fn x_mut(&mut self) -> &mut i64 {
         &mut self.coords[0]
     }
 
-    pub const fn y(&self) -> i32 {
+    pub const fn y(&self) -> i64 {
         self.coords[1]
     }
 
-    pub fn y_mut(&mut self) -> &mut i32 {
+    pub fn y_mut(&mut self) -> &mut i64 {
         &mut self.coords[1]
     }
 
-    pub const fn z(&self) -> i32 {
+    pub const fn z(&self) -> i64 {
         self.coords[2]
     }
 
-    pub fn z_mut(&mut self) -> &mut i32 {
+    pub fn z_mut(&mut self) -> &mut i64 {
         &mut self.coords[2]
     }
 
@@ -259,8 +297,8 @@ impl Point3D {
     }
 }
 
-impl From<(i32, i32, i32)> for Point3D {
-    fn from(coords: (i32, i32, i32)) -> Self {
+impl From<(i64, i64, i64)> for Point3D {
+    fn from(coords: (i64, i64, i64)) -> Self {
         Self { coords: [coords.0, coords.1, coords.2] }
     }
 }

@@ -1,6 +1,5 @@
 use crate::solvers::prelude::*;
-use crate::utils::Array2D;
-use crate::utils::Point2D;
+use crate::utils::{Array2D, Point2D};
 
 pub struct Day10 {
     grid: Array2D<Tile>,
