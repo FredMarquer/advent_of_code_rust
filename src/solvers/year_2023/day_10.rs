@@ -46,38 +46,38 @@ impl Solver for Day10 {
 
         let mut area = 0;
         for y in 0..loop_grid.height() {
-            let mut state = ParseAreaState::Outside;
+            let mut state = Outside;
             for x in 0..loop_grid.width() {
                 let tile = loop_grid[[x, y]];
                 let mut entered_loop_this_frame = false;
                 let was_on_loop = match state {
-                    ParseAreaState::OnLoop(_) => true,
+                    OnLoop{..} => true,
                     _ => false,
                 };
 
                 if !was_on_loop && tile != Tile::Empty {
                     let enter_direction = tile.definition().connections.unwrap()[0];
                     debug_assert!(enter_direction == Point2D::UP || enter_direction == Point2D::DOWN);
-                    state = ParseAreaState::OnLoop(OnLoopData {
-                        was_inside: state == ParseAreaState::Inside,
+                    state = OnLoop {
+                        was_inside: state == Inside,
                         enter_direction: enter_direction,
-                    });
+                    };
                     entered_loop_this_frame = true;
                 }
 
-                if state == ParseAreaState::Inside {
+                if state == Inside {
                     area += 1;
                 }
 
-                if let ParseAreaState::OnLoop(on_loop_data) = &state {
-                    if tile.definition().contains_connection(on_loop_data.enter_direction.opposite()) {
-                        state = if on_loop_data.was_inside { ParseAreaState::Outside } else { ParseAreaState::Inside };
-                    } else if !entered_loop_this_frame && tile.definition().contains_connection(on_loop_data.enter_direction) {
-                        state = if on_loop_data.was_inside { ParseAreaState::Inside } else { ParseAreaState::Outside };
+                if let OnLoop{was_inside, enter_direction} = &state {
+                    if tile.definition().contains_connection(enter_direction.opposite()) {
+                        state = if *was_inside { Outside } else { Inside };
+                    } else if !entered_loop_this_frame && tile.definition().contains_connection(*enter_direction) {
+                        state = if *was_inside { Inside } else { Outside };
                     }
                 }
             }
-            debug_assert_eq!(state, ParseAreaState::Outside);
+            debug_assert_eq!(state, Outside);
         }
 
         area.into()
@@ -214,15 +214,16 @@ impl TileDefinition {
 #[derive(Eq, PartialEq, Debug)]
 enum ParseAreaState {
     Outside,
-    OnLoop(OnLoopData),
+    OnLoop {
+        was_inside: bool,
+        enter_direction: Point2D
+    },
     Inside,
 }
 
-#[derive(Eq, PartialEq, Debug)]
-struct OnLoopData {
-    was_inside: bool,
-    enter_direction: Point2D,
-}
+use ParseAreaState::Outside;
+use ParseAreaState::OnLoop;
+use ParseAreaState::Inside;
 
 #[cfg(test)]
 mod tests {
