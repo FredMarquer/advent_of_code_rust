@@ -65,15 +65,10 @@ fn compute_beat_record_binary_search(time: i64, distance: i64) -> i64 {
     debug_assert!(compute_distance(l, time) < distance);
     debug_assert!(compute_distance(r, time) > distance);
     
-    loop {
-        if l >= (r - 1) {
-            break;
-        }
-
+    while l < (r - 1) {
         let mid = (l + r) / 2;
         debug_assert_ne!(mid, l);
         debug_assert_ne!(mid, r);
-
         if compute_distance(mid, time) > distance {
             r = mid
         } else {

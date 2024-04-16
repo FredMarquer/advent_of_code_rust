@@ -99,11 +99,7 @@ impl Map {
     fn convert_ranges(&self, ranges: &mut Vec<Range>) {
         let mut converted_ranges = Vec::new(); // this vector could be reuse to avoid allocation
         let mut i = 0;
-        'outter: loop {
-            if i >= ranges.len() {
-                break;
-            }
-
+        'outter: while  i < ranges.len() {
             let mut range = ranges[i];
             for map_range in self.ranges.iter() {
                 if range.start <= map_range.source_range.end() && range.end() >= map_range.source_range.start {
