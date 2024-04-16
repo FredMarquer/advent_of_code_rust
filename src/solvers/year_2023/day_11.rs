@@ -67,7 +67,7 @@ impl Day11 {
         let mut sum = 0;
         for i in 0..galaxies.len() {
             for j in (i+1)..galaxies.len() {
-                sum += galaxies[i].distance(galaxies[j]);
+                sum += galaxies[i].manhattan_distance(galaxies[j]);
             }
         }
 

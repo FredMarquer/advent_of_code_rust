@@ -18,16 +18,16 @@ impl<const D: usize> Point<D> {
         *self == Point::ZERO
     }
 
-    pub fn magnitude(&self) -> i64 {
+    pub fn manhattan_magnitude(&self) -> i64 {
         self.as_slice()
             .iter()
             .map(|coord| coord.abs())
             .sum()
     }
 
-    pub fn distance(self, other: Self) -> i64 {
+    pub fn manhattan_distance(self, other: Self) -> i64 {
         self.sub(other)
-            .magnitude()
+            .manhattan_magnitude()
     }
 
     pub fn max(self, other: Self) -> Self {
