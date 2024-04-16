@@ -4,6 +4,7 @@ use std::str::FromStr;
 use crate::solvers::ParseSolverError;
 use crate::utils::{Point, Point2D};
 
+#[derive(Clone)]
 pub struct ArrayMD<const D: usize, T> {
     data: Vec<T>,
     sizes: Point<D>,
@@ -157,7 +158,7 @@ impl<T> Array2D<T> {
     }
 
     pub fn from_str_map(s: &str, inverse_y: bool, f: impl FnMut(Point2D, char) -> Result<T, ParseSolverError>) -> Result<Self, ParseSolverError> {
-        let width = s.lines().next().ok_or(ParseSolverError::new("fail to parse array width"))?.chars().count();
+        let width = s.lines().next().ok_or(ParseSolverError::new("fail to parse array width"))?.len();
         let height = s.lines().count();
         if width  == 0 || height == 0 {
             return Err(ParseSolverError::new(format!("invalid array width (= {width}) or height (= {height})")));
@@ -188,6 +189,17 @@ impl<T> Array2D<T> {
             }
             Ok(data)
         }
+    }
+
+    pub fn print(&self, f: impl Fn(&T) -> char) {
+        print!("\n");
+        for y in 0..self.height() {
+            for x in 0..self.width() {
+                print!("{}", f(&self[[x, y]]));
+            }
+            print!("\n");
+        }
+        print!("\n");
     }
 }
 
