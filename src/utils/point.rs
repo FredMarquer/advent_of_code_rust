@@ -1,5 +1,5 @@
 use std::convert::From;
-use std::ops::{Add, Sub, Mul, Div};
+use std::ops::{Add, Sub, Mul, Div, AddAssign, SubAssign, MulAssign, DivAssign};
 use std::ops::{Index, IndexMut};
 use std::cmp::Ord;
 
@@ -16,6 +16,10 @@ impl<const D: usize> Point<D> {
 
     pub fn is_zero(&self) -> bool {
         *self == Point::ZERO
+    }
+
+    pub fn is_unit(&self) -> bool {
+        self.manhattan_magnitude() == 1
     }
 
     pub fn manhattan_magnitude(&self) -> i64 {
@@ -107,6 +111,15 @@ impl<const D: usize, T: Into<Point<D>>> Add<T> for Point<D> {
     }
 }
 
+impl<const D: usize, T: Into<Point<D>>> AddAssign<T> for Point<D> {
+    fn add_assign(&mut self, other: T) {
+        let other: Point<D> = other.into();
+        for d in 0..D {
+            self.coords[d] += other.coords[d];
+        }
+    }
+}
+
 impl<const D: usize, T: Into<Point<D>>> Sub<T> for Point<D> {
     type Output = Self;
 
@@ -117,6 +130,15 @@ impl<const D: usize, T: Into<Point<D>>> Sub<T> for Point<D> {
             coords[d] = self.coords[d] - other.coords[d];
         }
         Self { coords }
+    }
+}
+
+impl<const D: usize, T: Into<Point<D>>> SubAssign<T> for Point<D> {
+    fn sub_assign(&mut self, other: T) {
+        let other: Point<D> = other.into();
+        for d in 0..D {
+            self.coords[d] -= other.coords[d];
+        }
     }
 }
 
@@ -133,6 +155,15 @@ impl<const D: usize, T: Into<Point<D>>> Mul<T> for Point<D> {
     }
 }
 
+impl<const D: usize, T: Into<Point<D>>> MulAssign<T> for Point<D> {
+    fn mul_assign(&mut self, other: T) {
+        let other: Point<D> = other.into();
+        for d in 0..D {
+            self.coords[d] *= other.coords[d];
+        }
+    }
+}
+
 impl<const D: usize, T: Into<Point<D>>> Div<T> for Point<D> {
     type Output = Self;
 
@@ -143,6 +174,15 @@ impl<const D: usize, T: Into<Point<D>>> Div<T> for Point<D> {
             coords[d] = self.coords[d] / other.coords[d];
         }
         Self { coords }
+    }
+}
+
+impl<const D: usize, T: Into<Point<D>>> DivAssign<T> for Point<D> {
+    fn div_assign(&mut self, other: T) {
+        let other: Point<D> = other.into();
+        for d in 0..D {
+            self.coords[d] /= other.coords[d];
+        }
     }
 }
 
