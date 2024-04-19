@@ -255,6 +255,14 @@ impl Point2D {
         Point2D { coords: [x, y]}
     }
 
+    pub const fn is_horizontal(&self) -> bool {
+        self.x() != 0 && self.y() == 0
+    }
+
+    pub const fn is_vertical(&self) -> bool {
+        self.x() == 0 && self.y() != 0
+    }
+
     pub const fn x(&self) -> i64 {
         self.coords[0]
     }
