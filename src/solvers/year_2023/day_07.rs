@@ -200,7 +200,7 @@ mod tests {
     use super::*;
     use indoc::indoc;
 
-    const TEST_INPUT: &str = indoc!{
+    static TEST_INPUT: &str = indoc!{
        "32T3K 765
         T55J5 684
         KK677 28

@@ -52,7 +52,7 @@ mod tests {
 
     #[test]
     fn test() {
-        const TEST_INPUT: &str = indoc!{"
+        static TEST_INPUT: &str = indoc!{"
             199
             200
             208

@@ -52,7 +52,7 @@ mod tests {
 
     #[test]
     fn test() {
-        const TEST_INPUT: &str = "3,4,3,1,2";
+        static TEST_INPUT: &str = "3,4,3,1,2";
 
         let day = Day6::from_str(TEST_INPUT).unwrap();
         assert_eq!(day.run_part1(), 5934.into(), "Part1");

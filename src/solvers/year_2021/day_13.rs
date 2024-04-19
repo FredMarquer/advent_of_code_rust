@@ -152,7 +152,7 @@ mod tests {
 
     #[test]
     fn test() {
-        const TEST_INPUT: &str = indoc!{"
+        static TEST_INPUT: &str = indoc!{"
             6,10
             0,14
             9,10
@@ -176,7 +176,7 @@ mod tests {
             fold along x=5
         "};
 
-        const TEST_PART2_RESULT: &str = indoc!{"
+        static TEST_PART2_RESULT: &str = indoc!{"
         
             #####
             #...#

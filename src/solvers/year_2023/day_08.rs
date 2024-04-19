@@ -83,7 +83,7 @@ mod tests {
     use super::*;
     use indoc::indoc;
 
-    const TEST_INPUT_1A: &str = indoc!{
+    static TEST_INPUT_1A: &str = indoc!{
        "RL
 
         AAA = (BBB, CCC)
@@ -95,7 +95,7 @@ mod tests {
         ZZZ = (ZZZ, ZZZ)"
     };
 
-    const TEST_INPUT_1B: &str = indoc!{
+    static TEST_INPUT_1B: &str = indoc!{
        "LLR
 
         AAA = (BBB, BBB)
@@ -103,7 +103,7 @@ mod tests {
         ZZZ = (ZZZ, ZZZ)"
     };
 
-    const TEST_INPUT_2: &str = indoc!{
+    static TEST_INPUT_2: &str = indoc!{
        "LR
 
         11A = (11B, XXX)

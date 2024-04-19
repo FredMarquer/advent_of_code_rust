@@ -2,7 +2,8 @@ use crate::solvers::prelude::*;
 
 const PLAYER_COUNT: usize = 2;
 const BOARD_SIZE: usize = 10;
-const DIRAC_ROLLS: [DiracRoll; 7] = [
+
+static DIRAC_ROLLS: [DiracRoll; 7] = [
     DiracRoll::new(3, 1),
     DiracRoll::new(4, 3),
     DiracRoll::new(5, 6),
@@ -76,7 +77,7 @@ fn get_player_starting_position(line: &str) -> usize {
 }
 
 fn dirac_turn(game_state: GameState, player_index: usize, universe_count: usize, player_win_counts: &mut [usize; 2]) {
-    for dirac_roll in DIRAC_ROLLS {
+    for dirac_roll in DIRAC_ROLLS.iter() {
         let mut game_state = game_state; // Copy the game state
         let universe_count = universe_count * dirac_roll.count;
 
@@ -153,7 +154,7 @@ mod tests {
 
     #[test]
     fn test() {
-        const TEST_INPUT: &str = indoc!{"
+        static TEST_INPUT: &str = indoc!{"
             Player 1 starting position: 4
             Player 2 starting position: 8
         "};

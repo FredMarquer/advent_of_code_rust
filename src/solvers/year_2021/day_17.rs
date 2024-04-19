@@ -128,7 +128,7 @@ mod tests {
 
     #[test]
     fn test() {
-        const TEST_INPUT: &str = "target area: x=20..30, y=-10..-5";
+        static TEST_INPUT: &str = "target area: x=20..30, y=-10..-5";
 
         let day = Day17::from_str(TEST_INPUT).unwrap();
         assert_eq!(day.run_part1(), 45.into(), "Part1");

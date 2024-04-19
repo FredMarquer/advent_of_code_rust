@@ -155,7 +155,7 @@ mod tests {
 
     #[test]
     fn test() {
-        const TEST_INPUT: &str = indoc!{"
+        static TEST_INPUT: &str = indoc!{"
             v...>>.vv>
             .vv>>.vv..
             >>.>v>...v

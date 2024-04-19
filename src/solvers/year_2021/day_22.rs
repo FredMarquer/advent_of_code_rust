@@ -230,14 +230,14 @@ mod tests {
 
     #[test]
     fn test() {
-        const TEST_INPUT_1A: &str = indoc!{"
+        static TEST_INPUT_1A: &str = indoc!{"
             on x=10..12,y=10..12,z=10..12
             on x=11..13,y=11..13,z=11..13
             off x=9..11,y=9..11,z=9..11
             on x=10..10,y=10..10,z=10..10
         "};
 
-        const TEST_INPUT_1B: &str = indoc!{"
+        static TEST_INPUT_1B: &str = indoc!{"
             on x=-20..26,y=-36..17,z=-47..7
             on x=-20..33,y=-21..23,z=-26..28
             on x=-22..28,y=-29..23,z=-38..16
@@ -262,7 +262,7 @@ mod tests {
             on x=967..23432,y=45373..81175,z=27513..53682
         "};
 
-        const TEST_INPUT_2: &str = indoc!{"
+        static TEST_INPUT_2: &str = indoc!{"
             on x=-5..47,y=-31..22,z=-19..33
             on x=-44..5,y=-27..21,z=-14..35
             on x=-49..-1,y=-11..42,z=-10..38

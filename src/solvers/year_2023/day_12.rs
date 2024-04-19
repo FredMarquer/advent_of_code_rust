@@ -155,7 +155,7 @@ mod tests {
     use super::*;
     use indoc::indoc;
 
-    const TEST_INPUT: &str = indoc!{
+    static TEST_INPUT: &str = indoc!{
        "???.### 1,1,3
         .??..??...?##. 1,1,3
         ?#?#?#?#?#?#?#? 1,3,1,6

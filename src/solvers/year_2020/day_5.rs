@@ -63,11 +63,11 @@ mod tests {
 
     #[test]
     fn test() {
-        const TEST_INPUT_1A: &str = indoc!{"
+        static TEST_INPUT_1A: &str = indoc!{"
             FBFBBFFRLR
         "};
 
-        const TEST_INPUT_1B: &str = indoc!{"
+        static TEST_INPUT_1B: &str = indoc!{"
             BFFFBBFRRR
             FFFBBBFRRR
             BBFFBBFRLL

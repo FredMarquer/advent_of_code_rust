@@ -5,13 +5,14 @@ use crate::solvers::prelude::*;
 
 use regex::Regex;
 
-const REGEX: &str = r"#([A-D])#([A-D])#([A-D])#([A-D])#";
-const NEW_RAW_1: &str = "#D#C#B#A#";
-const NEW_RAW_2: &str = "#D#B#A#C#";
 const ROOM_COUNT: usize = 4;
-const MOVE_COSTS: [u32; ROOM_COUNT] = [1, 10, 100, 1000];
-const VALID_HALLWAY_INDEXES: [usize; 7] = [0, 1, 3, 5, 7, 9, 10];
-const ENTRANCE_HALLWAY_INDEXES: [usize; ROOM_COUNT] = [2, 4, 6, 8];
+
+static REGEX: &str = r"#([A-D])#([A-D])#([A-D])#([A-D])#";
+static NEW_RAW_1: &str = "#D#C#B#A#";
+static NEW_RAW_2: &str = "#D#B#A#C#";
+static MOVE_COSTS: [u32; ROOM_COUNT] = [1, 10, 100, 1000];
+static VALID_HALLWAY_INDEXES: [usize; 7] = [0, 1, 3, 5, 7, 9, 10];
+static ENTRANCE_HALLWAY_INDEXES: [usize; ROOM_COUNT] = [2, 4, 6, 8];
 
 pub struct Day23 {
     initial_state: State<2>,
@@ -355,7 +356,7 @@ mod tests {
 
     #[test]
     fn test() {
-        const TEST_INPUT: &str = indoc!{"
+        static TEST_INPUT: &str = indoc!{"
             #############
             #...........#
             ###B#C#B#D###

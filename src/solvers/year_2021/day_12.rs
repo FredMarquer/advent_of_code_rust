@@ -149,7 +149,7 @@ mod tests {
 
     #[test]
     fn test() {
-        const TEST_INPUT: &str = indoc!{"
+        static TEST_INPUT: &str = indoc!{"
             start-A
             start-b
             A-c
@@ -159,7 +159,7 @@ mod tests {
             b-end
         "};
 
-        const TEST_INPUT_1B: &str = indoc!{"
+        static TEST_INPUT_1B: &str = indoc!{"
             dc-end
             HN-start
             start-kj

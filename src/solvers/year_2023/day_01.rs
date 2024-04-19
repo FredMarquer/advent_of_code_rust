@@ -1,6 +1,6 @@
 use crate::solvers::prelude::*;
 
-const NUMBERS: [&str; 9] = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
+static NUMBERS: [&str; 9] = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
 
 pub struct Day01 {
     input: String,
@@ -85,14 +85,14 @@ mod tests {
     use super::*;
     use indoc::indoc;
 
-    const TEST_INPUT_1: &str = indoc!{
+    static TEST_INPUT_1: &str = indoc!{
        "1abc2
         pqr3stu8vwx
         a1b2c3d4e5f
         treb7uchet"
     };
 
-    const TEST_INPUT_2: &str = indoc!{
+    static TEST_INPUT_2: &str = indoc!{
        "two1nine
         eightwothree
         abcone2threexyz

@@ -156,17 +156,17 @@ enum Tile {
     SouthEast,
 }
 
-impl Tile {
-    const DEFINITIONS: [TileDefinition; 7] = [
-        TileDefinition::new(None),
-        TileDefinition::new(Some([Point2D::UP,    Point2D::DOWN])),
-        TileDefinition::new(Some([Point2D::RIGHT, Point2D::LEFT])),
-        TileDefinition::new(Some([Point2D::UP,    Point2D::RIGHT])),
-        TileDefinition::new(Some([Point2D::UP,    Point2D::LEFT])),
-        TileDefinition::new(Some([Point2D::DOWN,  Point2D::LEFT])),
-        TileDefinition::new(Some([Point2D::DOWN,  Point2D::RIGHT])),
-    ];
+static DEFINITIONS: [TileDefinition; 7] = [
+    TileDefinition::new(None),
+    TileDefinition::new(Some([Point2D::UP,    Point2D::DOWN])),
+    TileDefinition::new(Some([Point2D::RIGHT, Point2D::LEFT])),
+    TileDefinition::new(Some([Point2D::UP,    Point2D::RIGHT])),
+    TileDefinition::new(Some([Point2D::UP,    Point2D::LEFT])),
+    TileDefinition::new(Some([Point2D::DOWN,  Point2D::LEFT])),
+    TileDefinition::new(Some([Point2D::DOWN,  Point2D::RIGHT])),
+];
 
+impl Tile {
     fn from_char(c: char) -> Result<Self, ParseSolverError> {
         match c {
             '|' => Ok(Tile::NorthSouth),
@@ -181,7 +181,7 @@ impl Tile {
     }
 
     fn definition(&self) -> &'static TileDefinition {
-        &Tile::DEFINITIONS[*self as usize]
+        &DEFINITIONS[*self as usize]
     }
 }
 
@@ -230,7 +230,7 @@ mod tests {
     use super::*;
     use indoc::indoc;
 
-    const TEST_INPUT_1A: &str = indoc!{
+    static TEST_INPUT_1A: &str = indoc!{
        "-L|F7
         7S-7|
         L|7||
@@ -238,7 +238,7 @@ mod tests {
         L|-JF"
     };
 
-    const TEST_INPUT_1B: &str = indoc!{
+    static TEST_INPUT_1B: &str = indoc!{
        "7-F7-
         .FJ|7
         SJLL7
@@ -246,7 +246,7 @@ mod tests {
         LJ.LJ"
     };
 
-    const TEST_INPUT_2A: &str = indoc!{
+    static TEST_INPUT_2A: &str = indoc!{
        "...........
         .S-------7.
         .|F-----7|.
@@ -258,7 +258,7 @@ mod tests {
         ..........."
      };
 
-     const TEST_INPUT_2B: &str = indoc!{
+     static TEST_INPUT_2B: &str = indoc!{
        "..........
         .S------7.
         .|F----7|.
@@ -270,7 +270,7 @@ mod tests {
         .........."
       };
  
-     const TEST_INPUT_2C: &str = indoc!{
+      static TEST_INPUT_2C: &str = indoc!{
        ".F----7F7F7F7F-7....
         .|F--7||||||||FJ....
         .||.FJ||||||||L7....
@@ -283,7 +283,7 @@ mod tests {
         ....L---J.LJ.LJLJ..."
      };
 
-     const TEST_INPUT_2D: &str = indoc!{
+     static TEST_INPUT_2D: &str = indoc!{
        "FF7FSF7F7F7F7F7F---7
         L|LJ||||||||||||F--J
         FL-7LJLJ||||||LJL-77

@@ -75,7 +75,7 @@ mod tests {
 
     #[test]
     fn test() {
-        const TEST_INPUT: &str = "16,1,2,0,4,2,7,1,2,14";
+        static TEST_INPUT: &str = "16,1,2,0,4,2,7,1,2,14";
 
         let day = Day7::from_str(TEST_INPUT).unwrap();
         assert_eq!(day.run_part1(), 37.into(), "Part1");

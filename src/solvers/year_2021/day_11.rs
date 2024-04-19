@@ -3,7 +3,7 @@ use crate::solvers::prelude::*;
 const GRID_SIZE: usize = 10;
 const GRID_CAPACITY: usize = GRID_SIZE * GRID_SIZE;
 
-const NEIGHBOUR_DIR: [(isize, isize); 8] = [
+static NEIGHBOUR_DIR: [(isize, isize); 8] = [
     (-1, -1),
     (-1,  0),
     (-1,  1),
@@ -114,7 +114,7 @@ mod tests {
 
     #[test]
     fn test() {
-        const TEST_INPUT: &str = indoc!{"
+        static TEST_INPUT: &str = indoc!{"
             5483143223
             2745854711
             5264556173

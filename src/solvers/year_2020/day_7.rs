@@ -152,7 +152,7 @@ mod tests {
 
     #[test]
     fn test() {
-        const TEST_INPUT: &str = indoc!{"
+        static TEST_INPUT: &str = indoc!{"
             light red bags contain 1 bright white bag, 2 muted yellow bags.
             dark orange bags contain 3 bright white bags, 4 muted yellow bags.
             bright white bags contain 1 shiny gold bag.
@@ -164,7 +164,7 @@ mod tests {
             dotted black bags contain no other bags.
         "};
 
-        const TEST_INPUT_2B: &str = indoc!{"
+        static TEST_INPUT_2B: &str = indoc!{"
             shiny gold bags contain 2 dark red bags.
             dark red bags contain 2 dark orange bags.
             dark orange bags contain 2 dark yellow bags.

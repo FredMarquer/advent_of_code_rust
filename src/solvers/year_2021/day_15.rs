@@ -3,7 +3,7 @@ use std::cmp::Ordering;
 
 use crate::solvers::prelude::*;
 
-const NEIGHBOUR_DIRS: [(isize, isize); 4] = [
+static NEIGHBOUR_DIRS: [(isize, isize); 4] = [
     (-1,  0),
     ( 1,  0),
     ( 0, -1),
@@ -269,7 +269,7 @@ mod tests {
 
     #[test]
     fn test() {
-        const TEST_INPUT: &str = indoc!{"
+        static TEST_INPUT: &str = indoc!{"
             1163751742
             1381373672
             2136511328

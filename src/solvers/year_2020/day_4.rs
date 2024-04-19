@@ -4,8 +4,8 @@ use bitflags::bitflags;
 use itertools::Itertools;
 use regex::Regex;
 
-const REQUIRED_FIELDS: [&str; 7] = ["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"];
-const VALID_EYE_COLORS: [&str; 7] = ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"];
+static REQUIRED_FIELDS: [&str; 7] = ["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"];
+static VALID_EYE_COLORS: [&str; 7] = ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"];
 
 pub struct Day4 {
     passports: Vec<String>
@@ -192,7 +192,7 @@ mod tests {
 
     #[test]
     fn test() {
-        const TEST_INPUT_1: &str = indoc!{"
+        static TEST_INPUT_1: &str = indoc!{"
             ecl:gry pid:860033327 eyr:2020 hcl:#fffffd
             byr:1937 iyr:2017 cid:147 hgt:183cm
             
@@ -208,7 +208,7 @@ mod tests {
             iyr:2011 ecl:brn hgt:59in
         "};
 
-        const TEST_INPUT_2A: &str = indoc!{"
+        static TEST_INPUT_2A: &str = indoc!{"
             eyr:1972 cid:100
             hcl:#18171d ecl:amb hgt:170 pid:186cm iyr:2018 byr:1926
             
@@ -224,7 +224,7 @@ mod tests {
             pid:3556412378 byr:2007
         "};
 
-        const TEST_INPUT_2B: &str = indoc!{"
+        static TEST_INPUT_2B: &str = indoc!{"
             pid:087499704 hgt:74in ecl:grn iyr:2012 eyr:2030 byr:1980
             hcl:#623a2f
             

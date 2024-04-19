@@ -92,7 +92,7 @@ mod tests {
     use super::*;
     use indoc::indoc;
 
-    const TEST_INPUT: &str = indoc!{
+    static TEST_INPUT: &str = indoc!{
        "Time:      7  15   30
         Distance:  9  40  200"
     };

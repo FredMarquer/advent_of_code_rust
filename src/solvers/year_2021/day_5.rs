@@ -131,7 +131,7 @@ mod tests {
 
     #[test]
     fn test() {
-        const TEST_INPUT: &str = indoc!{"
+        static TEST_INPUT: &str = indoc!{"
             0,9 -> 5,9
             8,0 -> 0,8
             9,4 -> 3,4

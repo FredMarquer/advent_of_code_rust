@@ -6,7 +6,7 @@ use std::ops::Mul;
 
 use crate::solvers::prelude::*;
 
-const ROTATION_SEQUENCE: [RotationMatrix; 24] = [
+static ROTATION_SEQUENCE: [RotationMatrix; 24] = [
     RotationMatrix::identity(),
     RotationMatrix::roll(),
     RotationMatrix::roll(),
@@ -352,7 +352,7 @@ mod tests {
 
     #[test]
     fn test() {
-        const TEST_INPUT: &str = indoc!{"
+        static TEST_INPUT: &str = indoc!{"
             --- scanner 0 ---
             404,-588,-901
             528,-643,409
