@@ -2,7 +2,7 @@ use std::ops::{Index, IndexMut};
 use std::str::FromStr;
 
 use crate::solvers::ParseSolverError;
-use crate::utils::{Point, Point2D};
+use crate::utils::{BoundMD, Point, Point2D, SliceMD, SliceMutMD};
 
 #[derive(Clone)]
 pub struct ArrayMD<const D: usize, T> {
@@ -81,6 +81,14 @@ impl<const D: usize, T> ArrayMD<D, T> {
 
     pub fn iter_mut<'a>(&'a mut self) -> core::slice::IterMut<'a, T> {
         self.data.iter_mut()
+    }
+
+    pub fn get_slice<'a>(&'a self, bound: impl Into<BoundMD<D>>) -> SliceMD<'a, D, T> {
+        SliceMD::new(self, bound)
+    }
+
+    pub fn get_slice_mut<'a>(&'a mut self, bound: impl Into<BoundMD<D>>) -> SliceMutMD<'a, D, T> {
+        SliceMutMD::new(self, bound)
     }
 }
 
