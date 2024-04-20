@@ -34,6 +34,12 @@ impl<const D: usize> Point<D> {
             .manhattan_magnitude()
     }
 
+    pub fn volume(&self) -> i64 {
+        self.as_slice()
+            .iter()
+            .product()
+    }
+
     pub fn max(self, other: Self) -> Self {
         let mut coords = [0; D];
         for d in 0..D {
@@ -220,6 +226,16 @@ impl<const D: usize> From<i64> for Point<D> {
     }
 }
 
+impl<const D: usize> From<[i32; D]> for Point<D> {
+    fn from(coords: [i32; D]) -> Self {
+        let mut new_coors = [0; D];
+        for d in 0..D {
+            new_coors[d] = i64::from(coords[d]);
+        }
+        Self { coords: new_coors }
+    }
+}
+
 impl<const D: usize> From<[i64; D]> for Point<D> {
     fn from(coords: [i64; D]) -> Self {
         Self { coords }
@@ -277,6 +293,10 @@ impl Point2D {
 
     pub fn y_mut(&mut self) -> &mut i64 {
         &mut self.coords[1]
+    }
+
+    pub fn area(&self) -> i64 {
+        self.volume()
     }
 }
 
