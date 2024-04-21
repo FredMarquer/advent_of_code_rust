@@ -98,6 +98,17 @@ impl<const D: usize> BoundMD<D> {
 
         OverlapResult::Intersect
     }
+
+    pub fn and(&self, other: &Self) -> Option<Self> {
+        let min = Point::max(self.start, other.start);
+        let max = Point::min(self.end(), other.end()) - 1;
+        for d in 0..D {
+            if min[d] > max[d] {
+                return None;
+            }
+        }
+        Some(Self::from_min_max(min, max))
+    }
 }
 
 #[derive(Eq, PartialEq)]
