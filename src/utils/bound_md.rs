@@ -78,6 +78,10 @@ impl<const D: usize> BoundMD<D> {
     pub fn overlap(&self, other: &Self) -> OverlapResult {
         // TODO : This can probably be optimized
 
+        if self.start == other.start && self.end() == other.end() {
+            return OverlapResult::Equals;
+        }
+
         if self.is_in_bound(other.start) && self.is_in_bound(other.end() - 1) {
             return OverlapResult::SelfContainsOther;
         }
@@ -102,6 +106,7 @@ pub enum OverlapResult {
     Intersect,
     SelfContainsOther,
     OtherContainsSelf,
+    Equals,
 }
 
 pub type Range = BoundMD<1>;

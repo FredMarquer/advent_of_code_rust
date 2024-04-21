@@ -10,7 +10,10 @@ pub struct SliceMD<'a, const D: usize, T> {
 impl<'a, const D: usize, T> SliceMD<'a, D, T> {
     pub fn new(array: &'a ArrayMD<D, T>, bound: impl Into<BoundMD<D>>) -> Self {
         let bound = bound.into();
-        debug_assert!(bound.overlap(&BoundMD::new(Point::ZERO, array.sizes())) == OverlapResult::OtherContainsSelf);
+        debug_assert!({
+            let result = bound.overlap(&BoundMD::new(Point::ZERO, array.sizes()));
+            result == OverlapResult::OtherContainsSelf || result == OverlapResult::Equals
+        });
         SliceMD {
             array,
             bound,
@@ -55,7 +58,10 @@ impl<'a, const D: usize, T> SliceMD<'a, D, T> {
 
     pub fn get_slice(&'a self, bound: impl Into<BoundMD<D>>) -> SliceMD<'a, D, T> {
         let mut bound = bound.into();
-        debug_assert!(self.bound.overlap(&bound) == OverlapResult::SelfContainsOther);
+        debug_assert!({
+            let result = self.bound.overlap(&bound);
+            result == OverlapResult::SelfContainsOther || result == OverlapResult::Equals
+        });
         *bound.start_mut() += self.bound.start();
         SliceMD {
             array: self.array,
@@ -105,7 +111,10 @@ pub struct SliceMutMD<'a, const D: usize, T> {
 impl<'a, const D: usize, T> SliceMutMD<'a, D, T> {
     pub fn new(array: &'a mut ArrayMD<D, T>, bound: impl Into<BoundMD<D>>) -> Self {
         let bound = bound.into();
-        debug_assert!(bound.overlap(&BoundMD::new(Point::ZERO, array.sizes())) == OverlapResult::OtherContainsSelf, "array sizes {}, bound {:?}", array.sizes(), bound);
+        debug_assert!({
+            let result = bound.overlap(&BoundMD::new(Point::ZERO, array.sizes()));
+            result == OverlapResult::OtherContainsSelf || result == OverlapResult::Equals
+        });
         SliceMutMD {
             array,
             bound,
@@ -168,7 +177,10 @@ impl<'a, const D: usize, T> SliceMutMD<'a, D, T> {
 
     pub fn get_slice(&'a self, bound: impl Into<BoundMD<D>>) -> SliceMD<'a, D, T> {
         let mut bound = bound.into();
-        debug_assert!(self.bound.overlap(&bound) == OverlapResult::SelfContainsOther);
+        debug_assert!({
+            let result = self.bound.overlap(&bound);
+            result == OverlapResult::SelfContainsOther || result == OverlapResult::Equals
+        });
         *bound.start_mut() += self.bound.start();
         SliceMD {
             array: self.array,
@@ -178,7 +190,10 @@ impl<'a, const D: usize, T> SliceMutMD<'a, D, T> {
 
     pub fn get_slice_mut(&'a mut self, bound: impl Into<BoundMD<D>>) -> SliceMutMD<'a, D, T> {
         let mut bound = bound.into();
-        debug_assert!(self.bound.overlap(&bound) == OverlapResult::SelfContainsOther);
+        debug_assert!({
+            let result = self.bound.overlap(&bound);
+            result == OverlapResult::SelfContainsOther || result == OverlapResult::Equals
+        });
         *bound.start_mut() += self.bound.start();
         SliceMutMD {
             array: self.array,
