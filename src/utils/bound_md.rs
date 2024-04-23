@@ -30,25 +30,22 @@ impl<const D: usize> BoundMD<D> {
         }
     }
 
+    // TODO : improves interface start, end, sizes, min, max -> get, set -> all or D
+
+    pub fn get_range_d(&self, d: usize) -> Range {
+        Range::new(self.start[d], self.sizes[d])
+    }
+
     pub fn start(&self) -> Point<D> {
         self.start
     }
 
-    pub fn start_mut(&mut self) -> &mut Point<D> {
-        &mut self.start
+    pub fn set_start(&mut self, start: impl Into<Point<D>>) {
+        self.start = start.into();
     }
 
-    pub fn sizes(&self) -> Point<D> {
-        self.sizes
-    }
-
-    pub fn set_sizes(&mut self, sizes: impl Into<Point<D>>) {
-        self.sizes = sizes.into();
-        debug_assert!(self.sizes.min_coord() >= 0);
-    }
-
-    pub fn size(&self, d: usize) -> i64 {
-        self.sizes[d]
+    pub fn set_start_d(&mut self, d: usize, start: i64) {
+        self.start[d] = start;
     }
 
     pub fn end(&self) -> Point<D> {
@@ -60,11 +57,58 @@ impl<const D: usize> BoundMD<D> {
         debug_assert!(self.sizes.min_coord() >= 0);
     }
 
+    pub fn set_end_d(&mut self, d: usize, end: i64) {
+        self.sizes[d] = end - self.start[d];
+        debug_assert!(self.sizes[d] >= 0);
+    }
+
+    pub fn sizes(&self) -> Point<D> {
+        self.sizes
+    }
+    
+    pub fn set_sizes(&mut self, sizes: impl Into<Point<D>>) {
+        self.sizes = sizes.into();
+        debug_assert!(self.sizes.min_coord() >= 0);
+    }
+
+    pub fn set_size_d(&mut self, d: usize, size: i64) {
+        debug_assert!(size >= 0);
+        self.sizes[d] = size;
+    }
+
+    pub fn min(&self) -> Point<D> {
+        self.start
+    }
+
+    pub fn set_min(&mut self, min: impl Into<Point<D>>) {
+        let end = self.end();
+        self.set_start(min);
+        self.set_end(end)
+    }
+
+    pub fn set_min_d(&mut self, d: usize, min: i64) {
+        let end = self.end()[d];
+        self.set_start_d(d, min);
+        self.set_end_d(d, end)
+    }
+
+    pub fn max(&self) -> Point<D> {
+        self.end() - 1
+    }
+
+    pub fn set_max(&mut self, max: impl Into<Point<D>>) {
+        self.set_end(max.into() + 1);
+    }
+
+    pub fn set_max_d(&mut self, d: usize, max: i64) {
+        self.set_end_d(d, max + 1);
+    }
+
     pub fn volume(&self) -> i64 {
         self.sizes.volume()
     }
 
-    pub fn is_in_bound(&self, coords: impl Into<Point<D>>) -> bool {
+    pub fn contains(&self, coords: impl Into<Point<D>>) -> bool {
         let coords: Point<D> = coords.into();
         let end = self.end();
         for d in 0..D {
@@ -82,11 +126,11 @@ impl<const D: usize> BoundMD<D> {
             return OverlapResult::Equals;
         }
 
-        if self.is_in_bound(other.start) && self.is_in_bound(other.end() - 1) {
+        if self.contains(other.start) && self.contains(other.end() - 1) {
             return OverlapResult::SelfContainsOther;
         }
 
-        if other.is_in_bound(self.start) && other.is_in_bound(self.end() - 1) {
+        if other.contains(self.start) && other.contains(self.end() - 1) {
             return OverlapResult::OtherContainsSelf;
         }
 

@@ -62,7 +62,7 @@ impl<'a, const D: usize, T> SliceMD<'a, D, T> {
             let result = self.bound.overlap(&bound);
             result == OverlapResult::SelfContainsOther || result == OverlapResult::Equals
         });
-        *bound.start_mut() += self.bound.start();
+        bound.set_start(bound.start() + self.bound.start());
         SliceMD {
             array: self.array,
             bound,
@@ -181,7 +181,7 @@ impl<'a, const D: usize, T> SliceMutMD<'a, D, T> {
             let result = self.bound.overlap(&bound);
             result == OverlapResult::SelfContainsOther || result == OverlapResult::Equals
         });
-        *bound.start_mut() += self.bound.start();
+        bound.set_start(bound.start() + self.bound.start());
         SliceMD {
             array: self.array,
             bound,
@@ -194,7 +194,7 @@ impl<'a, const D: usize, T> SliceMutMD<'a, D, T> {
             let result = self.bound.overlap(&bound);
             result == OverlapResult::SelfContainsOther || result == OverlapResult::Equals
         });
-        *bound.start_mut() += self.bound.start();
+        bound.set_start(bound.start() + self.bound.start());
         SliceMutMD {
             array: self.array,
             bound,

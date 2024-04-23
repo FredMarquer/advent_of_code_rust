@@ -205,7 +205,7 @@ mod optim {
                             let bound_mid = self.bound.and(&trench_bound).unwrap();
                             self.sub_zones.push(Zone::new(ZoneType::Trench, bound_mid));
     
-                            if let Some(bound_right) = self.bound.and(&Bound2D::from_min_max(trench_bound.start() + Point2D::RIGHT * trench_bound.size(0), [BOUND_MAX, trench_bound.start().y()])) {
+                            if let Some(bound_right) = self.bound.and(&Bound2D::from_min_max(trench_bound.start() + Point2D::RIGHT * trench_bound.sizes()[0], [BOUND_MAX, trench_bound.start().y()])) {
                                 let zone_type = if trench_dir.x() > 0 {
                                     if next_dir.y() > 0 { ZoneType::Right } else { ZoneType::Left }
                                 } else {
@@ -247,7 +247,7 @@ mod optim {
                                 self.sub_zones.push(Zone::new(zone_type, bound_left));
                             }
     
-                            if let Some(bound_up) = self.bound.and(&Bound2D::from_min_max(trench_bound.start() + Point2D::UP * trench_bound.size(1), [trench_bound.start().x(), BOUND_MAX])) {
+                            if let Some(bound_up) = self.bound.and(&Bound2D::from_min_max(trench_bound.start() + Point2D::UP * trench_bound.sizes()[1], [trench_bound.start().x(), BOUND_MAX])) {
                                 let zone_type = if trench_dir.y() > 0 {
                                     if next_dir.x() > 0 { ZoneType::Left } else { ZoneType::Right }
                                 } else {
@@ -279,12 +279,12 @@ mod optim {
         }
     
         fn get_origin_zone_type(&self) -> ZoneType {
-            debug_assert!(self.bound.is_in_bound(BOUND_MIN));
+            debug_assert!(self.bound.contains(BOUND_MIN));
             if self.sub_zones.is_empty() {
                 return self.zone_type;
             } else {
                 for sub_zone in self.sub_zones.iter() {
-                    if sub_zone.bound.is_in_bound(BOUND_MIN) {
+                    if sub_zone.bound.contains(BOUND_MIN) {
                         return sub_zone.get_origin_zone_type();
                     }
                 }
