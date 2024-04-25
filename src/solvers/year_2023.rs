@@ -17,6 +17,7 @@ mod day_16;
 mod day_17;
 mod day_18;
 mod day_19;
+mod day_20;
 
 use crate::solvers;
 
@@ -42,6 +43,7 @@ pub fn run_solver(day: &str, run_part_1: bool, run_part_2: bool)
         "17" => solvers::run_solver_generic::<day_17::Day17>(run_part_1, run_part_2),
         "18" => solvers::run_solver_generic::<day_18::Day18>(run_part_1, run_part_2),
         "19" => solvers::run_solver_generic::<day_19::Day19>(run_part_1, run_part_2),
+        "20" => solvers::run_solver_generic::<day_20::Day20>(run_part_1, run_part_2),
         _ => panic!("Invalid day argument: {day}"),
     }
 }
