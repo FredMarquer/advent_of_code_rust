@@ -1,6 +1,6 @@
 use crate::utils::Point;
 
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq)]
 pub struct BoundMD<const D: usize> {
     start: Point<D>,
     sizes: Point<D>,
@@ -119,6 +119,27 @@ impl<const D: usize> BoundMD<D> {
         true
     }
 
+    pub fn append_point(&mut self, coords: impl Into<Point<D>>) {
+        let coords = coords.into();
+        for d in 0..D {
+            if coords[d] < self.min()[d] {
+                self.set_min_d(d, coords[d]);
+            } else if coords[d] > self.max()[d] {
+                self.set_max_d(d, coords[d]);
+            }
+        }
+    }
+
+    pub fn append_bound(&mut self, other: BoundMD<D>) {
+        for d in 0..D {
+            if other.min()[d] < self.min()[d] {
+                self.set_min_d(d, other.min()[d]);
+            } else if other.max()[d] > self.max()[d] {
+                self.set_max_d(d, other.max()[d]);
+            }
+        }
+    }
+
     pub fn overlap(&self, other: &Self) -> OverlapResult {
         // TODO : This can probably be optimized
 
@@ -153,6 +174,10 @@ impl<const D: usize> BoundMD<D> {
         }
         Some(Self::from_min_max(min, max))
     }
+
+    pub fn iter_d(&self, d: usize) -> std::ops::Range<i64> {
+        self.start[d]..self.end()[d]
+    }
 }
 
 #[derive(Eq, PartialEq)]
@@ -170,6 +195,10 @@ impl Range {
     pub fn distance(&self) -> i64 {
         self.volume()
     }
+
+    pub fn iter(&self) -> std::ops::Range<i64> {
+        self.start[0]..self.end()[0]
+    }
 }
 
 pub type Bound2D = BoundMD<2>;
@@ -181,3 +210,17 @@ impl Bound2D {
 }
 
 pub type Bound3D = BoundMD<3>;
+
+impl Bound3D {
+    pub fn xy(&self) -> Bound2D {
+        Bound2D::new(self.start().xy(), self.sizes().xy())
+    }
+
+    pub fn xz(&self) -> Bound2D {
+        Bound2D::new(self.start().xz(), self.sizes().xz())
+    }
+
+    pub fn yz(&self) -> Bound2D {
+        Bound2D::new(self.start().yz(), self.sizes().yz())
+    }
+}
