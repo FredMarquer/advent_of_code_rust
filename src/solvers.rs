@@ -113,6 +113,13 @@ impl From<ParseIntError> for ParseSolverError {
     }
 }
 
+use std::num::ParseFloatError;
+impl From<ParseFloatError> for ParseSolverError {
+    fn from(err: ParseFloatError) -> Self {
+        ParseSolverError::new(err)
+    }
+}
+
 #[macro_export]
 macro_rules! parse_solver_error {
     ($($arg:tt)*) => {{
