@@ -1,4 +1,4 @@
-use core::panic;
+use std::panic;
 use std::convert::From;
 use std::convert::Into;
 

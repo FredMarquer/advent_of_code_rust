@@ -75,11 +75,11 @@ impl<const D: usize, T> ArrayMD<D, T> {
         Some(usize::try_from(index).unwrap())
     }
 
-    pub fn iter<'a>(&'a self) -> core::slice::Iter<'a, T> {
+    pub fn iter<'a>(&'a self) -> std::slice::Iter<'a, T> {
         self.data.iter()
     }
 
-    pub fn iter_mut<'a>(&'a mut self) -> core::slice::IterMut<'a, T> {
+    pub fn iter_mut<'a>(&'a mut self) -> std::slice::IterMut<'a, T> {
         self.data.iter_mut()
     }
 

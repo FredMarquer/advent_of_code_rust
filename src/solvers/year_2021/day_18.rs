@@ -1,4 +1,4 @@
-use core::str::Chars;
+use std::str::Chars;
 use std::collections::VecDeque;
 use std::mem;
 

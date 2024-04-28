@@ -1,4 +1,4 @@
-use core::cmp::Ordering;
+use std::cmp::Ordering;
 use std::collections::BinaryHeap;
 
 use crate::solvers::prelude::*;
