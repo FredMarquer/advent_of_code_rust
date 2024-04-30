@@ -1,5 +1,5 @@
 use std::convert::From;
-use std::ops::{Add, Sub, Mul, Div, AddAssign, SubAssign, MulAssign, DivAssign};
+use std::ops::{Add, Sub, Mul, Div, AddAssign, SubAssign, MulAssign, DivAssign, Rem, RemAssign};
 use std::ops::{Index, IndexMut};
 use std::cmp::Ord;
 
@@ -188,6 +188,28 @@ impl<const D: usize, T: Into<Point<D>>> DivAssign<T> for Point<D> {
         let other: Point<D> = other.into();
         for d in 0..D {
             self.coords[d] /= other.coords[d];
+        }
+    }
+}
+
+impl<const D: usize, T: Into<Point<D>>> Rem<T> for Point<D> {
+    type Output = Self;
+
+    fn rem(self, other: T) -> Self {
+        let other: Point<D> = other.into();
+        let mut coords = [0; D];
+        for d in 0..D {
+            coords[d] = self.coords[d] % other.coords[d];
+        }
+        Self { coords }
+    }
+}
+
+impl<const D: usize, T: Into<Point<D>>> RemAssign<T> for Point<D> {
+    fn rem_assign(&mut self, other: T) {
+        let other: Point<D> = other.into();
+        for d in 0..D {
+            self.coords[d] %= other.coords[d];
         }
     }
 }
