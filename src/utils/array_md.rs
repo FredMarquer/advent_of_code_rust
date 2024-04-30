@@ -39,6 +39,20 @@ impl<const D: usize, T> ArrayMD<D, T> {
         &mut self.data[index]
     }
 
+    pub fn get_wrap(&self, coords: impl Into<Point<D>>) -> &T {
+        let mut coords = coords.into();
+        coords %= self.sizes;
+        let index = self.get_index(coords);
+        &self.data[index]
+    }
+
+    pub fn get_wrap_mut(&mut self, coords: impl Into<Point<D>>) -> &mut T {
+        let mut coords = coords.into();
+        coords %= self.sizes;
+        let index = self.get_index(coords);
+        &mut self.data[index]
+    }
+
     pub fn try_get(&self, coords: impl Into<Point<D>>) -> Option<&T> {
         let index = self.try_get_index(coords.into())?;
         Some(&self.data[index])
