@@ -1,3 +1,4 @@
+#[derive(Clone)]
 pub struct Graph<T> {
     nodes: Vec<Node<T>>
 }
@@ -21,14 +22,24 @@ impl<T> Graph<T> {
     }
 
     pub fn create_connection(&mut self, from: usize, to: usize, is_bidirectional: bool) {
-        if let Some(from_node) = self.get_node_mut(from) {
-            from_node.connections.push(to);
-        }
+        let from_node = self.get_node_mut(from).unwrap();
+        from_node.connections.push(to);
 
         if is_bidirectional {
-            if let Some(to_node) = self.get_node_mut(to) {
-                to_node.connections.push(from);
-            }
+            let to_node = self.get_node_mut(to).unwrap();
+            to_node.connections.push(from);
+        }
+    }
+
+    pub fn remove_connection(&mut self, from: usize, to: usize, is_bidirectional: bool) {
+        let from_node = self.get_node_mut(from).unwrap();
+        let index = from_node.connections.iter().position(|node_id| *node_id == to).unwrap();
+        from_node.connections.remove(index);
+
+        if is_bidirectional {
+            let to_node = self.get_node_mut(to).unwrap();
+            let index = to_node.connections.iter().position(|node_id| *node_id == from).unwrap();
+            to_node.connections.remove(index);
         }
     }
 
@@ -55,6 +66,7 @@ impl<T> Graph<T> {
     }
 }
 
+#[derive(Clone)]
 pub struct Node<T> {
     id: usize,
     value: T,
