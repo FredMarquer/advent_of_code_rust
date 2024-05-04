@@ -3,7 +3,7 @@ use crate::utils::Array2D;
 use crate::utils::graph::*;
 
 pub struct Day03 {
-    graph: Graph<NodeValue>,
+    graph: Graph<NodeValue, ()>,
 }
 
 enum NodeValue {
@@ -44,14 +44,13 @@ impl Solver for Day03 {
 
     fn run_part1(&self) -> SolverResult {
         let mut sum = 0;
-        for node in self.graph.iter() {
+        for node in self.graph.nodes_iter() {
             if let NodeValue::Number(number) = node.value() {
-                for connected_node_id in node.connections() {
-                    if let Some(connected_node) = self.graph.get_node(*connected_node_id) {
-                        if let NodeValue::Symbol(_) = connected_node.value() {
-                            sum += number;
-                            break;
-                        }
+                for connection in node.connections() {
+                    let connected_node = self.graph.get_node(connection.to_node_id());
+                    if let NodeValue::Symbol(_) = connected_node.value() {
+                        sum += number;
+                        break;
                     }
                 }
             }
@@ -61,17 +60,16 @@ impl Solver for Day03 {
 
     fn run_part2(&self) -> SolverResult {
         let mut sum = 0;
-        for node in self.graph.iter() {
+        for node in self.graph.nodes_iter() {
             if let NodeValue::Symbol(symbol) = node.value() {
                 if *symbol == '*' {
                     let mut gear_ratio = 1;
                     let mut number_count = 0;
-                    for connected_node_id in node.connections() {
-                        if let Some(connected_node) = self.graph.get_node(*connected_node_id) {
-                            if let NodeValue::Number(number) = connected_node.value() {
-                                gear_ratio *= number;
-                                number_count += 1;
-                            }
+                    for connection in node.connections() {
+                        let connected_node = self.graph.get_node(connection.to_node_id());
+                        if let NodeValue::Number(number) = connected_node.value() {
+                            gear_ratio *= number;
+                            number_count += 1;
                         }
                     }
                     if number_count == 2 {
@@ -84,7 +82,7 @@ impl Solver for Day03 {
     }
 }
 
-fn process_number(number: &mut u32, number_width: &mut i64, x: i64, y: i64, input: &Array2D<char>, symbol_node_ids: &mut Array2D<Option<usize>>, graph: &mut Graph<NodeValue>) {
+fn process_number(number: &mut u32, number_width: &mut i64, x: i64, y: i64, input: &Array2D<char>, symbol_node_ids: &mut Array2D<Option<usize>>, graph: &mut Graph<NodeValue, ()>) {
     if *number == 0 {
         return;
     }
@@ -98,10 +96,10 @@ fn process_number(number: &mut u32, number_width: &mut i64, x: i64, y: i64, inpu
             let c = *input.get([x, y]);
             if is_symbol(c) {
                 if let Some(symbol_node_id) = symbol_node_ids.get([x, y]) {
-                    graph.create_connection(number_node_id, *symbol_node_id, true)
+                    graph.create_edge(number_node_id, *symbol_node_id, true, ());
                 } else {
                     let symbol_node_id = graph.create_node(NodeValue::Symbol(c));
-                    graph.create_connection(number_node_id, symbol_node_id, true);
+                    graph.create_edge(number_node_id, symbol_node_id, true, ());
                     *symbol_node_ids.get_mut([x, y]) = Some(symbol_node_id);
                 }
             }

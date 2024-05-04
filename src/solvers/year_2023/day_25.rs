@@ -8,7 +8,7 @@ use crate::solvers::prelude::*;
 use crate::utils::graph::*;
 
 pub struct Day25 {
-    graph: Graph<()>,
+    graph: Graph<(), ()>,
 }
 
 impl FromStr for Day25 {
@@ -24,7 +24,7 @@ impl FromStr for Day25 {
 
             for connection_name in connections.split(' ') {
                 let connection_id = get_or_create_node(connection_name, &mut name_to_index, &mut graph);
-                graph.create_connection(node_id, connection_id, true);
+                graph.create_edge(node_id, connection_id, true, ());
             }
         }
 
@@ -32,7 +32,7 @@ impl FromStr for Day25 {
     }
 }
 
-fn get_or_create_node<'a>(node_name: &'a str, name_to_index: &mut HashMap<&'a str, usize>, graph: &mut Graph<()>) -> usize {
+fn get_or_create_node<'a>(node_name: &'a str, name_to_index: &mut HashMap<&'a str, usize>, graph: &mut Graph<(), ()>) -> usize {
     if let Some(node_id) = name_to_index.get(node_name) {
         *node_id
     } else {
@@ -46,55 +46,43 @@ impl Solver for Day25 {
     const INPUT_PATH: &'static str = "inputs/2023/25.txt";
 
     fn run_part1(&self) -> SolverResult {
-        let mut graph = self.graph.clone();
+        let mut graph = self.graph.convert_default();
 
-        let mut edges_path_count = HashMap::new();
-        for node in graph.iter() {
-            for connection in node.connections().iter() {
-                let edge = Edge::new(node.id(), *connection);
-                if !edges_path_count.contains_key(&edge) {
-                    edges_path_count.insert(edge, 0);
-                }
-            }
-        }
-
-        let mut prev_nodes = vec![None; graph.len()];
         let mut shortest_path = Vec::new();
         let mut removed_edges = Vec::new();
         for _ in 0..3 {
-            for path_count in edges_path_count.values_mut() {
-                *path_count = 0;
-            }
-
-            for i in 0..graph.len() {
-                for j in (i+1)..graph.len() {
-                    dijkstra(i, j, &graph, &mut prev_nodes, &mut shortest_path);
+            for i in 0..graph.nodes_len() {
+                for j in (i+1)..graph.nodes_len() {
+                    dijkstra(i, j, &mut graph, &mut shortest_path);
                     shortest_path.iter()
                         .tuple_windows()
-                        .for_each(|(a, b)|
-                            *edges_path_count.get_mut(&Edge::new(*a, *b)).unwrap() += 1
-                        );
+                        .for_each(|(a, b)| {
+                            let edge_id = graph.find_edge(*a, *b).unwrap();
+                            *graph.get_edge_mut(edge_id).value_mut() += 1;
+                    });
                 }
             }
 
             let edge_to_remove = {
                 let mut path_count_max = 0;
                 let mut edge_to_remove = None;
-                for (edge, path_count) in edges_path_count.iter() {
-                    if *path_count > path_count_max {
-                        path_count_max = *path_count;
-                        edge_to_remove = Some(*edge);
+                for edge in graph.edges_iter() {
+                    if *edge.value() > path_count_max {
+                        path_count_max = *edge.value();
+                        edge_to_remove = Some(edge.id());
                     }
                 }
                 edge_to_remove.unwrap()
             };
-
-            graph.remove_connection(edge_to_remove.a, edge_to_remove.b, true);
+            graph.remove_edge(edge_to_remove);
             removed_edges.push(edge_to_remove);
+
+            graph.edges_iter_mut().for_each(|edge| *edge.value_mut() = 0);
         }
 
-        let group_a = count_reachables(removed_edges[0].a, &graph);
-        let group_b = count_reachables(removed_edges[0].b, &graph);
+        let edge = graph.get_edge(removed_edges[0]);
+        let group_a = count_reachables(edge.from(), &graph);
+        let group_b = count_reachables(edge.to(), &graph);
         (group_a * group_b).into()
     }
 
@@ -103,9 +91,9 @@ impl Solver for Day25 {
     }
 }
 
-fn dijkstra(start: usize, target: usize, graph: &Graph<()>, prev_nodes: &mut Vec<Option<usize>>, shortest_path: &mut Vec<usize>) {
-    prev_nodes.iter_mut().for_each(|path_node| *path_node = None);
-    prev_nodes[start] = Some(usize::MAX);
+fn dijkstra(start: usize, target: usize, graph: &mut Graph<Option<usize>, usize>, shortest_path: &mut Vec<usize>) {
+    graph.nodes_iter_mut().for_each(|node| *node.value_mut() = None);
+    *graph.get_node_mut(start).value_mut() = Some(usize::MAX);
 
     shortest_path.clear();
 
@@ -120,20 +108,20 @@ fn dijkstra(start: usize, target: usize, graph: &Graph<()>, prev_nodes: &mut Vec
             let mut node_id = target;
             while node_id != usize::MAX {
                 shortest_path.push(node_id);
-                node_id = prev_nodes[node_id].unwrap();
+                node_id = graph.get_node(node_id).value().unwrap();
             }
             return;
         }
         
-        let node = graph.get_node(open_node.id).unwrap();
-        for connection in node.connections().iter() {
-            if prev_nodes[*connection].is_some() {
+        for i in 0..graph.get_node(open_node.id).connections().len() {
+            let to_node_id = graph.get_node(open_node.id).connections()[i].to_node_id();
+            if graph.get_node(to_node_id).value().is_some() {
                 continue;
             }
 
-            prev_nodes[*connection] = Some(open_node.id);
+            *graph.get_node_mut(to_node_id).value_mut() = Some(open_node.id);
             open_set.push(OpenNode {
-                id: *connection,
+                id: to_node_id,
                 distance: open_node.distance + 1,
             });
         }
@@ -142,8 +130,8 @@ fn dijkstra(start: usize, target: usize, graph: &Graph<()>, prev_nodes: &mut Vec
     panic!("path not found")
 }
 
-fn count_reachables(start: usize, graph: &Graph<()>) -> usize {
-    let mut visited_nodes = vec![false; graph.len()];
+fn count_reachables(start: usize, graph: &Graph<Option<usize>, usize>) -> usize {
+    let mut visited_nodes = vec![false; graph.nodes_len()];
     let mut queue = vec![start];
     while let Some(node_id) = queue.pop() {
         if visited_nodes[node_id] {
@@ -152,9 +140,9 @@ fn count_reachables(start: usize, graph: &Graph<()>) -> usize {
 
         visited_nodes[node_id] = true;
 
-        for connection in graph.get_node(node_id).unwrap().connections().iter() {
-            if !visited_nodes[*connection] {
-                queue.push(*connection);
+        for connection in graph.get_node(node_id).connections().iter() {
+            if !visited_nodes[connection.to_node_id()] {
+                queue.push(connection.to_node_id());
             }
         }
     }
